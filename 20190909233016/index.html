@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  <meta name="author" content="sugarmix">
+  
+  
+  
+  <title>使用SSH访问内网中的服务器 | SUGARMIX</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="默认,默认,">
+  
+
+  
+    <meta name="description" content="真正的大师，永远都怀着一颗学徒的心">
+  
+
+  
+    <link rel="alternate" href="atom.xml" title="SUGARMIX" type="application/atom+xml">
+  
+
+  
+    <link rel="icon" href="/images/favicon.ico">
+    <link rel="apple-touch-icon" href="/images/touch-icon.png">
+  
+
+  <link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/icon/iconfont.css">
+<link rel="stylesheet" href="/css/github-markdown.css">
+<link rel="stylesheet" href="/css/gitalk.css">
+<link rel="stylesheet" href="/css/highlight.css">
+  
+  <script src="/js/util.js"></script>
+<script src="/js/hidden_header.js"></script>
+  
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js" async></script>
+</head>
+
+    <body>
+        
+        <div id="app">
+            <div class="header-wrap">
+  <header>
+    <div class="site-brand">
+      <div class="site-title">
+        <a href="/">SUGARMIX</a>
+      </div>
+    </div>
+    <nav class="site-navigation">
+      <ul class="nav-menu">
+      
+        <li class="nav-item" data-path="https://paste.sugarmix.me">
+          
+            <a 
+              href="https://paste.sugarmix.me"
+              target="_blank"
+            >
+              Pastbin
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          
+            <a 
+              href="/archives/"
+              target="_blank"
+            >
+              Archives
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="">
+          
+            <a href="javascript:void(0);" v-else>Me</a>
+            <ul class="nav-menu--dropdown">
+              
+                <li>
+                  <a 
+                    href="https://github.com/sugarmix" 
+                    target="_blank"
+                  >
+                    GitHub
+                  </a>
+                </li>
+              
+                <li>
+                  <a 
+                    href="mailto:sugarmix.me@outlook.com" 
+                    target="_blank"
+                  >
+                    Mail
+                  </a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+      </ul>
+    </nav>
+    <i class="iconfont icon-menu"></i>
+  </header>
+</div>
+
+<script>
+  let links = document.querySelectorAll('.nav-item');
+  for(let link of links){
+    let childrenLink = link.querySelector('ul');
+    link.addEventListener('mouseenter', () => {
+      if(childrenLink) {
+        childrenLink.className = "nav-menu--dropdown active";
+      }
+    })
+    link.addEventListener('mouseleave', () => {
+      if(childrenLink) {
+        childrenLink.className = "nav-menu--dropdown";
+      }
+    })
+  }
+  let rootRealPath = getRealPath(window.location.pathname, true);
+  for(let link of links) {
+    let linkPath = link.getAttribute("data-path");
+    if(linkPath && getRealPath(linkPath, true) === rootRealPath) {
+      link.className = "nav-item hover";
+    }
+  }
+
+  let iconMenu = document.querySelector("i.iconfont.icon-menu");
+  let iconMenuClicked = true;
+  let navDOM = document.querySelector("nav.site-navigation");
+  iconMenu.addEventListener("click", () => {
+    iconMenuClicked 
+      ? navDOM.className = "site-navigation active"
+      : navDOM.className = "site-navigation";
+    iconMenuClicked = !iconMenuClicked;
+  })
+</script>
+
+            
+
+
+
+
+
+
+
+
+<div class="container post-index">
+
+  
+
+<div class="post">
+  <h1 class="article-title">
+    <span>使用SSH访问内网中的服务器</span>
+  </h1>
+  <div class="article-top-meta">
+    <span>
+      发布 : 
+      2019-09-09
+    </span>
+    
+      <span>
+        分类 : 
+          <a href="/categories/默认/">
+            默认
+          </a>
+      </span>
+    
+  </div>
+
+  <div class="article-content">
+    <div class="markdown-body">
+      <p>这篇文章使用尽可能少的参数以及尽可能多的端口号，使读者更容易理解操作流程。</p>
+<p>阅读文章前，请确定能理解下面这句指令的含义，以及<code>[]</code>中的内容不存在时使用的默认值是什么。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh [username@]host [-p port]</span><br></pre></td></tr></table></figure>
+<h1 id="在外网服务器中的操作"><a href="#在外网服务器中的操作" class="headerlink" title="在外网服务器中的操作"></a>在外网服务器中的操作</h1><p>先从服务器开始。首先假设您已经通过上个命令登录到服务器。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -L 0.0.0.0:10000:localhost:20000 outer@localhost -p 50000</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><strong>-L</strong> <code>[bind_address:]port:host:hostport</code>  </p>
+<p>Specifies that connections to the given TCP port or Unix socket on the local (client) host are to be forwarded to the given host and port, or Unix socket, on the remote side.</p>
+</blockquote>
+<p>简而言之，<code>0.0.0.0:10000</code> 收到的内容将被转发给<code>localhost:20000</code>。其他的参数与最开始的指令的含义相同。</p>
+<p>这是一个正向代理的过程。此时，就需要让 <code>20000</code> 端口收到的数据转发给内网中的服务器。</p>
+<h1 id="在内网服务器中的操作"><a href="#在内网服务器中的操作" class="headerlink" title="在内网服务器中的操作"></a>在内网服务器中的操作</h1><p>在进行后续操作前，请确定内网服务器的SSH服务的端口号是30000。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -R 20000:localhost:30000 outer@12.34.56.78 -p 50000</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><strong>-R</strong> <code>[bind_address:]port:host:hostport</code>  </p>
+<p> <em>Specifies that connections to the given TCP port or Unix socket on the remote (server) host are to be forwarded to the local side.</em></p>
+</blockquote>
+<p>这样，外网服务器在 <code>20000</code> 端口接收到的数据将被转发到内网服务器的 <code>30000</code> 端口。使用第三台机器进行测试。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh inner@12.34.56.78 -p 10000</span><br></pre></td></tr></table></figure>
+<h1 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h1><p>直接使用上述方式运行的话，命令保持在前台，并且存在断线的风险。使用autossh和ssh参数配置实现断线重连</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">autossh -M 0 -o "ServerAliveInterval 60" -o "ServerAliveCountMax 3" -fCNL ...</span><br><span class="line">autossh -M 0 -o "ServerAliveInterval 60" -o "ServerAliveCountMax 3" -fCNR ...</span><br></pre></td></tr></table></figure>
+<h1 id="数据流向"><a href="#数据流向" class="headerlink" title="数据流向"></a>数据流向</h1><p>某SSH客户端，访问外网服务器的<code>10000</code>端口，<code>10000</code>端口将接收到的数据直接转发给外网服务器的<code>20000</code>端口，内网服务器在外网服务器上打开了<code>20000</code>端口，并将数据转发给了内网服务器的<code>30000</code>端口。</p>
+<p>通过访问<code>50000</code>端口的SSH服务器软件控制数据流向。</p>
+    </div>
+  </div>
+  
+  
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+      <span>
+        
+          <i class="iconfont icon-06tags"></i>标签: 
+          
+          <span class="span--tag">
+            <a href="/tags/默认/">
+              #默认
+            </a>
+          </span>
+          
+        
+      </span>
+    </div>
+    <div class="article-meta pull-right">
+    </div>
+  </div>
+</div>
+
+
+
+
+  <nav class="post-navigation">
+    
+    <div class="nav-pre">
+      <i class="iconfont icon-prev"></i>
+      上一篇:
+      <a href="/20190821135227/" target="_self">C++函数指针到UE4委托代理</a>
+    </div>
+    
+    
+    <div class="nav-next">
+      下一篇:
+      <a href="/20191205005932/" target="_self">关于C++迭代器的一些小技巧</a>
+      <i class="iconfont icon-next"></i>
+    </div>
+    
+  </nav>
+  
+  
+
+</div>
+
+
+            <div class="back-to-top hidden">
+  <span>
+    <i class="iconfont icon-60"></i><span></span>%
+  </span>
+</div>
+
+<script>
+const updateIconToTop = percent => {
+  let dom = document.querySelector(".back-to-top span span");
+  dom.innerText = percent;
+  if(percent < 1) {
+    document.querySelector(".back-to-top").className = "back-to-top hidden";
+  } else {
+    document.querySelector(".back-to-top").className = "back-to-top";
+  }
+}
+
+const handleScoll = () => {
+  let isRunning = false;
+  return () => {
+    if (isRunning) return;
+    isRunning = true;
+    window.requestAnimationFrame(timestamp => {
+      let scrollTop =
+          document.documentElement.scrollTop || document.body.scrollTop,
+        scrollHeight =
+          document.documentElement.scrollHeight ||
+          document.body.scrollHeight,
+        clientHeight =
+          document.documentElement.clientHeight ||
+          document.body.clientHeight;
+      isRunning = false;
+      if (scrollTop <= 1) {
+        updateIconToTop(0);
+        return;
+      }
+      if (scrollTop + clientHeight >= scrollHeight) {
+        updateIconToTop(100);
+      } else {
+        updateIconToTop(parseInt(
+          100 * scrollTop / (scrollHeight - clientHeight),
+          10
+        ));
+      }
+    });
+  };
+}
+
+const backToTop = () => {
+  let scrollTop =
+      document.documentElement.scrollTop || document.body.scrollTop,
+    delay = 10,
+    time = 200;
+  if (scrollTop <= 20) {
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    return;
+  }
+  let step = Math.ceil(scrollTop * delay / time);
+  let timer = setInterval(() => {
+    scrollTop =
+      document.documentElement.scrollTop || document.body.scrollTop;
+    if (scrollTop - step <= 0) {
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+      clearInterval(timer);
+    } else {
+      document.documentElement.scrollTop = scrollTop - step;
+      document.body.scrollTop = scrollTop - step;
+    }
+  }, delay);
+}
+
+document.addEventListener("scroll", handleScoll(), false);
+
+document.querySelector(".back-to-top").addEventListener("click", backToTop, false);
+
+</script>
+        </div>
+        
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+<script>
+  (() => {
+    const mathjaxConfig = {
+      showProcessingMessages: false, //关闭js加载过程信息
+      messageStyle: "none", //不显示信息
+      jax: ["input/TeX", "output/HTML-CSS"],
+      tex2jax: {
+        inlineMath: [["$", "$"], ["\\(", "\\)"]], //行内公式选择符
+        displayMath: [["$$", "$$"], ["\\[", "\\]"]], //段内公式选择符
+        skipTags: ["script", "noscript", "style", "textarea", "pre", "code", "a"] //避开某些标签
+      },
+      "HTML-CSS": {
+        availableFonts: ["STIX", "TeX"], //可选字体
+        showMathMenu: false //关闭右击菜单显示
+      }
+    }
+
+    let mathjaxInterval = setInterval(() => {
+      if(!window.MathJax){
+        return;
+      }
+      window.MathJax.Hub.Config(mathjaxConfig)
+      window.MathJax.Hub.Queue(["Typeset", MathJax.Hub, document.getElementById('app')])
+
+      clearInterval(mathjaxInterval)
+    }, 10)    
+  })()
+</script>
+
+        
+    </body>
+</html>

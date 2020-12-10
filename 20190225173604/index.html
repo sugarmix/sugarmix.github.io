@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  <meta name="author" content="sugarmix">
+  
+  
+  
+  <title>MySQL存储引擎的特点 | SUGARMIX</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="数据库,翻译,MySQL,">
+  
+
+  
+    <meta name="description" content="真正的大师，永远都怀着一颗学徒的心">
+  
+
+  
+    <link rel="alternate" href="atom.xml" title="SUGARMIX" type="application/atom+xml">
+  
+
+  
+    <link rel="icon" href="/images/favicon.ico">
+    <link rel="apple-touch-icon" href="/images/touch-icon.png">
+  
+
+  <link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/icon/iconfont.css">
+<link rel="stylesheet" href="/css/github-markdown.css">
+<link rel="stylesheet" href="/css/gitalk.css">
+<link rel="stylesheet" href="/css/highlight.css">
+  
+  <script src="/js/util.js"></script>
+<script src="/js/hidden_header.js"></script>
+  
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js" async></script>
+</head>
+
+    <body>
+        
+        <div id="app">
+            <div class="header-wrap">
+  <header>
+    <div class="site-brand">
+      <div class="site-title">
+        <a href="/">SUGARMIX</a>
+      </div>
+    </div>
+    <nav class="site-navigation">
+      <ul class="nav-menu">
+      
+        <li class="nav-item" data-path="https://paste.sugarmix.me">
+          
+            <a 
+              href="https://paste.sugarmix.me"
+              target="_blank"
+            >
+              Pastbin
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          
+            <a 
+              href="/archives/"
+              target="_blank"
+            >
+              Archives
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="">
+          
+            <a href="javascript:void(0);" v-else>Me</a>
+            <ul class="nav-menu--dropdown">
+              
+                <li>
+                  <a 
+                    href="https://github.com/sugarmix" 
+                    target="_blank"
+                  >
+                    GitHub
+                  </a>
+                </li>
+              
+                <li>
+                  <a 
+                    href="mailto:sugarmix.me@outlook.com" 
+                    target="_blank"
+                  >
+                    Mail
+                  </a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+      </ul>
+    </nav>
+    <i class="iconfont icon-menu"></i>
+  </header>
+</div>
+
+<script>
+  let links = document.querySelectorAll('.nav-item');
+  for(let link of links){
+    let childrenLink = link.querySelector('ul');
+    link.addEventListener('mouseenter', () => {
+      if(childrenLink) {
+        childrenLink.className = "nav-menu--dropdown active";
+      }
+    })
+    link.addEventListener('mouseleave', () => {
+      if(childrenLink) {
+        childrenLink.className = "nav-menu--dropdown";
+      }
+    })
+  }
+  let rootRealPath = getRealPath(window.location.pathname, true);
+  for(let link of links) {
+    let linkPath = link.getAttribute("data-path");
+    if(linkPath && getRealPath(linkPath, true) === rootRealPath) {
+      link.className = "nav-item hover";
+    }
+  }
+
+  let iconMenu = document.querySelector("i.iconfont.icon-menu");
+  let iconMenuClicked = true;
+  let navDOM = document.querySelector("nav.site-navigation");
+  iconMenu.addEventListener("click", () => {
+    iconMenuClicked 
+      ? navDOM.className = "site-navigation active"
+      : navDOM.className = "site-navigation";
+    iconMenuClicked = !iconMenuClicked;
+  })
+</script>
+
+            
+
+
+
+
+
+
+
+
+<div class="container post-index">
+
+  
+
+<div class="post">
+  <h1 class="article-title">
+    <span>MySQL存储引擎的特点</span>
+  </h1>
+  <div class="article-top-meta">
+    <span>
+      发布 : 
+      2019-02-25
+    </span>
+    
+      <span>
+        分类 : 
+          <a href="/categories/数据库/">
+            数据库
+          </a>
+      </span>
+    
+  </div>
+
+  <div class="article-content">
+    <div class="markdown-body">
+      <h1 id="InnoDB存储引擎"><a href="#InnoDB存储引擎" class="headerlink" title="InnoDB存储引擎"></a>InnoDB存储引擎</h1><p>InnoDB用于大多数数据库服务器，因为它支持事务，符合ACID。</p>
+<p>原子性是增强数据库中数据的完整性的一种特性。当影响多个表的事务发生时，必须全部完成，否则回滚。</p>
+<p>一致性意味着数据在保存到磁盘之前能够通过验证规则。</p>
+<p>隔离性允许数据库隔离来自不同并发用户的事务。</p>
+<p>持久性可确保在事务完成后被保存。</p>
+<p>因此，如果您的应用程序需要上述功能，请选择InnoDB。</p>
+<p>InnoDB的另一大优势是支持外键约束。这样可以保持所有相关数据库表的完整性。检查插入，更新和删除操作以确保多个表之间保持一致。</p>
+<p>由于其持续改进，InnoDB不太容易发生数据库崩溃。如果在事务完成之前出现了问题，服务器重启后，InnoDB将完成操作或撤消更改。</p>
+<p>InnoDB支持B-Tree索引和FULLTEXT索引，底层分别使用B-Tree和Inverted Lists实现。</p>
+<h1 id="MyISAM存储引擎"><a href="#MyISAM存储引擎" class="headerlink" title="MyISAM存储引擎"></a>MyISAM存储引擎</h1><p>对于那些读取操作比写入操作更多的应用，MyISAM具有更好的性能。对于初学者来是很容易设计和创建一个数据库，因为它不支持外键(foreign keys)。使用外键需要有经验的配置来避免不合法的删除和更新操作。</p>
+<p>与InnoDB相比，该引擎占用更少的磁盘空间，因此适用于磁盘空间受限制的应用。</p>
+<p>MyISAM不符合ACID，因此它没有回滚功能。当事务失败时，必须手动删除数据。这个引擎支持并发插入操作。</p>
+<p>MyISAM支持R-Tree索引。</p>
+<h1 id="CSV存储引擎"><a href="#CSV存储引擎" class="headerlink" title="CSV存储引擎"></a>CSV存储引擎</h1><p>CSV代表逗号分隔值(Comma Separated Values)。这个引擎保存用逗号分割的明文数据。</p>
+<p>当创建表格的时候会自动创建一个 <code>.CSV</code> 文件。</p>
+<p>CSV文件的例子如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&quot;75521&quot;,&quot;JOHN DOE&quot;</span><br><span class="line">&quot;75522&quot;,&quot;BABY DOE&quot;</span><br></pre></td></tr></table></figure>
+<p>这个引擎的唯一优点是容易被Office软件读取。</p>
+<p>CSV引擎不支持索引和事务，很少被使用。</p>
+<h1 id="NDB存储引擎"><a href="#NDB存储引擎" class="headerlink" title="NDB存储引擎"></a>NDB存储引擎</h1><p>NDB 代表网络数据库(Network DataBase).它用于需要高级别可用性的集群环境中。NDB使用无共享体系结构，适用于创建分布式容错数据库体系结构。</p>
+<p>如果你在运行一个至关重要(mission critical)的应用，并且数据需要冗余备份，选择NDB。然而，这个引擎需要一系列服务器来保存冗余数据。</p>
+<p>大多数软件仓库的MySQL默认不安装这个引擎，需要下载MSQL社区版。</p>
+<p>NDB具有InnoDB的大部分功能，可以扩展到128TB（7.5.2版本）。在线时间为99.999％，故障节点的恢复时间不到一秒。</p>
+<h1 id="Blackhole存储引擎"><a href="#Blackhole存储引擎" class="headerlink" title="Blackhole存储引擎"></a>Blackhole存储引擎</h1><p>黑洞引擎接受数据并将其丢弃。您可以使用此存储引擎创建表并向其插入数据，但后续读取将返回空集。引擎支持索引。</p>
+<p>Blackhole引擎可用于验证转储文件语法并测量二进制日志记录的开销，甚至可以查找数据库中的性能瓶颈。</p>
+<h1 id="Memory存储引擎"><a href="#Memory存储引擎" class="headerlink" title="Memory存储引擎"></a>Memory存储引擎</h1><p>内存存储引擎用于将数据存储在内存中以用于特殊目的。使用此引擎容易崩溃，它的数据应该来源于其他永久存储的表。</p>
+<p>内存存储引擎支持索引和加密。表中数据的大小受限于服务器上的可用内存。</p>
+<p>可以使用此引擎存储非关键任务数据，例如会话(session)管理信息或只需最少更新的只读数据。请注意，重新启动服务器将擦除所有数据。</p>
+<h1 id="Archive存储引擎"><a href="#Archive存储引擎" class="headerlink" title="Archive存储引擎"></a>Archive存储引擎</h1><p>如果你想在数据库中存储很多不常被使用的数据，例如历史信息，请使用存档存储引擎。该引擎使用非常小的空间中存储大量信息。</p>
+<p>它支持压缩和加密，但缺少索引和事务功能。因此，它仅适用于归档数据，不应该被用于需要被快速更改、需要大量读写的信息。</p>
+<h1 id="Federated存储引擎"><a href="#Federated存储引擎" class="headerlink" title="Federated存储引擎"></a>Federated存储引擎</h1><p>从没有集群和复制技术的远程MySQL服务器获取数据时，适合使用联合(Federated)存储引擎。</p>
+<p>如果从使用联合引擎定义的本地表查询数据，则会从定义的远程服务器自动检索数据。因此，联合表需要本地和远程服务器。</p>
+<p>远程服务器保存表定义和关联数据，而本地服务器仅保存包含指向远程服务器的连接字符串的定义。远程服务器上的存储引擎可以是任何类型，例如InnoDB或MyISAM。</p>
+<p>MySQL默认不支持此引擎，使用需要启动。</p>
+<p>联合存储引擎可以用作将数据写入远程服务器的代理。它只是一个指向远程服务器中另一个表的表。它应该很少被使用，因为它在连接表时非常慢并且在涉及事务时具有奇怪的行为。</p>
+<h1 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h1><p><a href="https://medium.com/@Alibaba_Cloud/how-to-choose-mysql-storage-engine-on-alibaba-cloud-d56687934c28" target="_blank" rel="noopener">How to Choose MySQL Storage Engine on Alibaba Cloud</a></p>
+    </div>
+  </div>
+  
+  
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+      <span>
+        
+          <i class="iconfont icon-06tags"></i>标签: 
+          
+          <span class="span--tag">
+            <a href="/tags/翻译/">
+              #翻译
+            </a>
+          </span>
+          
+          <span class="span--tag">
+            <a href="/tags/MySQL/">
+              #MySQL
+            </a>
+          </span>
+          
+        
+      </span>
+    </div>
+    <div class="article-meta pull-right">
+    </div>
+  </div>
+</div>
+
+
+
+
+  <nav class="post-navigation">
+    
+    <div class="nav-pre">
+      <i class="iconfont icon-prev"></i>
+      上一篇:
+      <a href="/20190220102211/" target="_self">内存数据存储系统Redis与Memcached对比</a>
+    </div>
+    
+    
+    <div class="nav-next">
+      下一篇:
+      <a href="/20190226104504/" target="_self">MySQL索引</a>
+      <i class="iconfont icon-next"></i>
+    </div>
+    
+  </nav>
+  
+  
+
+</div>
+
+
+            <div class="back-to-top hidden">
+  <span>
+    <i class="iconfont icon-60"></i><span></span>%
+  </span>
+</div>
+
+<script>
+const updateIconToTop = percent => {
+  let dom = document.querySelector(".back-to-top span span");
+  dom.innerText = percent;
+  if(percent < 1) {
+    document.querySelector(".back-to-top").className = "back-to-top hidden";
+  } else {
+    document.querySelector(".back-to-top").className = "back-to-top";
+  }
+}
+
+const handleScoll = () => {
+  let isRunning = false;
+  return () => {
+    if (isRunning) return;
+    isRunning = true;
+    window.requestAnimationFrame(timestamp => {
+      let scrollTop =
+          document.documentElement.scrollTop || document.body.scrollTop,
+        scrollHeight =
+          document.documentElement.scrollHeight ||
+          document.body.scrollHeight,
+        clientHeight =
+          document.documentElement.clientHeight ||
+          document.body.clientHeight;
+      isRunning = false;
+      if (scrollTop <= 1) {
+        updateIconToTop(0);
+        return;
+      }
+      if (scrollTop + clientHeight >= scrollHeight) {
+        updateIconToTop(100);
+      } else {
+        updateIconToTop(parseInt(
+          100 * scrollTop / (scrollHeight - clientHeight),
+          10
+        ));
+      }
+    });
+  };
+}
+
+const backToTop = () => {
+  let scrollTop =
+      document.documentElement.scrollTop || document.body.scrollTop,
+    delay = 10,
+    time = 200;
+  if (scrollTop <= 20) {
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    return;
+  }
+  let step = Math.ceil(scrollTop * delay / time);
+  let timer = setInterval(() => {
+    scrollTop =
+      document.documentElement.scrollTop || document.body.scrollTop;
+    if (scrollTop - step <= 0) {
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+      clearInterval(timer);
+    } else {
+      document.documentElement.scrollTop = scrollTop - step;
+      document.body.scrollTop = scrollTop - step;
+    }
+  }, delay);
+}
+
+document.addEventListener("scroll", handleScoll(), false);
+
+document.querySelector(".back-to-top").addEventListener("click", backToTop, false);
+
+</script>
+        </div>
+        
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+<script>
+  (() => {
+    const mathjaxConfig = {
+      showProcessingMessages: false, //关闭js加载过程信息
+      messageStyle: "none", //不显示信息
+      jax: ["input/TeX", "output/HTML-CSS"],
+      tex2jax: {
+        inlineMath: [["$", "$"], ["\\(", "\\)"]], //行内公式选择符
+        displayMath: [["$$", "$$"], ["\\[", "\\]"]], //段内公式选择符
+        skipTags: ["script", "noscript", "style", "textarea", "pre", "code", "a"] //避开某些标签
+      },
+      "HTML-CSS": {
+        availableFonts: ["STIX", "TeX"], //可选字体
+        showMathMenu: false //关闭右击菜单显示
+      }
+    }
+
+    let mathjaxInterval = setInterval(() => {
+      if(!window.MathJax){
+        return;
+      }
+      window.MathJax.Hub.Config(mathjaxConfig)
+      window.MathJax.Hub.Queue(["Typeset", MathJax.Hub, document.getElementById('app')])
+
+      clearInterval(mathjaxInterval)
+    }, 10)    
+  })()
+</script>
+
+        
+    </body>
+</html>

@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  <meta name="author" content="sugarmix">
+  
+    <meta name="robots" content="noindex">
+  
+  
+  
+  <title>SUGARMIX</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content>
+  
+
+  
+    <meta name="description" content="真正的大师，永远都怀着一颗学徒的心">
+  
+
+  
+    <link rel="alternate" href="atom.xml" title="SUGARMIX" type="application/atom+xml">
+  
+
+  
+    <link rel="icon" href="/images/favicon.ico">
+    <link rel="apple-touch-icon" href="/images/touch-icon.png">
+  
+
+  <link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/icon/iconfont.css">
+<link rel="stylesheet" href="/css/github-markdown.css">
+<link rel="stylesheet" href="/css/gitalk.css">
+<link rel="stylesheet" href="/css/highlight.css">
+  
+  <script src="/js/util.js"></script>
+<script src="/js/hidden_header.js"></script>
+  
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js" async></script>
+</head>
+
+    <body>
+        
+        <div id="app">
+            <div class="header-wrap">
+  <header>
+    <div class="site-brand">
+      <div class="site-title">
+        <a href="/">SUGARMIX</a>
+      </div>
+    </div>
+    <nav class="site-navigation">
+      <ul class="nav-menu">
+      
+        <li class="nav-item" data-path="https://paste.sugarmix.me">
+          
+            <a 
+              href="https://paste.sugarmix.me"
+              target="_blank"
+            >
+              Pastbin
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          
+            <a 
+              href="/archives/"
+              target="_blank"
+            >
+              Archives
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="">
+          
+            <a href="javascript:void(0);" v-else>Me</a>
+            <ul class="nav-menu--dropdown">
+              
+                <li>
+                  <a 
+                    href="https://github.com/sugarmix" 
+                    target="_blank"
+                  >
+                    GitHub
+                  </a>
+                </li>
+              
+                <li>
+                  <a 
+                    href="mailto:sugarmix.me@outlook.com" 
+                    target="_blank"
+                  >
+                    Mail
+                  </a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+      </ul>
+    </nav>
+    <i class="iconfont icon-menu"></i>
+  </header>
+</div>
+
+<script>
+  let links = document.querySelectorAll('.nav-item');
+  for(let link of links){
+    let childrenLink = link.querySelector('ul');
+    link.addEventListener('mouseenter', () => {
+      if(childrenLink) {
+        childrenLink.className = "nav-menu--dropdown active";
+      }
+    })
+    link.addEventListener('mouseleave', () => {
+      if(childrenLink) {
+        childrenLink.className = "nav-menu--dropdown";
+      }
+    })
+  }
+  let rootRealPath = getRealPath(window.location.pathname, true);
+  for(let link of links) {
+    let linkPath = link.getAttribute("data-path");
+    if(linkPath && getRealPath(linkPath, true) === rootRealPath) {
+      link.className = "nav-item hover";
+    }
+  }
+
+  let iconMenu = document.querySelector("i.iconfont.icon-menu");
+  let iconMenuClicked = true;
+  let navDOM = document.querySelector("nav.site-navigation");
+  iconMenu.addEventListener("click", () => {
+    iconMenuClicked 
+      ? navDOM.className = "site-navigation active"
+      : navDOM.className = "site-navigation";
+    iconMenuClicked = !iconMenuClicked;
+  })
+</script>
+
+            
+<div class="container home-index">
+  
+  <div class="post">
+    <h1 class="article-title">
+      <a href="/20190623223142/">
+        <span>Divisor Game</span>
+      </a>
+    </h1>
+    <!-- PC端文章信息 -->
+    <div class="article-top-meta pc-view">
+      <span>
+        发布时间 : 2019-06-23
+      </span>
+    </div>
+    <!-- 移动端文章信息 -->
+    <div class="article-top-meta mobile-view">
+      <span>
+        发布 : 2019-06-23
+      </span>
+      
+        <span>
+        分类 :
+          <a href="/categories/算法/">
+            算法
+          </a>
+        </span>
+      
+    </div>
+    <!-- 文章简介 -->
+    <div class="article-content">
+      <div class="markdown-body article-content--inner" v-html="mdToHtml(psg.summary)">
+        <p>这是一个在LeetCode被标记为Easy的题目，具体描述如下。</p>
+<p>爱丽丝和鲍勃一起玩游戏，他们轮流行动。爱丽丝先手开局。<br>最初，黑板上有一个数字 N 。在每个玩家的回合，玩家需要执行以下操作：</p>
+<ul>
+<li>选出任一 x，满足 0 &lt; x &lt; N 且 N % x == 0 。</li>
+<li>用 N - x 替换黑板上的数字 N 。</li>
+</ul>
+<p>如果玩家无法执行这些操作，就会输掉游戏。<br>只有在爱丽丝在游戏中取得胜利时才返回 True，否则返回 false。假设两个玩家都以最佳状态参与游戏。</p>
+      </div>
+    </div>
+    <div class="article-footer">
+      <div class="article-meta pull-left">
+        <!-- 分类pc端可见 -->
+        <span class="pc-view">
+          
+            <i class="iconfont icon-tag"></i>分类:
+            <a href="/categories/算法/">
+              算法
+            </a>
+          </span>
+          
+        <span>
+          
+            <i class="iconfont icon-06tags"></i>标签:
+            
+              <span class="span--tag">
+                <a href="/tags/数学/">
+                  #数学
+                </a>
+              </span>
+            
+                    
+        </span>
+      </div>
+    </div>
+  </div>
+  
+  <div class="post">
+    <h1 class="article-title">
+      <a href="/20190327151300/">
+        <span>MySQL事务的并发问题与解决办法</span>
+      </a>
+    </h1>
+    <!-- PC端文章信息 -->
+    <div class="article-top-meta pc-view">
+      <span>
+        发布时间 : 2019-03-27
+      </span>
+    </div>
+    <!-- 移动端文章信息 -->
+    <div class="article-top-meta mobile-view">
+      <span>
+        发布 : 2019-03-27
+      </span>
+      
+        <span>
+        分类 :
+          <a href="/categories/数据库/">
+            数据库
+          </a>
+        </span>
+      
+    </div>
+    <!-- 文章简介 -->
+    <div class="article-content">
+      <div class="markdown-body article-content--inner" v-html="mdToHtml(psg.summary)">
+        <p>本文阐述MySQL数据库多个事务并发时可能引发的问题，讨论MySQL事务不同的隔离级别是如何解决并发问题的，并简单了解不同隔离级别的实现方法。</p>
+      </div>
+    </div>
+    <div class="article-footer">
+      <div class="article-meta pull-left">
+        <!-- 分类pc端可见 -->
+        <span class="pc-view">
+          
+            <i class="iconfont icon-tag"></i>分类:
+            <a href="/categories/数据库/">
+              数据库
+            </a>
+          </span>
+          
+        <span>
+          
+            <i class="iconfont icon-06tags"></i>标签:
+            
+              <span class="span--tag">
+                <a href="/tags/MySQL/">
+                  #MySQL
+                </a>
+              </span>
+            
+                    
+        </span>
+      </div>
+    </div>
+  </div>
+  
+  <div class="post">
+    <h1 class="article-title">
+      <a href="/20190322155258/">
+        <span>MySQL语句执行顺序简介</span>
+      </a>
+    </h1>
+    <!-- PC端文章信息 -->
+    <div class="article-top-meta pc-view">
+      <span>
+        发布时间 : 2019-03-22
+      </span>
+    </div>
+    <!-- 移动端文章信息 -->
+    <div class="article-top-meta mobile-view">
+      <span>
+        发布 : 2019-03-22
+      </span>
+      
+        <span>
+        分类 :
+          <a href="/categories/数据库/">
+            数据库
+          </a>
+        </span>
+      
+    </div>
+    <!-- 文章简介 -->
+    <div class="article-content">
+      <div class="markdown-body article-content--inner" v-html="mdToHtml(psg.summary)">
+        <p>本篇文章侧重于一条SQL语句提交后，对于这条语句中不同部分的执行先后顺序，对于普通MySQL更实用。<a href="/20190301160919/">MySQL语句执行过程简介</a>侧重于讲解底层的的原理。</p>
+      </div>
+    </div>
+    <div class="article-footer">
+      <div class="article-meta pull-left">
+        <!-- 分类pc端可见 -->
+        <span class="pc-view">
+          
+            <i class="iconfont icon-tag"></i>分类:
+            <a href="/categories/数据库/">
+              数据库
+            </a>
+          </span>
+          
+        <span>
+          
+            <i class="iconfont icon-06tags"></i>标签:
+            
+              <span class="span--tag">
+                <a href="/tags/MySQL/">
+                  #MySQL
+                </a>
+              </span>
+            
+                    
+        </span>
+      </div>
+    </div>
+  </div>
+  
+  <div class="post">
+    <h1 class="article-title">
+      <a href="/20190321112352/">
+        <span>Edit Distance</span>
+      </a>
+    </h1>
+    <!-- PC端文章信息 -->
+    <div class="article-top-meta pc-view">
+      <span>
+        发布时间 : 2019-03-21
+      </span>
+    </div>
+    <!-- 移动端文章信息 -->
+    <div class="article-top-meta mobile-view">
+      <span>
+        发布 : 2019-03-21
+      </span>
+      
+        <span>
+        分类 :
+          <a href="/categories/算法/">
+            算法
+          </a>
+        </span>
+      
+    </div>
+    <!-- 文章简介 -->
+    <div class="article-content">
+      <div class="markdown-body article-content--inner" v-html="mdToHtml(psg.summary)">
+        <p>存在两个字符串word1和word2，可以对word1进行插入、修改、删除某个字符的操作，最少经过多少次操作，可以让word1等于word2。</p>
+      </div>
+    </div>
+    <div class="article-footer">
+      <div class="article-meta pull-left">
+        <!-- 分类pc端可见 -->
+        <span class="pc-view">
+          
+            <i class="iconfont icon-tag"></i>分类:
+            <a href="/categories/算法/">
+              算法
+            </a>
+          </span>
+          
+        <span>
+          
+            <i class="iconfont icon-06tags"></i>标签:
+            
+              <span class="span--tag">
+                <a href="/tags/动态规划/">
+                  #动态规划
+                </a>
+              </span>
+            
+                    
+        </span>
+      </div>
+    </div>
+  </div>
+  
+  <div class="post">
+    <h1 class="article-title">
+      <a href="/20190320105022/">
+        <span>Largest Rectangle in Histogram</span>
+      </a>
+    </h1>
+    <!-- PC端文章信息 -->
+    <div class="article-top-meta pc-view">
+      <span>
+        发布时间 : 2019-03-20
+      </span>
+    </div>
+    <!-- 移动端文章信息 -->
+    <div class="article-top-meta mobile-view">
+      <span>
+        发布 : 2019-03-20
+      </span>
+      
+        <span>
+        分类 :
+          <a href="/categories/算法/">
+            算法
+          </a>
+        </span>
+      
+    </div>
+    <!-- 文章简介 -->
+    <div class="article-content">
+      <div class="markdown-body article-content--inner" v-html="mdToHtml(psg.summary)">
+        <p>一些紧密排列宽度为1高度已知(如2,1,5,6,2,3)的长方形，在这个拼出的图形中，寻找一个面积最大的长方形，返回这个长方形的面积。如本题中的5,6可拼出面积为10的长方形。</p>
+      </div>
+    </div>
+    <div class="article-footer">
+      <div class="article-meta pull-left">
+        <!-- 分类pc端可见 -->
+        <span class="pc-view">
+          
+            <i class="iconfont icon-tag"></i>分类:
+            <a href="/categories/算法/">
+              算法
+            </a>
+          </span>
+          
+        <span>
+          
+            <i class="iconfont icon-06tags"></i>标签:
+            
+              <span class="span--tag">
+                <a href="/tags/栈/">
+                  #栈
+                </a>
+              </span>
+            
+              <span class="span--tag">
+                <a href="/tags/Java数组复制/">
+                  #Java数组复制
+                </a>
+              </span>
+            
+                    
+        </span>
+      </div>
+    </div>
+  </div>
+  
+  <div class="post">
+    <h1 class="article-title">
+      <a href="/20190320093728/">
+        <span>Minimum Window Substring</span>
+      </a>
+    </h1>
+    <!-- PC端文章信息 -->
+    <div class="article-top-meta pc-view">
+      <span>
+        发布时间 : 2019-03-20
+      </span>
+    </div>
+    <!-- 移动端文章信息 -->
+    <div class="article-top-meta mobile-view">
+      <span>
+        发布 : 2019-03-20
+      </span>
+      
+        <span>
+        分类 :
+          <a href="/categories/算法/">
+            算法
+          </a>
+        </span>
+      
+    </div>
+    <!-- 文章简介 -->
+    <div class="article-content">
+      <div class="markdown-body article-content--inner" v-html="mdToHtml(psg.summary)">
+        <p>有两个字符串S和T，从S中找出一个最小的子串，该子串中包含T中的所有元素。如，当S=&quot;ADOBECODEBANC&quot;, T=&quot;ABC&quot;时，需要寻找的字串就为&quot;BANC&quot;。字符串T中的元素不要求按顺序出现在S中。</p>
+      </div>
+    </div>
+    <div class="article-footer">
+      <div class="article-meta pull-left">
+        <!-- 分类pc端可见 -->
+        <span class="pc-view">
+          
+            <i class="iconfont icon-tag"></i>分类:
+            <a href="/categories/算法/">
+              算法
+            </a>
+          </span>
+          
+        <span>
+          
+            <i class="iconfont icon-06tags"></i>标签:
+            
+              <span class="span--tag">
+                <a href="/tags/滑动窗口/">
+                  #滑动窗口
+                </a>
+              </span>
+            
+                    
+        </span>
+      </div>
+    </div>
+  </div>
+  
+  <div class="post">
+    <h1 class="article-title">
+      <a href="/20190315095242/">
+        <span>Super Egg Drop</span>
+      </a>
+    </h1>
+    <!-- PC端文章信息 -->
+    <div class="article-top-meta pc-view">
+      <span>
+        发布时间 : 2019-03-15
+      </span>
+    </div>
+    <!-- 移动端文章信息 -->
+    <div class="article-top-meta mobile-view">
+      <span>
+        发布 : 2019-03-15
+      </span>
+      
+        <span>
+        分类 :
+          <a href="/categories/算法/">
+            算法
+          </a>
+        </span>
+      
+    </div>
+    <!-- 文章简介 -->
+    <div class="article-content">
+      <div class="markdown-body article-content--inner" v-html="mdToHtml(psg.summary)">
+        <p>鸡蛋从楼上掉下来，在某层以上一定会破，在某层以及以下一定不会破，若鸡蛋破碎则不能再次使用，现在有K个鸡蛋N层楼，每次可以在某层楼扔一个鸡蛋探测，在最坏的情况下，至少需要多少次才能准确探测出在第几层鸡蛋会破碎？</p>
+      </div>
+    </div>
+    <div class="article-footer">
+      <div class="article-meta pull-left">
+        <!-- 分类pc端可见 -->
+        <span class="pc-view">
+          
+            <i class="iconfont icon-tag"></i>分类:
+            <a href="/categories/算法/">
+              算法
+            </a>
+          </span>
+          
+        <span>
+          
+            <i class="iconfont icon-06tags"></i>标签:
+            
+              <span class="span--tag">
+                <a href="/tags/动态规划/">
+                  #动态规划
+                </a>
+              </span>
+            
+                    
+        </span>
+      </div>
+    </div>
+  </div>
+  
+  <div class="post">
+    <h1 class="article-title">
+      <a href="/20190301160919/">
+        <span>MySQL语句执行过程简介</span>
+      </a>
+    </h1>
+    <!-- PC端文章信息 -->
+    <div class="article-top-meta pc-view">
+      <span>
+        发布时间 : 2019-03-01
+      </span>
+    </div>
+    <!-- 移动端文章信息 -->
+    <div class="article-top-meta mobile-view">
+      <span>
+        发布 : 2019-03-01
+      </span>
+      
+        <span>
+        分类 :
+          <a href="/categories/数据库/">
+            数据库
+          </a>
+        </span>
+      
+    </div>
+    <!-- 文章简介 -->
+    <div class="article-content">
+      <div class="markdown-body article-content--inner" v-html="mdToHtml(psg.summary)">
+        <p>昔日庖丁解牛，未见全牛，所赖者是其对牛内部骨架结构的了解，对于MySQL亦是如此，只有更加全面地了解SQL语句执行的每个过程，才能更好的进行SQL的设计和优化。</p>
+<p>当希望MySQL能够以更高的性能运行查询时，最好的办法就是弄清楚MySQL是如何优化和执行查询的。一旦理解了这一点，很多查询优化工作实际上就是遵循一些原则能够按照预想的合理的方式运行。</p>
+      </div>
+    </div>
+    <div class="article-footer">
+      <div class="article-meta pull-left">
+        <!-- 分类pc端可见 -->
+        <span class="pc-view">
+          
+            <i class="iconfont icon-tag"></i>分类:
+            <a href="/categories/数据库/">
+              数据库
+            </a>
+          </span>
+          
+        <span>
+          
+            <i class="iconfont icon-06tags"></i>标签:
+            
+              <span class="span--tag">
+                <a href="/tags/MySQL/">
+                  #MySQL
+                </a>
+              </span>
+            
+              <span class="span--tag">
+                <a href="/tags/转载/">
+                  #转载
+                </a>
+              </span>
+            
+                    
+        </span>
+      </div>
+    </div>
+  </div>
+  
+  <div class="post">
+    <h1 class="article-title">
+      <a href="/20190226104504/">
+        <span>MySQL索引</span>
+      </a>
+    </h1>
+    <!-- PC端文章信息 -->
+    <div class="article-top-meta pc-view">
+      <span>
+        发布时间 : 2019-02-26
+      </span>
+    </div>
+    <!-- 移动端文章信息 -->
+    <div class="article-top-meta mobile-view">
+      <span>
+        发布 : 2019-02-26
+      </span>
+      
+        <span>
+        分类 :
+          <a href="/categories/数据库/">
+            数据库
+          </a>
+        </span>
+      
+    </div>
+    <!-- 文章简介 -->
+    <div class="article-content">
+      <div class="markdown-body article-content--inner" v-html="mdToHtml(psg.summary)">
+        <p>索引用于快速查找具有特定列值的行。如果没有索引，MySQL必须从第一行开始，然后读取整个表以查找相关行。表越大，成本越高。如果表中有相关​​列的索引，MySQL可以快速确定要在数据文件中间寻找的位置，而无需查看所有数据。这比按顺序读取每一行要快得多。本文将介绍如何使用索引，以及索引是如何工作的。</p>
+      </div>
+    </div>
+    <div class="article-footer">
+      <div class="article-meta pull-left">
+        <!-- 分类pc端可见 -->
+        <span class="pc-view">
+          
+            <i class="iconfont icon-tag"></i>分类:
+            <a href="/categories/数据库/">
+              数据库
+            </a>
+          </span>
+          
+        <span>
+          
+            <i class="iconfont icon-06tags"></i>标签:
+            
+              <span class="span--tag">
+                <a href="/tags/翻译/">
+                  #翻译
+                </a>
+              </span>
+            
+              <span class="span--tag">
+                <a href="/tags/MySQL/">
+                  #MySQL
+                </a>
+              </span>
+            
+                    
+        </span>
+      </div>
+    </div>
+  </div>
+  
+  <div class="post">
+    <h1 class="article-title">
+      <a href="/20190225173604/">
+        <span>MySQL存储引擎的特点</span>
+      </a>
+    </h1>
+    <!-- PC端文章信息 -->
+    <div class="article-top-meta pc-view">
+      <span>
+        发布时间 : 2019-02-25
+      </span>
+    </div>
+    <!-- 移动端文章信息 -->
+    <div class="article-top-meta mobile-view">
+      <span>
+        发布 : 2019-02-25
+      </span>
+      
+        <span>
+        分类 :
+          <a href="/categories/数据库/">
+            数据库
+          </a>
+        </span>
+      
+    </div>
+    <!-- 文章简介 -->
+    <div class="article-content">
+      <div class="markdown-body article-content--inner" v-html="mdToHtml(psg.summary)">
+        <p>每个MySQL存储引擎都满足特定需求。因此，引擎的选择主要取决于您希望在应用程序中完成的任务。</p>
+<p>每个存储引擎的完整功能超出了本文的范围。我们将仅讨论各种存储引擎的不同以及它们的适应场景。</p>
+      </div>
+    </div>
+    <div class="article-footer">
+      <div class="article-meta pull-left">
+        <!-- 分类pc端可见 -->
+        <span class="pc-view">
+          
+            <i class="iconfont icon-tag"></i>分类:
+            <a href="/categories/数据库/">
+              数据库
+            </a>
+          </span>
+          
+        <span>
+          
+            <i class="iconfont icon-06tags"></i>标签:
+            
+              <span class="span--tag">
+                <a href="/tags/翻译/">
+                  #翻译
+                </a>
+              </span>
+            
+              <span class="span--tag">
+                <a href="/tags/MySQL/">
+                  #MySQL
+                </a>
+              </span>
+            
+                    
+        </span>
+      </div>
+    </div>
+  </div>
+  
+
+  <nav class="page-navigation">
+    
+      <a href="/">上一页</a>
+    
+    
+      <a href="/page/3/">下一页</a>
+    
+  </nav>
+
+</div>
+
+            <div class="back-to-top hidden">
+  <span>
+    <i class="iconfont icon-60"></i><span></span>%
+  </span>
+</div>
+
+<script>
+const updateIconToTop = percent => {
+  let dom = document.querySelector(".back-to-top span span");
+  dom.innerText = percent;
+  if(percent < 1) {
+    document.querySelector(".back-to-top").className = "back-to-top hidden";
+  } else {
+    document.querySelector(".back-to-top").className = "back-to-top";
+  }
+}
+
+const handleScoll = () => {
+  let isRunning = false;
+  return () => {
+    if (isRunning) return;
+    isRunning = true;
+    window.requestAnimationFrame(timestamp => {
+      let scrollTop =
+          document.documentElement.scrollTop || document.body.scrollTop,
+        scrollHeight =
+          document.documentElement.scrollHeight ||
+          document.body.scrollHeight,
+        clientHeight =
+          document.documentElement.clientHeight ||
+          document.body.clientHeight;
+      isRunning = false;
+      if (scrollTop <= 1) {
+        updateIconToTop(0);
+        return;
+      }
+      if (scrollTop + clientHeight >= scrollHeight) {
+        updateIconToTop(100);
+      } else {
+        updateIconToTop(parseInt(
+          100 * scrollTop / (scrollHeight - clientHeight),
+          10
+        ));
+      }
+    });
+  };
+}
+
+const backToTop = () => {
+  let scrollTop =
+      document.documentElement.scrollTop || document.body.scrollTop,
+    delay = 10,
+    time = 200;
+  if (scrollTop <= 20) {
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    return;
+  }
+  let step = Math.ceil(scrollTop * delay / time);
+  let timer = setInterval(() => {
+    scrollTop =
+      document.documentElement.scrollTop || document.body.scrollTop;
+    if (scrollTop - step <= 0) {
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+      clearInterval(timer);
+    } else {
+      document.documentElement.scrollTop = scrollTop - step;
+      document.body.scrollTop = scrollTop - step;
+    }
+  }, delay);
+}
+
+document.addEventListener("scroll", handleScoll(), false);
+
+document.querySelector(".back-to-top").addEventListener("click", backToTop, false);
+
+</script>
+        </div>
+        
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+<script>
+  (() => {
+    const mathjaxConfig = {
+      showProcessingMessages: false, //关闭js加载过程信息
+      messageStyle: "none", //不显示信息
+      jax: ["input/TeX", "output/HTML-CSS"],
+      tex2jax: {
+        inlineMath: [["$", "$"], ["\\(", "\\)"]], //行内公式选择符
+        displayMath: [["$$", "$$"], ["\\[", "\\]"]], //段内公式选择符
+        skipTags: ["script", "noscript", "style", "textarea", "pre", "code", "a"] //避开某些标签
+      },
+      "HTML-CSS": {
+        availableFonts: ["STIX", "TeX"], //可选字体
+        showMathMenu: false //关闭右击菜单显示
+      }
+    }
+
+    let mathjaxInterval = setInterval(() => {
+      if(!window.MathJax){
+        return;
+      }
+      window.MathJax.Hub.Config(mathjaxConfig)
+      window.MathJax.Hub.Queue(["Typeset", MathJax.Hub, document.getElementById('app')])
+
+      clearInterval(mathjaxInterval)
+    }, 10)    
+  })()
+</script>
+
+        
+    </body>
+</html>

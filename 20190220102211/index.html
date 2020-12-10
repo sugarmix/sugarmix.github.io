@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  <meta name="author" content="sugarmix">
+  
+  
+  
+  <title>内存数据存储系统Redis与Memcached对比 | SUGARMIX</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="数据库,Redis,Memcached,翻译,">
+  
+
+  
+    <meta name="description" content="真正的大师，永远都怀着一颗学徒的心">
+  
+
+  
+    <link rel="alternate" href="atom.xml" title="SUGARMIX" type="application/atom+xml">
+  
+
+  
+    <link rel="icon" href="/images/favicon.ico">
+    <link rel="apple-touch-icon" href="/images/touch-icon.png">
+  
+
+  <link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/icon/iconfont.css">
+<link rel="stylesheet" href="/css/github-markdown.css">
+<link rel="stylesheet" href="/css/gitalk.css">
+<link rel="stylesheet" href="/css/highlight.css">
+  
+  <script src="/js/util.js"></script>
+<script src="/js/hidden_header.js"></script>
+  
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js" async></script>
+</head>
+
+    <body>
+        
+        <div id="app">
+            <div class="header-wrap">
+  <header>
+    <div class="site-brand">
+      <div class="site-title">
+        <a href="/">SUGARMIX</a>
+      </div>
+    </div>
+    <nav class="site-navigation">
+      <ul class="nav-menu">
+      
+        <li class="nav-item" data-path="https://paste.sugarmix.me">
+          
+            <a 
+              href="https://paste.sugarmix.me"
+              target="_blank"
+            >
+              Pastbin
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          
+            <a 
+              href="/archives/"
+              target="_blank"
+            >
+              Archives
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="">
+          
+            <a href="javascript:void(0);" v-else>Me</a>
+            <ul class="nav-menu--dropdown">
+              
+                <li>
+                  <a 
+                    href="https://github.com/sugarmix" 
+                    target="_blank"
+                  >
+                    GitHub
+                  </a>
+                </li>
+              
+                <li>
+                  <a 
+                    href="mailto:sugarmix.me@outlook.com" 
+                    target="_blank"
+                  >
+                    Mail
+                  </a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+      </ul>
+    </nav>
+    <i class="iconfont icon-menu"></i>
+  </header>
+</div>
+
+<script>
+  let links = document.querySelectorAll('.nav-item');
+  for(let link of links){
+    let childrenLink = link.querySelector('ul');
+    link.addEventListener('mouseenter', () => {
+      if(childrenLink) {
+        childrenLink.className = "nav-menu--dropdown active";
+      }
+    })
+    link.addEventListener('mouseleave', () => {
+      if(childrenLink) {
+        childrenLink.className = "nav-menu--dropdown";
+      }
+    })
+  }
+  let rootRealPath = getRealPath(window.location.pathname, true);
+  for(let link of links) {
+    let linkPath = link.getAttribute("data-path");
+    if(linkPath && getRealPath(linkPath, true) === rootRealPath) {
+      link.className = "nav-item hover";
+    }
+  }
+
+  let iconMenu = document.querySelector("i.iconfont.icon-menu");
+  let iconMenuClicked = true;
+  let navDOM = document.querySelector("nav.site-navigation");
+  iconMenu.addEventListener("click", () => {
+    iconMenuClicked 
+      ? navDOM.className = "site-navigation active"
+      : navDOM.className = "site-navigation";
+    iconMenuClicked = !iconMenuClicked;
+  })
+</script>
+
+            
+
+
+
+
+
+
+
+
+<div class="container post-index">
+
+  
+
+<div class="post">
+  <h1 class="article-title">
+    <span>内存数据存储系统Redis与Memcached对比</span>
+  </h1>
+  <div class="article-top-meta">
+    <span>
+      发布 : 
+      2019-02-20
+    </span>
+    
+      <span>
+        分类 : 
+          <a href="/categories/数据库/">
+            数据库
+          </a>
+      </span>
+    
+  </div>
+
+  <div class="article-content">
+    <div class="markdown-body">
+      <h1 id="功能比较"><a href="#功能比较" class="headerlink" title="功能比较"></a>功能比较</h1><p>Redis的作者对Redis和Memcached有如下比较：</p>
+<blockquote>
+<p><strong><em>服务器端数据操作</em></strong><br>Redis拥有更多数据结构，支持服务端(Redis服务)直接对数据进行操作(如对整数的+1和-1操作)。对于类似的操作，在Memcached中，需要将数据复制到客户端，修改后，在服务端(Memcached服务)重新设置该值。这极大地增加了网络IO。在Redis中，这些复杂的操作与一般的GET/SET操作一样高效。因此，如果您需要缓存来支持更复杂的结构和操作，Redis是一个不错的选择。</p>
+</blockquote>
+<blockquote>
+<p><strong><em>内存使用效率比较</em></strong><br>由于使用了简单的键值存储，Memcached具有更高的内存利用率。但是，如果Redis采用哈希结构，由于其组合压缩模式，它将具有比Memcached更高的内存利用率。</p>
+</blockquote>
+<blockquote>
+<p><strong><em>性能比较</em></strong><br>Redis仅使用单核，而Memcached使用多核。因此，在一般情况下，就核心而言，Redis在小型数据存储方面的性能高于Memcached。在存储10万(100k)条及以上的数据时，Memcached优于Redis。虽然Redis也对存储大数据进行了一些优化，但它仍然不如Memcached。</p>
+</blockquote>
+<p>现在做一些支持上述观点的讨论。</p>
+<h1 id="对不同数据类型的支持"><a href="#对不同数据类型的支持" class="headerlink" title="对不同数据类型的支持"></a>对不同数据类型的支持</h1><p>Memcached仅支持简单键值结构的数据记录，Redis支持更丰富的数据类型，包括String，Hash，List，Set和Sorted Set。Redis在内部使用redisObject来表示所有键和值。redisObject的主要信息如下所示：<br><img src="/20190220102211/redis_core_object.png" alt><br>该类型表示值对象的数据类型。编码指示Redis中不同数据类型的存储方法，例如type = string表示该值存储一般字符串，相应的编码可以是raw或int。如果为int，则Redis将关联的字符串存储并表示为值类型。当然，前提是可以用值表示字符串，例如字符串“123”和“456”。只有启用Redis虚拟内存功能后，才会为内存分配vm字段。默认情况下此功能处于关闭状态。现在让我们讨论一些数据类型。</p>
+<h2 id="String"><a href="#String" class="headerlink" title="String"></a>String</h2><p><strong>常用命令：</strong>set/get/decr/incr/mget等。<br><strong>应用场景：</strong>String是最常见的数据类型，通用key/value属于此类别。<br><strong>实现方法：</strong>String是字符串，redisObject默认情况下使用String(被保存的数据都被视为字符串)。当调用INCR或DECR操作时，系统会将其转换为值类型以进行计算(只有进行数值计算时，才将字符串类型转换为数值类型)。此时，redisObject的编码字段为int。</p>
+<h2 id="Hash"><a href="#Hash" class="headerlink" title="Hash"></a>Hash</h2><p><strong>常用命令：</strong>hget/hset/hgetall等。<br><strong>应用场景：</strong>存储用户信息对象数据，包括用户ID，用户名，年龄和生日;通过用户ID检索用户名，年龄或生日。<br><strong>实现方法：</strong>Redis中的Hash是内部存储值的HashMap，并提供直接访问此map成员的接口。如图所示，Key是用户ID，Value是map。此映射的键是成员属性名称，值是属性值。通过这种方式，可以直接执行更改并通过内部映射的键访问数据（在Redis中，内部映射键称为字段），即通过密钥（用户ID）+字段（属性标记）到对相应的属性数据执行操作。</p>
+<p>当前HashMap有两种实现方式：当HashMap中只有少数成员时，Redis会选择一维数组来实现紧凑存储以节省内存，而不是实际意义上的HashMap结构。此时，相应值redisObject的编码是zipmap。当成员数量增加时，Redis会将它们转换为真正意义上的HashMap，此时的编码将是ht。<br><img src="/20190220102211/hash.png" alt></p>
+<h2 id="List"><a href="#List" class="headerlink" title="List"></a>List</h2><p><strong>常用命令：</strong>lpush/rpush/lpop/rpop/lrange。<br><strong>应用场景：</strong>Redis List是Redis中最重要的数据结构。实际上，可以使用Redis的list结构实现Twitter的following list和fans list 。<br><strong>实现方法：</strong>通过双向链表，支持反向查找和遍历以方便操作。但它也带来了一些额外的内存开销。Redis中的许多实现（包括发送缓冲队列）也采用此数据结构。</p>
+<h2 id="Set"><a href="#Set" class="headerlink" title="Set"></a>Set</h2><p><strong>常用命令：</strong>sadd/spop/smembers/sunion等。<br><strong>应用场景：</strong>Redis set提供了与list类似的外部列表功能。它的特殊之处在于set可以自动删除重复项。当您需要存储没有任何重复的数据list时，set是一个不错的选择。此外，set提供了一个重要的接口来判断一个成员是否在一个集合中，list不提供此功能。<br><strong>实现方法：</strong>set的内部实现是一个HashMap，其值始终为null。它实际上通过计算哈希值来快速删除重复项。实际上，这也是为什么set可以判断成员是否在集合内的原因。</p>
+<h2 id="Sorted-Set"><a href="#Sorted-Set" class="headerlink" title="Sorted Set"></a>Sorted Set</h2><p><strong>常用命令：</strong>zadd/zrange/zrem/zcard等。<br><strong>应用场景：</strong>Redis Sorted Set(排序集)的应用场景与集合的应用场景类似。不同之处在于，set不会自动对数据进行排序，但是排序集可以通过用户提供的优先级参数对成员进行排序。而且，后者还会自动对插入的数据进行排序。当您需要一个没有重复数据的有序集合列表时，您可以选择Sorted Set数据结构，例如Twitter的公共时间线，它可以将发布时间作为优先级参数，并自动对按时间获取的数据进行排序。<br><strong>实现方法：</strong>Redis sorted set在内部使用HashMap和SkipList来确保高效的数据存储和排序。HashMap存储成员和优先级参数之间的映射;而SkipList存储所有成员。排序依赖于存储在HashMap中的优先级参数。使用SkipList结构可以提高搜索效率并简化实现。</p>
+<h1 id="不同的内存管理方案"><a href="#不同的内存管理方案" class="headerlink" title="不同的内存管理方案"></a>不同的内存管理方案</h1><p>在Redis中，数据不一定完全保存在内存中。这是Redis和Memcached的主要区别。当物理内存已满时，Redis可能会将长时间未使用的值交换到磁盘。Redis仅缓存所有键(key)信息。如果发现内存使用率超过阈值，则会触发交换操作。Redis根据<code>swappability = age * log(size_in_memory)</code>计算要交换到磁盘的键的值。然后，将值保存到磁盘并从内存中擦除。此功能使Redis能够维护大于其机器内存容量的数据。机器内存必须保留所有键，并且不会把所有数据都交换到硬盘(内存中一定存在没有被交换的数据)。</p>
+<p>当Redis进行数据交换时，提供服务的主线程和执行交换操作的子线程将共享这部分内存。此时Redis将阻止数据更新操作，直到子线程完成交换操作。当从Redis读取数据时，如果读取键对应的值不在内存中，则Redis需要从交换文件加载相应的数据，然后将其返回给请求者。这里存在I/O线程池的问题。默认情况下，Redis会拥塞，也就是说，只有在成功加载所有交换文件后才会响应。当有少量客户端时，此策略适用于成批操作。但是如果你在一个大型网站程序中应用Redis，它就无法满足高并发性要求。但是，可以设置Redis运行的I/O线程池大小，并使用并发读取加载位于交换文件的数据的请求，以缩短拥塞时间。</p>
+<p>对于像Redis和Memcached这样基于内存的数据库系统，内存管理效率是影响系统性能的关键。在C语言中，malloc/free是最传统的分配和释放内存的方法。然而，这个方法隐藏了巨大的缺陷：首先，对于开发者来说，分配和释放不匹配很容易导致内存泄漏；其次，频繁的调用将使重新循环利用内存变得困难(内存碎片)，减少了内存的利用率；最后，系统调用将比一般函数调用消耗更大的系统开销。因此，为了提高内存管理效率，内存管理不会直接使用malloc/free调用作为解决方案。Redis和Memcached都采用他们自己设计的内存管理机制，但实现方法差异很大。接下来我们介绍这两种机制。</p>
+<p>默认情况下，Memcached使用Slab Allocation机制进行内存管理。其主要思想是将分配的内存分段为预定义的特定长度的块，用这些块来存储长度相匹配的键值数据记录，以完全解决内存片段(外碎片)问题。理想状态下，slab的分配机制设计应该满足外部数据存储的需求，也就是说，它有助于在Slab Allocation系统中存储所有不同长度的键值数据。但是，Memcached的其他内存请求申请是通过一般的malloc/free调用发生的。通常，这些请求的数量小，频率低，不会影响整体系统性能。Slab Allocation的原理非常简单。首先它从操作系统申请一大块内存，把他们分成一系列大小不同的小块，然后把相同大小的小块放到Slab Class中。其中，块是用于存储键值数据的最小单元。通过在Memcached启动时创建增长因子，可以控制每个Slab类的大小。假设图中的生长因子是1.25。如果第一组中的块大小为88字节，则第二组中的块将为112字节。其余的块遵循相同的规则。<br><img src="/20190220102211/slab_class.png" alt><br>当Memcached接收到客户端发送的数据时，首先根据数据大小选择最合适的Slab Class，然后在Memcached中查询包含Slab Class的空闲块列表，以找到用于存储数据的块。当一段数据过期或废弃被丢弃时，回收占用的块，并将其恢复到空闲列表。</p>
+<p>从上面的过程中，我们可以看到Memcached具有非常高的内存管理效率，不会导致内存碎片。然而，它最大的缺点是它可能造成空间浪费。由于操作系统会在特定长度的内存空间中分配每个块，因此较长的数据可能无法完全利用该空间。如图所示，当我们将100字节的数据缓存到128字节的块中时，未使用的28字节会浪费掉。<br><img src="/20190220102211/memcached_mem_waste.png" alt></p>
+<p>Redis的内存管理的实现主要通过源代码中的两个文件zmalloc.h和zmalloc.c来完成。为了便于内存管理，Redis会在内存分配后将内存大小存储在内存块头中。如图所示，real_ptr是Redis调用malloc后返回的指针。Redis将内存块大小存储在头中，并且内存占用的大小是可确定的，即系统返回size_t类型的长度，然后返回ret_ptr。当需要释放内存时，系统将ret_ptr传递给内存管理程序。通过ret_ptr，程序可以轻松计算real_ptr的值，然后通过real_ptr释放内存。<br><img src="/20190220102211/redis_mem.png" alt><br>Redis通过定义长度为ZMALLOC_MAX_ALLOC_STAT的数组来记录所有内存的分布。数组中的每个元素表示当前程序分配的内存块数，内存块的大小是元素的下标。在源代码中，此数组是zmalloc_allocations。zmalloc_allocations[16]表示以16字节长度分配的内存块数。zmalloc.c包含一个used_memory的静态变量，用于记录当前分配的内存的总大小。所以一般来说，Redis采用封装的malloc/free，与Memcached的内存管理机制相比要简单得多。</p>
+<h1 id="数据持久性支持"><a href="#数据持久性支持" class="headerlink" title="数据持久性支持"></a>数据持久性支持</h1><p>虽然是基于内存的存储，但Redis支持内存数据持久性，并提供两种主要的持久性策略：RDB快照和AOF日志。Memcached不支持数据持久性操作。</p>
+<h2 id="RDB快照"><a href="#RDB快照" class="headerlink" title="RDB快照"></a>RDB快照</h2><p>Redis支持将当前数据的快照存储到数据文件中以实现持久性，即RDB快照。但是，我们如何为连续写入数据的数据库生成快照呢？Redis利用fork命令的copy on write机制。在创建快照时，当前进程会fork一个子进程，使所有数据循环并将它们写入RDB文件。我们可以通过Redis的save命令配置RDB快照生成的时间。例如，如果要每10分钟配置一次快照生成，则可以在每1,000次写入后配置快照生成。您还可以配置多个规则以便一起实施。这些规则的定义在Redis的配置文件中。您还可以在Redis运行期间使用Redis的CONFIG SET命令设置规则，而无需重新启动Redis。</p>
+<p>Redis的RDB文件在某种程度上是不可破坏的，因为它在新进程中执行其写操作。生成新的RDB文件后，Redis生成的子进程将首先将数据写入临时文件，然后通过原子重命名系统调用将临时文件重命名为RDB文件，以便RDB文件在Redis发生错误后始终可用。同时，Redis的RDB文件也是Redis主从同步内部实现的一个链接。但是，RDB的缺点在于，一旦数据库遇到某些问题，保存在RDB文件中的数据可能不是最新的，从最后一个RDB文件生成到Redis失败期间数据丢失。请注意，对于某些企业来说，这是可以容忍的。</p>
+<h2 id="AOF日志"><a href="#AOF日志" class="headerlink" title="AOF日志"></a>AOF日志</h2><p>AOF日志的全程是 Append Only File。它是一个附加的日志文件。与通用数据库的binlog不同，AOF是一个可识别的明文(recognizable plaintext)，其内容是Redis标准命令。Rdeis仅把引起数据更改的命令添加到AOF。每个更改数据的命令都会生成一个日志。AOF文件将变得越来越大。Redis提供了另一个功能-AOF重写。AOF重写的功能是重新生成AOF文件。新AOF文件中，每条记录只有一个操作，而不像在旧的AOF文件中那样，记录了对同一个值的多次操作。生成过程类似于RDB快照，即分支进程，遍历数据并将数据写入新的临时AOF文件。将数据写入新文件时，它会将所有写操作日志写入旧的AOF文件，并同时将它们记录在内存缓冲区中。完成操作后，系统会一次将缓冲区中的所有日志写入临时文件。此后，它将调用atomic rename命令以使用新的AOF文件替换旧的AOF文件。</p>
+<p>AOF是写文件操作，旨在将操作日志写入磁盘。它还涉及我们前面提到的写操作过程。在Redis调用AOF的写入操作后，它使用appendfsync选项通过调用fsync命令来控制将数据写入磁盘的时间。以下appendfsync中的三个设置选项具有从低到强的安全强度。</p>
+<ul>
+<li><p>appendfsync no：当我们将appendfsync设置为no时，Redis不会主动调用fsync来将AOF日志同步到磁盘。同步将完全依赖于操作系统调试。大多数Linux操作系统每30秒执行一次fsync操作，以将缓冲区中的数据写入磁盘。</p>
+</li>
+<li><p>appendfsync everysec：当我们将appendfsync设置为everysec时，Redis将默认每隔一秒调用一次fsync，以将缓冲区中的数据写入磁盘。但是当fsync调用持续时间超过1秒时，Redis将采用fsync延迟等待一秒钟。也就是说，Redis将在两秒后调用fsync。无论执行多长时间，它都将执行此fsync。此时，由于文件描述符在文件fsync期间会遇到拥塞，因此当前的写操作将遇到类似的拥塞。结论是，在绝大多数情况下，Redis将每隔一秒执行一次fsync。在最坏的情况下，它将每两秒执行一次fsync操作。大多数数据库系统将此操作称为组提交，即将多个写入的数据组合在一起并一次将日志写入磁盘。</p>
+</li>
+<li>appednfsync always：当我们将appendfsync设置为always时，每次写操作都会调用fsync一次。这时，数据是最安全的。当然，由于它每次都执行fsync，因此会影响性能。</li>
+</ul>
+<p>对于一般业务需求，我们建议您使用RDB进行持久化，因为RDB开销远低于AOF日志。对于无法承受任何数据丢失风险的应用程序，我们建议您使用AOF日志。</p>
+<h1 id="集群管理的差异"><a href="#集群管理的差异" class="headerlink" title="集群管理的差异"></a>集群管理的差异</h1><p>Memcached是一个全内存数据缓冲系统。虽然Redis支持数据持久性，但全内存是其高性能的本质。对于基于内存的存储，物理机的内存大小是系统的最大数据存储容量。如果要处理的数据大小超过单个计算机的物理内存大小，则需要构建分布式群集以扩展存储容量。</p>
+<p>Memcached本身不支持分布式模式。您只能通过分布式算法(如Consistent Hash)在客户端实现Memcached的分布式存储。下图演示了Memcached的分布式存储实现架构。在客户端向Memcached集群发送数据之前，它首先通过嵌套分布式算法计算数据的目标节点，然后嵌套分布式算法直接将数据发送到节点进行存储。但是当客户端查询数据时，还需要计算用作查询数据位置的节点，然后直接将查询请求发送到节点以获取数据。<br><img src="/20190220102211/memcached_distribution.png" alt></p>
+<p>与只能在客户端实现分布式存储的Memcached相比，Redis更喜欢在服务器端构建分布式存储。最新版本的Redis支持分布式存储。Redis Cluster是Redis的高级版本，可实现分布式存储并允许SPOF。它没有中心节点，能够进行线性扩展。下图提供了Redis Cluster的分布式存储架构。节点间通信遵循二进制协议，但节点 - 客户端通信遵循ASCII协议。在数据放置策略中，Redis Cluster将整个密钥数值范围划分为4,096个散列槽，并允许在每个节点上存储一个或多个散列槽。也就是说，当前的Redis群集最多支持4,096个节点。Redis Cluster使用的分布式算法也很简单：crc16（key）％HASH_SLOTS_NUMBER。<br><img src="/20190220102211/redis_distribution.png" alt></p>
+<h1 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h1><p>在本文中，我们讨论了Redis和Memcached之间的差异。我们首先列出了Redis的作者Salvatore Sanfilippo提出的几点比较。此后，我们进一步阐述了Redis和Memcached之间的关键点，即支持的数据类型，集群管理，数据持久性支持和内存管理方案。</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p>原文：<a href="https://medium.com/@Alibaba_Cloud/redis-vs-memcached-in-memory-data-storage-systems-3395279b0941" target="_blank" rel="noopener">Redis vs. Memcached: In-Memory Data Storage Systems</a></p>
+    </div>
+  </div>
+  
+  
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+      <span>
+        
+          <i class="iconfont icon-06tags"></i>标签: 
+          
+          <span class="span--tag">
+            <a href="/tags/Redis/">
+              #Redis
+            </a>
+          </span>
+          
+          <span class="span--tag">
+            <a href="/tags/Memcached/">
+              #Memcached
+            </a>
+          </span>
+          
+          <span class="span--tag">
+            <a href="/tags/翻译/">
+              #翻译
+            </a>
+          </span>
+          
+        
+      </span>
+    </div>
+    <div class="article-meta pull-right">
+    </div>
+  </div>
+</div>
+
+
+
+
+  <nav class="post-navigation">
+    
+    <div class="nav-pre">
+      <i class="iconfont icon-prev"></i>
+      上一篇:
+      <a href="/20181229230044/" target="_self">批量修改Hexo文件名</a>
+    </div>
+    
+    
+    <div class="nav-next">
+      下一篇:
+      <a href="/20190225173604/" target="_self">MySQL存储引擎的特点</a>
+      <i class="iconfont icon-next"></i>
+    </div>
+    
+  </nav>
+  
+  
+
+</div>
+
+
+            <div class="back-to-top hidden">
+  <span>
+    <i class="iconfont icon-60"></i><span></span>%
+  </span>
+</div>
+
+<script>
+const updateIconToTop = percent => {
+  let dom = document.querySelector(".back-to-top span span");
+  dom.innerText = percent;
+  if(percent < 1) {
+    document.querySelector(".back-to-top").className = "back-to-top hidden";
+  } else {
+    document.querySelector(".back-to-top").className = "back-to-top";
+  }
+}
+
+const handleScoll = () => {
+  let isRunning = false;
+  return () => {
+    if (isRunning) return;
+    isRunning = true;
+    window.requestAnimationFrame(timestamp => {
+      let scrollTop =
+          document.documentElement.scrollTop || document.body.scrollTop,
+        scrollHeight =
+          document.documentElement.scrollHeight ||
+          document.body.scrollHeight,
+        clientHeight =
+          document.documentElement.clientHeight ||
+          document.body.clientHeight;
+      isRunning = false;
+      if (scrollTop <= 1) {
+        updateIconToTop(0);
+        return;
+      }
+      if (scrollTop + clientHeight >= scrollHeight) {
+        updateIconToTop(100);
+      } else {
+        updateIconToTop(parseInt(
+          100 * scrollTop / (scrollHeight - clientHeight),
+          10
+        ));
+      }
+    });
+  };
+}
+
+const backToTop = () => {
+  let scrollTop =
+      document.documentElement.scrollTop || document.body.scrollTop,
+    delay = 10,
+    time = 200;
+  if (scrollTop <= 20) {
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    return;
+  }
+  let step = Math.ceil(scrollTop * delay / time);
+  let timer = setInterval(() => {
+    scrollTop =
+      document.documentElement.scrollTop || document.body.scrollTop;
+    if (scrollTop - step <= 0) {
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+      clearInterval(timer);
+    } else {
+      document.documentElement.scrollTop = scrollTop - step;
+      document.body.scrollTop = scrollTop - step;
+    }
+  }, delay);
+}
+
+document.addEventListener("scroll", handleScoll(), false);
+
+document.querySelector(".back-to-top").addEventListener("click", backToTop, false);
+
+</script>
+        </div>
+        
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+<script>
+  (() => {
+    const mathjaxConfig = {
+      showProcessingMessages: false, //关闭js加载过程信息
+      messageStyle: "none", //不显示信息
+      jax: ["input/TeX", "output/HTML-CSS"],
+      tex2jax: {
+        inlineMath: [["$", "$"], ["\\(", "\\)"]], //行内公式选择符
+        displayMath: [["$$", "$$"], ["\\[", "\\]"]], //段内公式选择符
+        skipTags: ["script", "noscript", "style", "textarea", "pre", "code", "a"] //避开某些标签
+      },
+      "HTML-CSS": {
+        availableFonts: ["STIX", "TeX"], //可选字体
+        showMathMenu: false //关闭右击菜单显示
+      }
+    }
+
+    let mathjaxInterval = setInterval(() => {
+      if(!window.MathJax){
+        return;
+      }
+      window.MathJax.Hub.Config(mathjaxConfig)
+      window.MathJax.Hub.Queue(["Typeset", MathJax.Hub, document.getElementById('app')])
+
+      clearInterval(mathjaxInterval)
+    }, 10)    
+  })()
+</script>
+
+        
+    </body>
+</html>

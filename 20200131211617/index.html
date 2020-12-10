@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  <meta name="author" content="sugarmix">
+  
+  
+  
+  <title>己亥年年终总结 | SUGARMIX</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="默认,默认,">
+  
+
+  
+    <meta name="description" content="真正的大师，永远都怀着一颗学徒的心">
+  
+
+  
+    <link rel="alternate" href="atom.xml" title="SUGARMIX" type="application/atom+xml">
+  
+
+  
+    <link rel="icon" href="/images/favicon.ico">
+    <link rel="apple-touch-icon" href="/images/touch-icon.png">
+  
+
+  <link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/icon/iconfont.css">
+<link rel="stylesheet" href="/css/github-markdown.css">
+<link rel="stylesheet" href="/css/gitalk.css">
+<link rel="stylesheet" href="/css/highlight.css">
+  
+  <script src="/js/util.js"></script>
+<script src="/js/hidden_header.js"></script>
+  
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js" async></script>
+</head>
+
+    <body>
+        
+        <div id="app">
+            <div class="header-wrap">
+  <header>
+    <div class="site-brand">
+      <div class="site-title">
+        <a href="/">SUGARMIX</a>
+      </div>
+    </div>
+    <nav class="site-navigation">
+      <ul class="nav-menu">
+      
+        <li class="nav-item" data-path="https://paste.sugarmix.me">
+          
+            <a 
+              href="https://paste.sugarmix.me"
+              target="_blank"
+            >
+              Pastbin
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          
+            <a 
+              href="/archives/"
+              target="_blank"
+            >
+              Archives
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="">
+          
+            <a href="javascript:void(0);" v-else>Me</a>
+            <ul class="nav-menu--dropdown">
+              
+                <li>
+                  <a 
+                    href="https://github.com/sugarmix" 
+                    target="_blank"
+                  >
+                    GitHub
+                  </a>
+                </li>
+              
+                <li>
+                  <a 
+                    href="mailto:sugarmix.me@outlook.com" 
+                    target="_blank"
+                  >
+                    Mail
+                  </a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+      </ul>
+    </nav>
+    <i class="iconfont icon-menu"></i>
+  </header>
+</div>
+
+<script>
+  let links = document.querySelectorAll('.nav-item');
+  for(let link of links){
+    let childrenLink = link.querySelector('ul');
+    link.addEventListener('mouseenter', () => {
+      if(childrenLink) {
+        childrenLink.className = "nav-menu--dropdown active";
+      }
+    })
+    link.addEventListener('mouseleave', () => {
+      if(childrenLink) {
+        childrenLink.className = "nav-menu--dropdown";
+      }
+    })
+  }
+  let rootRealPath = getRealPath(window.location.pathname, true);
+  for(let link of links) {
+    let linkPath = link.getAttribute("data-path");
+    if(linkPath && getRealPath(linkPath, true) === rootRealPath) {
+      link.className = "nav-item hover";
+    }
+  }
+
+  let iconMenu = document.querySelector("i.iconfont.icon-menu");
+  let iconMenuClicked = true;
+  let navDOM = document.querySelector("nav.site-navigation");
+  iconMenu.addEventListener("click", () => {
+    iconMenuClicked 
+      ? navDOM.className = "site-navigation active"
+      : navDOM.className = "site-navigation";
+    iconMenuClicked = !iconMenuClicked;
+  })
+</script>
+
+            
+
+
+
+
+
+
+
+
+<div class="container post-index">
+
+  
+
+<div class="post">
+  <h1 class="article-title">
+    <span>己亥年年终总结</span>
+  </h1>
+  <div class="article-top-meta">
+    <span>
+      发布 : 
+      2020-01-31
+    </span>
+    
+      <span>
+        分类 : 
+          <a href="/categories/默认/">
+            默认
+          </a>
+      </span>
+    
+  </div>
+
+  <div class="article-content">
+    <div class="markdown-body">
+      <h1 id="序"><a href="#序" class="headerlink" title="序"></a>序</h1><p>2020年的我24岁，已经过了<strong>可以尽情试错</strong>的年龄。过去这一年经历足够丰富。认识新朋友，重新审视老朋友，也学到一些（长者没有告诉我的）人生的经验。</p>
+<h1 id="关于工作"><a href="#关于工作" class="headerlink" title="关于工作"></a>关于工作</h1><p>2019年是正式工作的第一年。离开学校前一份实习。离开学校后第一份工作坚持了将近4个月，再一次生病后毅然选择辞职。在一个多月后换到了现在这份工作。其间面试过一些公司。学到的一点小小的经验是，<strong>工作就是拿钱办事</strong>。公司的角度是要花更少的钱办更多的事，在公司拿不出你想要的薪资的时候，一般会画饼，</p>
+<blockquote>
+<p>这个项目上线了就给你们涨工资</p>
+</blockquote>
+<p>又或者打感情牌，</p>
+<blockquote>
+<p>公司花钱培养你们几个月，刚学会就要走不好</p>
+</blockquote>
+<p>对于画饼不多说，能不能吃下这个饼看自己的判断。这里主要说一下第二种。如果公司觉得在试用期学会就走人是公司的损失，完全可以降低试用期工资（如果还能招到人的话），或者及时调整薪资到与能力相匹配的水平。有些人倾向于向公司提出涨薪。但是也存在另一些人，他知道自己换家公司可以显著提高自己的工资，同时可以短时间忍耐工资略低于工作能力（忍耐的过程不考虑工作效率）。我更倾向于后者，毕竟要给那些想白嫖劳动力的人一些教训。教训就是上面提到的那句话，</p>
+<blockquote>
+<p>公司花钱培养你们几个月，刚学会就要走不好</p>
+</blockquote>
+<p>在考虑与工作相关的事情时，撇开所有情感因素。因为<strong>工作只是一场交易</strong>。交易追求公平，如果自认为有失公允，完全可以离开这场交易，毕竟在自己年老体弱（35岁）时，公司会是主动中断交易的一方，在自己还有选择的时候，不要放弃自己的权利。</p>
+<h1 id="关于学习"><a href="#关于学习" class="headerlink" title="关于学习"></a>关于学习</h1><p>持续学习可能是无产阶级唯一能平稳度过中年危机的方法。能否持续学习应该被当作考量一份工作好坏的重要因素。到目前位置我发现持续学习有两个（特别功利的）好处。</p>
+<ol>
+<li>足够的知识可以当作面试谈判的砝码</li>
+<li>离开公司后，更多的知识可以帮助自己更好的生存</li>
+</ol>
+<p>思想境界的提升先不考虑，毕竟我不想过</p>
+<blockquote>
+<p>种豆南山下，草盛豆苗稀。晨兴理荒秽，带月荷锄归。</p>
+</blockquote>
+<p>的生活。</p>
+<p>顺便说一下我现在的学习方法：LeetCode 和 经典图书。能与人实时互动的方式都不推荐，比如QQ群。</p>
+<p>回看这一年，学习新东西最多的时候是实习和离职后。还需要平衡好学习和工作的时间，不能学习的工作，或者学习的内容不是自己喜欢的工作，要果断换掉。还好我只是耽误了3个月。</p>
+<h1 id="关于生活"><a href="#关于生活" class="headerlink" title="关于生活"></a>关于生活</h1><p>到2020-01-31 22:41新型冠状病毒确诊病例9811,疑似病例15238。我已经在家里呆了不知道多少天，希望这一切快点结束，回归到正常生活。</p>
+<!--
+1. 医生发现病毒，不解决问题，先解决医生，真有天朝特色
+2. 对抗疫情就对抗疫情，别弄成感动中国
+3. 有禁止吃野味的法律，却还是发生了这种事。这种签了字的纸也是厕所里的屎
+-->
+<p>这篇文章拖到现在写就是因为，现在我空闲时间比较多。而在应该写这篇文章的时间，刚好是我离职的那段时间，那段时间在刷题看书，没有抽出时间来写。平时还是要常常抽出时间思考。常常独立思考实在是太重要了呀。</p>
+<p>实习和工作结交了很多新朋友，让我也看到了更多不同的人生。沉淀下来的老朋友，绝对是一笔物质和精神上的双重财富。</p>
+<!--LH-->
+<p>实习那段时间，小A去我实习城市玩，一起玩了两天。小A离开的时候我竟然控制不住自己的情绪。</p>
+<!--LQQ-->
+<p>跟小B认识快有10年了吧，安安稳稳到现在还是朋友，我可真棒。</p>
+<!--LJN-->
+<p>当初在学校，就知道跟小C可以谈心。但是我们第一次没有目的聊天竟然发生在毕业后。</p>
+<!--SYF-->
+<p>小D必须有姓名，虽然这半年的接触不是很多（导致运动量下降太多），不过接下来又可以经常约出来玩了。</p>
+<p>恢复平静吧，我想去吃火锅了，热干面也可以。</p>
+    </div>
+  </div>
+  
+  
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+      <span>
+        
+          <i class="iconfont icon-06tags"></i>标签: 
+          
+          <span class="span--tag">
+            <a href="/tags/默认/">
+              #默认
+            </a>
+          </span>
+          
+        
+      </span>
+    </div>
+    <div class="article-meta pull-right">
+    </div>
+  </div>
+</div>
+
+
+
+
+  <nav class="post-navigation">
+    
+    <div class="nav-pre">
+      <i class="iconfont icon-prev"></i>
+      上一篇:
+      <a href="/20191205005932/" target="_self">关于C++迭代器的一些小技巧</a>
+    </div>
+    
+    
+    <div class="nav-next">
+      下一篇:
+      <a href="/20200202210032/" target="_self">开始使用WireGuard</a>
+      <i class="iconfont icon-next"></i>
+    </div>
+    
+  </nav>
+  
+  
+
+</div>
+
+
+            <div class="back-to-top hidden">
+  <span>
+    <i class="iconfont icon-60"></i><span></span>%
+  </span>
+</div>
+
+<script>
+const updateIconToTop = percent => {
+  let dom = document.querySelector(".back-to-top span span");
+  dom.innerText = percent;
+  if(percent < 1) {
+    document.querySelector(".back-to-top").className = "back-to-top hidden";
+  } else {
+    document.querySelector(".back-to-top").className = "back-to-top";
+  }
+}
+
+const handleScoll = () => {
+  let isRunning = false;
+  return () => {
+    if (isRunning) return;
+    isRunning = true;
+    window.requestAnimationFrame(timestamp => {
+      let scrollTop =
+          document.documentElement.scrollTop || document.body.scrollTop,
+        scrollHeight =
+          document.documentElement.scrollHeight ||
+          document.body.scrollHeight,
+        clientHeight =
+          document.documentElement.clientHeight ||
+          document.body.clientHeight;
+      isRunning = false;
+      if (scrollTop <= 1) {
+        updateIconToTop(0);
+        return;
+      }
+      if (scrollTop + clientHeight >= scrollHeight) {
+        updateIconToTop(100);
+      } else {
+        updateIconToTop(parseInt(
+          100 * scrollTop / (scrollHeight - clientHeight),
+          10
+        ));
+      }
+    });
+  };
+}
+
+const backToTop = () => {
+  let scrollTop =
+      document.documentElement.scrollTop || document.body.scrollTop,
+    delay = 10,
+    time = 200;
+  if (scrollTop <= 20) {
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    return;
+  }
+  let step = Math.ceil(scrollTop * delay / time);
+  let timer = setInterval(() => {
+    scrollTop =
+      document.documentElement.scrollTop || document.body.scrollTop;
+    if (scrollTop - step <= 0) {
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+      clearInterval(timer);
+    } else {
+      document.documentElement.scrollTop = scrollTop - step;
+      document.body.scrollTop = scrollTop - step;
+    }
+  }, delay);
+}
+
+document.addEventListener("scroll", handleScoll(), false);
+
+document.querySelector(".back-to-top").addEventListener("click", backToTop, false);
+
+</script>
+        </div>
+        
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+<script>
+  (() => {
+    const mathjaxConfig = {
+      showProcessingMessages: false, //关闭js加载过程信息
+      messageStyle: "none", //不显示信息
+      jax: ["input/TeX", "output/HTML-CSS"],
+      tex2jax: {
+        inlineMath: [["$", "$"], ["\\(", "\\)"]], //行内公式选择符
+        displayMath: [["$$", "$$"], ["\\[", "\\]"]], //段内公式选择符
+        skipTags: ["script", "noscript", "style", "textarea", "pre", "code", "a"] //避开某些标签
+      },
+      "HTML-CSS": {
+        availableFonts: ["STIX", "TeX"], //可选字体
+        showMathMenu: false //关闭右击菜单显示
+      }
+    }
+
+    let mathjaxInterval = setInterval(() => {
+      if(!window.MathJax){
+        return;
+      }
+      window.MathJax.Hub.Config(mathjaxConfig)
+      window.MathJax.Hub.Queue(["Typeset", MathJax.Hub, document.getElementById('app')])
+
+      clearInterval(mathjaxInterval)
+    }, 10)    
+  })()
+</script>
+
+        
+    </body>
+</html>

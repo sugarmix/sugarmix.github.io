@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  <meta name="author" content="sugarmix">
+  
+  
+  
+  <title>谈一谈交叉编译 | SUGARMIX</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="Linux,Linux,">
+  
+
+  
+    <meta name="description" content="真正的大师，永远都怀着一颗学徒的心">
+  
+
+  
+    <link rel="alternate" href="atom.xml" title="SUGARMIX" type="application/atom+xml">
+  
+
+  
+    <link rel="icon" href="/images/favicon.ico">
+    <link rel="apple-touch-icon" href="/images/touch-icon.png">
+  
+
+  <link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/icon/iconfont.css">
+<link rel="stylesheet" href="/css/github-markdown.css">
+<link rel="stylesheet" href="/css/gitalk.css">
+<link rel="stylesheet" href="/css/highlight.css">
+  
+  <script src="/js/util.js"></script>
+<script src="/js/hidden_header.js"></script>
+  
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js" async></script>
+</head>
+
+    <body>
+        
+        <div id="app">
+            <div class="header-wrap">
+  <header>
+    <div class="site-brand">
+      <div class="site-title">
+        <a href="/">SUGARMIX</a>
+      </div>
+    </div>
+    <nav class="site-navigation">
+      <ul class="nav-menu">
+      
+        <li class="nav-item" data-path="https://paste.sugarmix.me">
+          
+            <a 
+              href="https://paste.sugarmix.me"
+              target="_blank"
+            >
+              Pastbin
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          
+            <a 
+              href="/archives/"
+              target="_blank"
+            >
+              Archives
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="">
+          
+            <a href="javascript:void(0);" v-else>Me</a>
+            <ul class="nav-menu--dropdown">
+              
+                <li>
+                  <a 
+                    href="https://github.com/sugarmix" 
+                    target="_blank"
+                  >
+                    GitHub
+                  </a>
+                </li>
+              
+                <li>
+                  <a 
+                    href="mailto:sugarmix.me@outlook.com" 
+                    target="_blank"
+                  >
+                    Mail
+                  </a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+      </ul>
+    </nav>
+    <i class="iconfont icon-menu"></i>
+  </header>
+</div>
+
+<script>
+  let links = document.querySelectorAll('.nav-item');
+  for(let link of links){
+    let childrenLink = link.querySelector('ul');
+    link.addEventListener('mouseenter', () => {
+      if(childrenLink) {
+        childrenLink.className = "nav-menu--dropdown active";
+      }
+    })
+    link.addEventListener('mouseleave', () => {
+      if(childrenLink) {
+        childrenLink.className = "nav-menu--dropdown";
+      }
+    })
+  }
+  let rootRealPath = getRealPath(window.location.pathname, true);
+  for(let link of links) {
+    let linkPath = link.getAttribute("data-path");
+    if(linkPath && getRealPath(linkPath, true) === rootRealPath) {
+      link.className = "nav-item hover";
+    }
+  }
+
+  let iconMenu = document.querySelector("i.iconfont.icon-menu");
+  let iconMenuClicked = true;
+  let navDOM = document.querySelector("nav.site-navigation");
+  iconMenu.addEventListener("click", () => {
+    iconMenuClicked 
+      ? navDOM.className = "site-navigation active"
+      : navDOM.className = "site-navigation";
+    iconMenuClicked = !iconMenuClicked;
+  })
+</script>
+
+            
+
+
+
+
+
+
+
+
+<div class="container post-index">
+
+  
+
+<div class="post">
+  <h1 class="article-title">
+    <span>谈一谈交叉编译</span>
+  </h1>
+  <div class="article-top-meta">
+    <span>
+      发布 : 
+      2020-04-07
+    </span>
+    
+      <span>
+        分类 : 
+          <a href="/categories/Linux/">
+            Linux
+          </a>
+      </span>
+    
+  </div>
+
+  <div class="article-content">
+    <div class="markdown-body">
+      <h1 id="交叉编译"><a href="#交叉编译" class="headerlink" title="交叉编译"></a>交叉编译</h1><p>首先简化编译的概念，这里不提编译预处理、词法分析、语法分析等等一系列的概念，<del>因为我也不知道自己是不是真的懂这些东西</del>，想了解这部分概念，可以去看编译原理相关的书籍。</p>
+<p>这里把<strong>编译</strong>简单的理解为<strong>从一种字符串</strong>（例如C语言的源程序）到<strong>另一种字符串</strong>（与机器相关的二进制01字符串）的<strong>转化</strong>。</p>
+<p>进行转化操作的，一般来说是一个软件（我们不应该忘记曾经在纸带上打孔的科学家们，他们将想法变成纸带上孔的过程，难道不是编译所做的事情吗），这个软件被称为编译器。</p>
+<ul>
+<li>一般情况下，写一段C程序，通过运行在x86机器上的编译器，编译出一个可以在x86上运行的程序。  </li>
+<li>另一种情况，还是那一段C程序，通过运行在AArch64机器上的编译器，编译出一个可以在AArch64上运行的程序。</li>
+</ul>
+<p>这体现了C语言良好的跨平台特性，一段代码只需要分别编译就可以在两种架构的设备上运行。</p>
+<p>然而，假如你现在手上的AArch64的机器内存很小，没有硬盘，它能做的事情只是以很低的功耗运行一些小型的软件，或者以任何理由导致它没有运行起一个编译器的能力，而凑巧的是，你手头正好有一个可以用来编译的x86机器。（如果这个也没有，那你真的是太惨了）</p>
+<p>现在第三种情况出现了</p>
+<ul>
+<li>还是刚才那段C程序，通过运行在x86机器上的编译器，编译出一个可以在AArch64上运行的程序。</li>
+</ul>
+<p>上面这个编译器，就被称为<strong>交叉编译器</strong>，这种情况，就被称为<strong>交叉编译</strong>。很显然，交叉编译器编译出的二进制文件没有办法在这台编译出它的机器上运行。</p>
+<h1 id="静态链接和动态链接"><a href="#静态链接和动态链接" class="headerlink" title="静态链接和动态链接"></a>静态链接和动态链接</h1><p>当我开开心心的把编译好的软件（此处应该理解为可执行文件），放到AArch64机器上运行的时候，告诉我缺少<code>lib*.so*</code>。出现这种情况<strong>一般</strong>是在编译时链接进来的库文件在目标系统（就是那个啥都没有还想运行软件的系统）上缺失。<br>一种方案是直接使用静态链接，这种方案不推荐。首要原因可以参考<a href="https://blog.lilydjwg.me/2015/5/11/why-i-m-against-static-linking.92218.html" target="_blank" rel="noopener">为什么我反对普遍地静态链接？-依云&#39;s Blog</a>，其次是，静态链接你真不见得编译的过 ;-)</p>
+<h1 id="动态链接库的查找方式"><a href="#动态链接库的查找方式" class="headerlink" title="动态链接库的查找方式"></a>动态链接库的查找方式</h1><p>既然我们<del>菜的没法通过静态链接，</del>理智的接受了别人推荐的动态链接，那么就有必要知道二进制程序在运行时是如何查找所需要的链接库的。</p>
+<p>直接放（在Linux可用的）结论。排名分先后</p>
+<ol>
+<li><p>Linux中二进制文件使用ELF格式，其中包含RPATH变量，这个变量指向一个路径，这个路径是这个二进制文件查找so的路径。在链接时可以通过环境变量或者编译参数影响这个变量，这是最稳妥也最有效果的方式，但是需要在编译时就确定好目录，如果程序已经编译完了，懒得再次编译或者无法再次编译，就不能用这个方法了</p>
+</li>
+<li><p>如果上一个步骤没有找到链接库，同时又设置了LD_LIBRARY_PATH环境变量，那么会在这个环境变量指向的路径中查找。这是我个人最常用也最喜欢的方式，使用的时候甚至不需要export，而是直接加在命令前面，可以把影响范围缩小到仅一条命令</p>
+</li>
+<li><p>第三种是使用/etc/ld.so.conf，在第二种方式查找失败的时候会使用中指定的路径</p>
+</li>
+</ol>
+<p>除了第一种，剩下两种都有一定的约束条件，毕竟平白无辜设置一个环境变量二进制程序也不会去直接读。那么就要简单的说一下后两种是怎么生效的。在理解生效方式后，也就理解为什么也可以把so直接放到/lib或者/usr/lib里了。</p>
+<p>算了，我懒了，这里直接贴<a href="http://man7.org/linux/man-pages/man8/ld.so.8.html" target="_blank" rel="noopener">man ld.so</a>的输出</p>
+<blockquote>
+<p>When resolving shared object dependencies, the dynamic linker first inspects each dependency string to see if it contains a slash (this can occur if a shared object pathname containing slashes was specified at link time).  If a slash is found, then the dependency string is interpreted as a (relative or absolute) pathname, and the shared object is loaded using that pathname.</p>
+<p> If a shared object dependency does not contain a slash, then it is searched for in the following order:</p>
+<ul>
+<li><p>Using the directories specified in the DT_RPATH dynamic section attribute of the binary if present and DT_RUNPATH attribute does not exist.  Use of DT_RPATH is deprecated.</p>
+</li>
+<li><p>Using the environment variable LD_LIBRARY_PATH, unless the executable is being run in secure-execution mode (see below), in which case this variable is ignored.</p>
+</li>
+<li><p>Using the directories specified in the DT_RUNPATH dynamic section attribute of the binary if present.  Such directories are searched only to find those objects required by DT_NEEDED (direct dependencies) entries and do not apply to those objects&#39; children, which must themselves have their own DT_RUNPATH entries.  This is unlike DT_RPATH, which is applied to searches for all children in the dependency tree.</p>
+</li>
+<li><p>From the cache file /etc/ld.so.cache, which contains a compiled list of candidate shared objects previously found in the augmented library path.  If, however, the binary was linked with the -z nodeflib linker option, shared objects in the default paths are skipped.  Shared objects installed in hardware capability directories (see below) are preferred to other shared objects.</p>
+</li>
+<li><p>In the default path /lib, and then /usr/lib.  (On some 64-bit architectures, the default paths for 64-bit shared objects are /lib64, and then /usr/lib64.)  If the binary was linked with the -z nodeflib linker option, this step is skipped.</p>
+</li>
+</ul>
+</blockquote>
+<p>其中，刷新/etc/ld.so.cache的是/sbin/ldconfig。</p>
+<p>手册可真是个好东西呀，这篇文章只是粗略的描述了一下，需要了解细节可以通过手册一层一层的查下去了。</p>
+<p>本文完。</p>
+    </div>
+  </div>
+  
+  
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+      <span>
+        
+          <i class="iconfont icon-06tags"></i>标签: 
+          
+          <span class="span--tag">
+            <a href="/tags/Linux/">
+              #Linux
+            </a>
+          </span>
+          
+        
+      </span>
+    </div>
+    <div class="article-meta pull-right">
+    </div>
+  </div>
+</div>
+
+
+
+
+  <nav class="post-navigation">
+    
+    <div class="nav-pre">
+      <i class="iconfont icon-prev"></i>
+      上一篇:
+      <a href="/20200215181709/" target="_self">RabbitMQ</a>
+    </div>
+    
+    
+  </nav>
+  
+  
+
+</div>
+
+
+            <div class="back-to-top hidden">
+  <span>
+    <i class="iconfont icon-60"></i><span></span>%
+  </span>
+</div>
+
+<script>
+const updateIconToTop = percent => {
+  let dom = document.querySelector(".back-to-top span span");
+  dom.innerText = percent;
+  if(percent < 1) {
+    document.querySelector(".back-to-top").className = "back-to-top hidden";
+  } else {
+    document.querySelector(".back-to-top").className = "back-to-top";
+  }
+}
+
+const handleScoll = () => {
+  let isRunning = false;
+  return () => {
+    if (isRunning) return;
+    isRunning = true;
+    window.requestAnimationFrame(timestamp => {
+      let scrollTop =
+          document.documentElement.scrollTop || document.body.scrollTop,
+        scrollHeight =
+          document.documentElement.scrollHeight ||
+          document.body.scrollHeight,
+        clientHeight =
+          document.documentElement.clientHeight ||
+          document.body.clientHeight;
+      isRunning = false;
+      if (scrollTop <= 1) {
+        updateIconToTop(0);
+        return;
+      }
+      if (scrollTop + clientHeight >= scrollHeight) {
+        updateIconToTop(100);
+      } else {
+        updateIconToTop(parseInt(
+          100 * scrollTop / (scrollHeight - clientHeight),
+          10
+        ));
+      }
+    });
+  };
+}
+
+const backToTop = () => {
+  let scrollTop =
+      document.documentElement.scrollTop || document.body.scrollTop,
+    delay = 10,
+    time = 200;
+  if (scrollTop <= 20) {
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    return;
+  }
+  let step = Math.ceil(scrollTop * delay / time);
+  let timer = setInterval(() => {
+    scrollTop =
+      document.documentElement.scrollTop || document.body.scrollTop;
+    if (scrollTop - step <= 0) {
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+      clearInterval(timer);
+    } else {
+      document.documentElement.scrollTop = scrollTop - step;
+      document.body.scrollTop = scrollTop - step;
+    }
+  }, delay);
+}
+
+document.addEventListener("scroll", handleScoll(), false);
+
+document.querySelector(".back-to-top").addEventListener("click", backToTop, false);
+
+</script>
+        </div>
+        
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+<script>
+  (() => {
+    const mathjaxConfig = {
+      showProcessingMessages: false, //关闭js加载过程信息
+      messageStyle: "none", //不显示信息
+      jax: ["input/TeX", "output/HTML-CSS"],
+      tex2jax: {
+        inlineMath: [["$", "$"], ["\\(", "\\)"]], //行内公式选择符
+        displayMath: [["$$", "$$"], ["\\[", "\\]"]], //段内公式选择符
+        skipTags: ["script", "noscript", "style", "textarea", "pre", "code", "a"] //避开某些标签
+      },
+      "HTML-CSS": {
+        availableFonts: ["STIX", "TeX"], //可选字体
+        showMathMenu: false //关闭右击菜单显示
+      }
+    }
+
+    let mathjaxInterval = setInterval(() => {
+      if(!window.MathJax){
+        return;
+      }
+      window.MathJax.Hub.Config(mathjaxConfig)
+      window.MathJax.Hub.Queue(["Typeset", MathJax.Hub, document.getElementById('app')])
+
+      clearInterval(mathjaxInterval)
+    }, 10)    
+  })()
+</script>
+
+        
+    </body>
+</html>

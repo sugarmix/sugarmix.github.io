@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  <meta name="author" content="sugarmix">
+  
+  
+  
+  <title>RabbitMQ | SUGARMIX</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="数据库,消息队列,">
+  
+
+  
+    <meta name="description" content="真正的大师，永远都怀着一颗学徒的心">
+  
+
+  
+    <link rel="alternate" href="atom.xml" title="SUGARMIX" type="application/atom+xml">
+  
+
+  
+    <link rel="icon" href="/images/favicon.ico">
+    <link rel="apple-touch-icon" href="/images/touch-icon.png">
+  
+
+  <link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/icon/iconfont.css">
+<link rel="stylesheet" href="/css/github-markdown.css">
+<link rel="stylesheet" href="/css/gitalk.css">
+<link rel="stylesheet" href="/css/highlight.css">
+  
+  <script src="/js/util.js"></script>
+<script src="/js/hidden_header.js"></script>
+  
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js" async></script>
+</head>
+
+    <body>
+        
+        <div id="app">
+            <div class="header-wrap">
+  <header>
+    <div class="site-brand">
+      <div class="site-title">
+        <a href="/">SUGARMIX</a>
+      </div>
+    </div>
+    <nav class="site-navigation">
+      <ul class="nav-menu">
+      
+        <li class="nav-item" data-path="https://paste.sugarmix.me">
+          
+            <a 
+              href="https://paste.sugarmix.me"
+              target="_blank"
+            >
+              Pastbin
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          
+            <a 
+              href="/archives/"
+              target="_blank"
+            >
+              Archives
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="">
+          
+            <a href="javascript:void(0);" v-else>Me</a>
+            <ul class="nav-menu--dropdown">
+              
+                <li>
+                  <a 
+                    href="https://github.com/sugarmix" 
+                    target="_blank"
+                  >
+                    GitHub
+                  </a>
+                </li>
+              
+                <li>
+                  <a 
+                    href="mailto:sugarmix.me@outlook.com" 
+                    target="_blank"
+                  >
+                    Mail
+                  </a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+      </ul>
+    </nav>
+    <i class="iconfont icon-menu"></i>
+  </header>
+</div>
+
+<script>
+  let links = document.querySelectorAll('.nav-item');
+  for(let link of links){
+    let childrenLink = link.querySelector('ul');
+    link.addEventListener('mouseenter', () => {
+      if(childrenLink) {
+        childrenLink.className = "nav-menu--dropdown active";
+      }
+    })
+    link.addEventListener('mouseleave', () => {
+      if(childrenLink) {
+        childrenLink.className = "nav-menu--dropdown";
+      }
+    })
+  }
+  let rootRealPath = getRealPath(window.location.pathname, true);
+  for(let link of links) {
+    let linkPath = link.getAttribute("data-path");
+    if(linkPath && getRealPath(linkPath, true) === rootRealPath) {
+      link.className = "nav-item hover";
+    }
+  }
+
+  let iconMenu = document.querySelector("i.iconfont.icon-menu");
+  let iconMenuClicked = true;
+  let navDOM = document.querySelector("nav.site-navigation");
+  iconMenu.addEventListener("click", () => {
+    iconMenuClicked 
+      ? navDOM.className = "site-navigation active"
+      : navDOM.className = "site-navigation";
+    iconMenuClicked = !iconMenuClicked;
+  })
+</script>
+
+            
+
+
+
+
+
+
+
+
+<div class="container post-index">
+
+  
+
+<div class="post">
+  <h1 class="article-title">
+    <span>RabbitMQ</span>
+  </h1>
+  <div class="article-top-meta">
+    <span>
+      发布 : 
+      2020-02-15
+    </span>
+    
+      <span>
+        分类 : 
+          <a href="/categories/数据库/">
+            数据库
+          </a>
+      </span>
+    
+  </div>
+
+  <div class="article-content">
+    <div class="markdown-body">
+      <h1 id="本文目的"><a href="#本文目的" class="headerlink" title="本文目的"></a>本文目的</h1><p>以尽可能小的篇幅，完整的描述RabbitMQ的相关概念。并且解释这些概念是如何在代码中体现的。所以这里不会提到关于服务器搭建的流程，有相关需求请参考其他文档。</p>
+<h1 id="相关概念"><a href="#相关概念" class="headerlink" title="相关概念"></a>相关概念</h1><p>生产者将<strong>带有标签的数据</strong>发送给<strong>消息中间件</strong>,消息中间件<strong>根据标签和某些规则</strong>把消息发送给消费者。</p>
+<p>在RabbitMQ中，与生产者直接接触的部分叫<code>Exchange</code>，携带的标签被称为为<code>Routing Key</code>。与消费者直接接触的部分是<code>Queue</code>。</p>
+<p>所以，生产者只需要发送带有<code>Routing Key</code>的<code>Message</code>到<code>Exchange</code>。消费者只需要固定接收某个<code>Queue</code>中的内容。</p>
+<p>消息从<code>Exchange</code>到<code>Queue</code>的过程在RabbitMQ内部完成。</p>
+<p>在一个消息被发送前，需要<strong>让RabbitMQ知道整个消息的路由过程</strong>，否则消息将被丢弃。这个路由过程<strong>可以</strong>在生产者中声明，也<strong>可以</strong>在消费者中声明。但是<strong>个人认为</strong>，让生产者消费者与消息中间件内部结构解耦合是个更好的策略，可以通过与生产者消费者<strong>完全无关</strong>的代码来<strong>声明消息的路由关系</strong>,<del>如果不想用代码，甚至可以直接在RabbitMQ Management里用鼠标点几下声明</del>。</p>
+<p>此外还有几个与业务逻辑关系不大的概念，但是在使用的时候经常出现，这里做一下简单的介绍。</p>
+<p>在创建完成RabbitMQ服务器后，默认有一个<code>guest</code>账户，这个账户可以访问一个名为<code>/</code>的<code>Virtual Host</code>。其中涉及了两个概念，<code>Users</code>和<code>Virtual Hosts</code>。<code>User</code>和<code>Virtual Host</code>可以独立创建，并且它们之间是多对多的关系。即一个用户可以拥有多个虚拟主机，一个虚拟主机也可以被多个用户拥有。</p>
+<blockquote>
+<p><strong><em>Channel:信道</em></strong><br>仅仅创建了客户端到Broker之间的连接后，客户端还是不能发送消息的。需要为每一个Connection创建Channel，AMQP协议规定只有通过Channel才能执行AMQP的命令。一个Connection可以包含多个Channel。之所以需要Channel，是因为TCP连接的建立和释放都是十分昂贵的，如果一个客户端每一个线程都需要与Broker交互，如果每一个线程都建立一个TCP连接，暂且不考虑TCP连接是否浪费，就算操作系统也无法承受每秒建立如此多的TCP连接，可以简单的理解为线程池中的一个个线程。</p>
+</blockquote>
+<p>消息的发送接收与路由，与程序指定的Channel无关。</p>
+<h1 id="RabbitMQ-Tutorials"><a href="#RabbitMQ-Tutorials" class="headerlink" title="RabbitMQ Tutorials"></a>RabbitMQ Tutorials</h1><p>这个教程覆盖了RabbitMQ的几种基本应用场景。</p>
+<h2 id="quot-Hello-World-quot"><a href="#quot-Hello-World-quot" class="headerlink" title="&quot;Hello World!&quot;"></a>&quot;Hello World!&quot;</h2><p><img src="/20200215181709/one-overall.png" alt></p>
+<p>一个生产者，一个消费者，一个队列<code>queue</code>，类型为<code>headers</code>的<code>Exchange</code>绑定到<code>queue</code>。<br>生产者发送消息，消费者接收到消息并处理。如果设置为<code>no_ack=1</code>,那么进入<code>queue</code>的消息会轮流发送给所有的消费者。不管处理消息的快慢，每个消费者需要处理的消息一样多。这样可能导致处理慢的消费者一直在处理，而处理的快在消费者闲着。<code>Work queues</code>解决了这个问题。</p>
+<h2 id="Work-queues"><a href="#Work-queues" class="headerlink" title="Work queues"></a>Work queues</h2><p><img src="/20200215181709/prefetch-count.png" alt></p>
+<p>为了实现，“谁没事干就把工作给谁”的效果。需要进行以下处理。<del>真实工作中这样对待员工的话，会让高效员工快速的成长，如果最终不能支付符合员工预期的薪水，这样优秀的员工必然跳槽。</del></p>
+<p>设置<code>qos</code>，让消费者最多持有有限(这里是1)个没有确认的消息。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">amqp_basic_qos(conn, channel, <span class="number">0</span>, <span class="comment">/*prefetch_count*/</span> <span class="number">1</span> , <span class="number">0</span>);</span><br></pre></td></tr></table></figure></p>
+<p>设置<code>no_ack=0</code>，收到<code>ack</code>前，消息保存在队列里。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">amqp_basic_consume(conn, channel, <span class="built_in">queue</span>, amqp_empty_bytes, <span class="number">0</span>, <span class="number">0</span>, <span class="comment">/*no_ack*/</span> <span class="number">0</span>, amqp_empty_table);</span><br></pre></td></tr></table></figure></p>
+<p>处理完消息发送<code>basic.ack</code>，删除队列中的消息。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">amqp_basic_ack(conn,channel,envelope.delivery_tag,<span class="number">0</span>);</span><br></pre></td></tr></table></figure></p>
+<h2 id="Publish-Subscribe"><a href="#Publish-Subscribe" class="headerlink" title="Publish/Subscribe"></a>Publish/Subscribe</h2><p><img src="/20200215181709/three-overall.png" alt></p>
+<p>这里介绍类型为<code>Fanout Exchange</code>。当消息被发送到这种Exchange时，所有绑定到这个<code>Exchange</code>的<code>queue</code>都将收到消息。<code>fanout</code>发送消息时完全忽略<code>routing key</code>和<code>binding key</code>。</p>
+<p>这里第一次出现<code>binding key</code>的概念，<code>binding key</code>为<code>Exchange</code>与<code>queue</code>联系的一个字符串。在不同的<code>Exchange</code>类型中有不同的用途。</p>
+<blockquote>
+<p><code>binding key</code> 是为了方便记忆的一种叫法，它实际上被称为<code>Exchange</code>和<code>queue</code>之间的<code>routing key</code>。但是生产者发送消息时携带的也叫<code>routing key</code>，为了不引起歧义，这里单独给它命名。</p>
+</blockquote>
+<h2 id="Routing"><a href="#Routing" class="headerlink" title="Routing"></a>Routing</h2><p><img src="/20200215181709/four.png" alt></p>
+<p>这里介绍类型为<code>Direct Exchange</code>。当<code>binding key</code>精确等于<code>routing key</code>时，消息会发送到<code>queue</code>。<code>Exchange</code>与同一个<code>queue</code>之间可能存在多个不同名字的<code>binding key</code>。同时也存在名字相同的<code>binding key</code>指向不同的<code>queue</code>。</p>
+<p>通过组合不同的<code>routing key</code>和<code>binding key</code>，可以实现比<code>fanout</code>更精细的控制。</p>
+<h2 id="Topics"><a href="#Topics" class="headerlink" title="Topics"></a>Topics</h2><p><img src="/20200215181709/five.png" alt></p>
+<p>对于上一部分内容，<code>routing key</code>和<code>binding key</code>完全一致才会转发，<code>Topics Exchange</code>则使用通配符，比<code>Direct Exchange</code>更加灵活。</p>
+<h2 id="Remote-Procedure-Call-RPC"><a href="#Remote-Procedure-Call-RPC" class="headerlink" title="Remote Procedure Call (RPC)"></a>Remote Procedure Call (RPC)</h2><p><img src="/20200215181709/six.png" alt></p>
+<p>这部分没有新概念的引入。只是对<code>RabbitMQ</code>的一种应用。上面的例子中，生产者和消费者关系分明。但是对于<code>RPC</code>来说，每个部分即是生产者也是消费者。约定发送请求的一方为<code>Client</code>，处理的一方为<code>Server</code>。</p>
+<p><code>Client</code>需要把消息发送给<code>Server</code>所绑定的队列，<code>Server</code>从队列中拿到消息处理后通过另一个队列回传给<code>Client</code>。<br>为了让<code>Server</code>知道<code>Client</code>的队列是什么，<code>Client</code>在发送消息的时候要携带自己所绑定的队列的标识，也就是所谓的<code>reply_to</code>字段。同时，<code>Client</code>在收到响应的时候，要跟自己发送的请求进行匹配，又占用了一个标识，也就是所谓的<code>correlation_id</code>字段。</p>
+<p>对于其他语言，用<code>Json</code>保存上面的结构化信息是个不错的选择，但是对于<code>C/C++</code>，可能用<a href="https://developers.google.com/protocol-buffers" target="_blank" rel="noopener">Protocol Buffers</a>是个更好的选择。</p>
+<h3 id="使用C语言实现的RPC-Demo"><a href="#使用C语言实现的RPC-Demo" class="headerlink" title="使用C语言实现的RPC Demo"></a>使用C语言实现的RPC Demo</h3><p><a href="rpc.proto">Protocol Buffers文件</a>：代替Json，传输效率更高。<br><a href="rpc_client.c">RPC客户端</a>：客户端传入一个整数。<br><a href="rpc_server.c">RPC服务端</a>：服务端接受这个整数，加一后返回给客户端。</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://www.jianshu.com/p/25816ae3d8db" target="_blank" rel="noopener">RabbitMQ基本概念</a><br><a href="https://www.cnblogs.com/hello-/articles/10345021.html" target="_blank" rel="noopener">rabbitMQ常见问题</a><br><a href="https://www.rabbitmq.com/getstarted.html" target="_blank" rel="noopener">RabbitMQ Tutorials</a><br><a href="http://rabbitmq.1065348.n5.nabble.com/rabbitmq-c-examples-producer-consumer-work-queue-not-working-td36207.html" target="_blank" rel="noopener">rabbitmq-c examples - producer/consumer work queue not working ???</a></p>
+    </div>
+  </div>
+  
+  
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+      <span>
+        
+          <i class="iconfont icon-06tags"></i>标签: 
+          
+          <span class="span--tag">
+            <a href="/tags/消息队列/">
+              #消息队列
+            </a>
+          </span>
+          
+        
+      </span>
+    </div>
+    <div class="article-meta pull-right">
+    </div>
+  </div>
+</div>
+
+
+
+
+  <nav class="post-navigation">
+    
+    <div class="nav-pre">
+      <i class="iconfont icon-prev"></i>
+      上一篇:
+      <a href="/20200202210032/" target="_self">开始使用WireGuard</a>
+    </div>
+    
+    
+    <div class="nav-next">
+      下一篇:
+      <a href="/20200407163610/" target="_self">谈一谈交叉编译</a>
+      <i class="iconfont icon-next"></i>
+    </div>
+    
+  </nav>
+  
+  
+
+</div>
+
+
+            <div class="back-to-top hidden">
+  <span>
+    <i class="iconfont icon-60"></i><span></span>%
+  </span>
+</div>
+
+<script>
+const updateIconToTop = percent => {
+  let dom = document.querySelector(".back-to-top span span");
+  dom.innerText = percent;
+  if(percent < 1) {
+    document.querySelector(".back-to-top").className = "back-to-top hidden";
+  } else {
+    document.querySelector(".back-to-top").className = "back-to-top";
+  }
+}
+
+const handleScoll = () => {
+  let isRunning = false;
+  return () => {
+    if (isRunning) return;
+    isRunning = true;
+    window.requestAnimationFrame(timestamp => {
+      let scrollTop =
+          document.documentElement.scrollTop || document.body.scrollTop,
+        scrollHeight =
+          document.documentElement.scrollHeight ||
+          document.body.scrollHeight,
+        clientHeight =
+          document.documentElement.clientHeight ||
+          document.body.clientHeight;
+      isRunning = false;
+      if (scrollTop <= 1) {
+        updateIconToTop(0);
+        return;
+      }
+      if (scrollTop + clientHeight >= scrollHeight) {
+        updateIconToTop(100);
+      } else {
+        updateIconToTop(parseInt(
+          100 * scrollTop / (scrollHeight - clientHeight),
+          10
+        ));
+      }
+    });
+  };
+}
+
+const backToTop = () => {
+  let scrollTop =
+      document.documentElement.scrollTop || document.body.scrollTop,
+    delay = 10,
+    time = 200;
+  if (scrollTop <= 20) {
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    return;
+  }
+  let step = Math.ceil(scrollTop * delay / time);
+  let timer = setInterval(() => {
+    scrollTop =
+      document.documentElement.scrollTop || document.body.scrollTop;
+    if (scrollTop - step <= 0) {
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+      clearInterval(timer);
+    } else {
+      document.documentElement.scrollTop = scrollTop - step;
+      document.body.scrollTop = scrollTop - step;
+    }
+  }, delay);
+}
+
+document.addEventListener("scroll", handleScoll(), false);
+
+document.querySelector(".back-to-top").addEventListener("click", backToTop, false);
+
+</script>
+        </div>
+        
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+<script>
+  (() => {
+    const mathjaxConfig = {
+      showProcessingMessages: false, //关闭js加载过程信息
+      messageStyle: "none", //不显示信息
+      jax: ["input/TeX", "output/HTML-CSS"],
+      tex2jax: {
+        inlineMath: [["$", "$"], ["\\(", "\\)"]], //行内公式选择符
+        displayMath: [["$$", "$$"], ["\\[", "\\]"]], //段内公式选择符
+        skipTags: ["script", "noscript", "style", "textarea", "pre", "code", "a"] //避开某些标签
+      },
+      "HTML-CSS": {
+        availableFonts: ["STIX", "TeX"], //可选字体
+        showMathMenu: false //关闭右击菜单显示
+      }
+    }
+
+    let mathjaxInterval = setInterval(() => {
+      if(!window.MathJax){
+        return;
+      }
+      window.MathJax.Hub.Config(mathjaxConfig)
+      window.MathJax.Hub.Queue(["Typeset", MathJax.Hub, document.getElementById('app')])
+
+      clearInterval(mathjaxInterval)
+    }, 10)    
+  })()
+</script>
+
+        
+    </body>
+</html>

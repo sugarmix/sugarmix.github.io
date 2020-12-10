@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  <meta name="author" content="sugarmix">
+  
+  
+  
+  <title>MySQL索引 | SUGARMIX</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="数据库,翻译,MySQL,">
+  
+
+  
+    <meta name="description" content="真正的大师，永远都怀着一颗学徒的心">
+  
+
+  
+    <link rel="alternate" href="atom.xml" title="SUGARMIX" type="application/atom+xml">
+  
+
+  
+    <link rel="icon" href="/images/favicon.ico">
+    <link rel="apple-touch-icon" href="/images/touch-icon.png">
+  
+
+  <link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/icon/iconfont.css">
+<link rel="stylesheet" href="/css/github-markdown.css">
+<link rel="stylesheet" href="/css/gitalk.css">
+<link rel="stylesheet" href="/css/highlight.css">
+  
+  <script src="/js/util.js"></script>
+<script src="/js/hidden_header.js"></script>
+  
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js" async></script>
+</head>
+
+    <body>
+        
+        <div id="app">
+            <div class="header-wrap">
+  <header>
+    <div class="site-brand">
+      <div class="site-title">
+        <a href="/">SUGARMIX</a>
+      </div>
+    </div>
+    <nav class="site-navigation">
+      <ul class="nav-menu">
+      
+        <li class="nav-item" data-path="https://paste.sugarmix.me">
+          
+            <a 
+              href="https://paste.sugarmix.me"
+              target="_blank"
+            >
+              Pastbin
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          
+            <a 
+              href="/archives/"
+              target="_blank"
+            >
+              Archives
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="">
+          
+            <a href="javascript:void(0);" v-else>Me</a>
+            <ul class="nav-menu--dropdown">
+              
+                <li>
+                  <a 
+                    href="https://github.com/sugarmix" 
+                    target="_blank"
+                  >
+                    GitHub
+                  </a>
+                </li>
+              
+                <li>
+                  <a 
+                    href="mailto:sugarmix.me@outlook.com" 
+                    target="_blank"
+                  >
+                    Mail
+                  </a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+      </ul>
+    </nav>
+    <i class="iconfont icon-menu"></i>
+  </header>
+</div>
+
+<script>
+  let links = document.querySelectorAll('.nav-item');
+  for(let link of links){
+    let childrenLink = link.querySelector('ul');
+    link.addEventListener('mouseenter', () => {
+      if(childrenLink) {
+        childrenLink.className = "nav-menu--dropdown active";
+      }
+    })
+    link.addEventListener('mouseleave', () => {
+      if(childrenLink) {
+        childrenLink.className = "nav-menu--dropdown";
+      }
+    })
+  }
+  let rootRealPath = getRealPath(window.location.pathname, true);
+  for(let link of links) {
+    let linkPath = link.getAttribute("data-path");
+    if(linkPath && getRealPath(linkPath, true) === rootRealPath) {
+      link.className = "nav-item hover";
+    }
+  }
+
+  let iconMenu = document.querySelector("i.iconfont.icon-menu");
+  let iconMenuClicked = true;
+  let navDOM = document.querySelector("nav.site-navigation");
+  iconMenu.addEventListener("click", () => {
+    iconMenuClicked 
+      ? navDOM.className = "site-navigation active"
+      : navDOM.className = "site-navigation";
+    iconMenuClicked = !iconMenuClicked;
+  })
+</script>
+
+            
+
+
+
+
+
+
+
+
+<div class="container post-index">
+
+  
+
+<div class="post">
+  <h1 class="article-title">
+    <span>MySQL索引</span>
+  </h1>
+  <div class="article-top-meta">
+    <span>
+      发布 : 
+      2019-02-26
+    </span>
+    
+      <span>
+        分类 : 
+          <a href="/categories/数据库/">
+            数据库
+          </a>
+      </span>
+    
+  </div>
+
+  <div class="article-content">
+    <div class="markdown-body">
+      <p>大多数MySQL索引(PRIMARY KEY，UNIQUE，INDEX和FULLTEXT)都存储在<a href="#B-tree索引">B树</a>中。例外：空间数据类型的索引使用R树;MEMORY表支持hash indexes;InnoDB的FULLTEXT索引使用inverted lists。</p>
+<h1 id="B-Tree索引和Hash索引对比"><a href="#B-Tree索引和Hash索引对比" class="headerlink" title="B-Tree索引和Hash索引对比"></a>B-Tree索引和Hash索引对比</h1><p>了解B树和哈希数据结构有助于预测不同查询在索引中使用这些数据结构的不同存储引擎上的执行情况，特别是对于允许您选择B树或哈希索引的MEMORY存储引擎。</p>
+<h2 id="B-Tree索引的特点"><a href="#B-Tree索引的特点" class="headerlink" title="B-Tree索引的特点"></a>B-Tree索引的特点</h2><p>B树索引可用于使用 =，&gt;，&gt; =，&lt;，&lt;=或 BETWEEN 运算符的表达式中的列比较。如果 LIKE 的参数是不以通配符开头的常量字符串，则索引也可用于 LIKE 比较。例如，以下 SELECT 语句使用索引：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> tbl_name <span class="keyword">WHERE</span> key_col <span class="keyword">LIKE</span> <span class="string">'Patrick%'</span>;</span><br><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> tbl_name <span class="keyword">WHERE</span> key_col <span class="keyword">LIKE</span> <span class="string">'Pat%_ck%'</span>;</span><br></pre></td></tr></table></figure>
+<p>在第一个语句中，只考虑带有 <strong>&#39;Patrick&#39;&lt;= key_col &lt;&#39;Patrick&#39;</strong> 的行。在第二个语句中，仅考虑具有 <strong>&#39;Pat&#39;&lt;= key_col &lt;&#39;Pau&#39;</strong> 的行。</p>
+<p>以下 SELECT 语句不使用索引：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> tbl_name <span class="keyword">WHERE</span> key_col <span class="keyword">LIKE</span> <span class="string">'%Patrick%'</span>;</span><br><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> tbl_name <span class="keyword">WHERE</span> key_col <span class="keyword">LIKE</span> other_col;</span><br></pre></td></tr></table></figure>
+<p>在第一个语句中，LIKE 值以通配符开头。在第二个语句中，LIKE 值不是常量。</p>
+<p>如果您使用... <strong>LIKE &#39;%<em>string</em>%&#39;</strong> 且 <strong><em>string</em></strong> 超过三个字符，MySQL使用<a href="https://zh.wikipedia.org/wiki/Boyer-Moore字符串搜索算法" target="_blank" rel="noopener">Turbo Boyer-Moore算法</a>初始化字符串的模式，然后使用此模式更快地执行搜索。</p>
+<p>如果 <strong><em>col_name</em></strong> 被索引，则使用 <strong><em>col_name IS NULL</em></strong> 的搜索使用索引。</p>
+<p>不跨越 WHERE 子句中所有 AND 级别的任何索引不用于优化查询。换句话说，为了能够使用索引，必须在每个 AND 组中使用索引的前缀(被 OR 分割的短语中，至少要有一个子句使用索引前缀)。</p>
+<p>以下 WHERE 子句使用索引：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> tbl_name <span class="keyword">WHERE</span> index_part1=<span class="number">1</span> <span class="keyword">AND</span> index_part2=<span class="number">2</span> <span class="keyword">AND</span> other_column=<span class="number">3</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* index = 1 OR index = 2 */</span></span><br><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> tbl_name <span class="keyword">WHERE</span> <span class="keyword">index</span>=<span class="number">1</span> <span class="keyword">OR</span> A=<span class="number">10</span> <span class="keyword">AND</span> <span class="keyword">index</span>=<span class="number">2</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* optimized like "index_part1='hello'" */</span></span><br><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> tbl_name <span class="keyword">WHERE</span> index_part1=<span class="string">'hello'</span> <span class="keyword">AND</span> index_part3=<span class="number">5</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* Can use index on index1 but not on index2 or index3 */</span></span><br><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> tbl_name <span class="keyword">WHERE</span> index1=<span class="number">1</span> <span class="keyword">AND</span> index2=<span class="number">2</span> <span class="keyword">OR</span> index1=<span class="number">3</span> <span class="keyword">AND</span> index3=<span class="number">3</span>;</span><br></pre></td></tr></table></figure>
+<p>以下 WHERE 子句不使用索引</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* index_part1 is not used */</span></span><br><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> tbl_name <span class="keyword">WHERE</span> index_part2=<span class="number">1</span> <span class="keyword">AND</span> index_part3=<span class="number">2</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*  Index is not used in both parts of the WHERE clause  */</span></span><br><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> tbl_name <span class="keyword">WHERE</span> <span class="keyword">index</span>=<span class="number">1</span> <span class="keyword">OR</span> A=<span class="number">10</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* No index spans all rows  */</span></span><br><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> tbl_name <span class="keyword">WHERE</span> index_part1=<span class="number">1</span> <span class="keyword">OR</span> index_part2=<span class="number">10</span></span><br></pre></td></tr></table></figure>
+<p>有时候，即使存在索引，MySQL也不使用索引。比如，当优化器预计使用索引将扫描表格中大多数的行(在这种情况下，表扫描可能会快得多，因为它需要较少的搜索)时，就不使用索引。如果查询中使用 LIMIT 获取结果中的一部分，则一定会使用索引，因为仅查找很少的几行，使用索引速度更快。</p>
+<h2 id="Hash索引的特点"><a href="#Hash索引的特点" class="headerlink" title="Hash索引的特点"></a>Hash索引的特点</h2><p>散列索引与刚才讨论的特征有些不同：</p>
+<ul>
+<li>它们仅用于使用=或&lt;=&gt;运算符的相等比较(但速度非常快)。它们不用于比较运算符，例如，使用 &lt; 查找到一系列值。依赖于这种类型的单值查找的系统被称为“键值存储”;要将MySQL用于此类应用程序，请尽可能使用哈希索引。</li>
+<li>优化器无法使用哈希索引来加速 ORDER BY 操作。(此类索引不能用于按顺序搜索下一个条目。)</li>
+<li>MySQL无法确定两个值之间大约有多少行(范围优化器使用它来决定使用哪个索引)。如果将MyISAM或InnoDB表更改为哈希索引的MEMORY表，则可能会影响某些查询。</li>
+<li>只有整个键可用于搜索行。(使用B树索引，键的任何最左边的前缀都可用于查找行。)</li>
+</ul>
+<h1 id="多列索引"><a href="#多列索引" class="headerlink" title="多列索引"></a>多列索引</h1><p>MySQL可以创建复合索引(即多列索引)。索引最多可包含16列。对于某些数据类型，您可以索引列的前缀。</p>
+<p>MySQL可以对测试索引中所有列的查询使用多列索引，或者只测试第一列，前两列，前三列等的查询。如果在索引定义中以正确的顺序指定列，则单个复合索引可以加速同一表上的多种查询。</p>
+<p>多列索引可以视为排序数组，其行包含通过连接索引列的值创建的值。</p>
+<blockquote>
+<h3 id="笔记"><a href="#笔记" class="headerlink" title="笔记"></a>笔记</h3><p>作为复合索引的替代方法，您可以根据其他列的信息引入“散列”列。如果此列很短，相当独特且已编制索引，则它可能比许多列上的“宽”索引更快。在MySQL中，使用这个额外的列很容易：<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> tbl_name</span><br><span class="line">  <span class="keyword">WHERE</span> hash_col=<span class="keyword">MD5</span>(<span class="keyword">CONCAT</span>(val1,val2))</span><br><span class="line">  <span class="keyword">AND</span> col1=val1 <span class="keyword">AND</span> col2=val2;</span><br></pre></td></tr></table></figure></p>
+</blockquote>
+<p>假设一个表具有以下规范：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> <span class="keyword">test</span> (</span><br><span class="line">    <span class="keyword">id</span>         <span class="built_in">INT</span> <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">    last_name  <span class="built_in">CHAR</span>(<span class="number">30</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">    first_name <span class="built_in">CHAR</span>(<span class="number">30</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">    PRIMARY <span class="keyword">KEY</span> (<span class="keyword">id</span>),</span><br><span class="line">    <span class="keyword">INDEX</span> <span class="keyword">name</span> (last_name,first_name)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<p>name索引是last_name和first_name列的索引。该索引可用于查询中的查找，这些查询为last_name和first_name值的组合指定已知范围内的值。它还可以用于仅指定last_name值的查询，因为该列是索引的最左前缀。因此，名称索引用于以下查询中的查找：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> <span class="keyword">test</span> <span class="keyword">WHERE</span> last_name=<span class="string">'Widenius'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> <span class="keyword">test</span></span><br><span class="line">  <span class="keyword">WHERE</span> last_name=<span class="string">'Widenius'</span> <span class="keyword">AND</span> first_name=<span class="string">'Michael'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> <span class="keyword">test</span></span><br><span class="line">  <span class="keyword">WHERE</span> last_name=<span class="string">'Widenius'</span></span><br><span class="line">  <span class="keyword">AND</span> (first_name=<span class="string">'Michael'</span> <span class="keyword">OR</span> first_name=<span class="string">'Monty'</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> <span class="keyword">test</span></span><br><span class="line">  <span class="keyword">WHERE</span> last_name=<span class="string">'Widenius'</span></span><br><span class="line">  <span class="keyword">AND</span> first_name &gt;=<span class="string">'M'</span> <span class="keyword">AND</span> first_name &lt; <span class="string">'N'</span>;</span><br></pre></td></tr></table></figure>
+<p>但是，name索引不用于以下查询中的查找：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> <span class="keyword">test</span> <span class="keyword">WHERE</span> first_name=<span class="string">'Michael'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> <span class="keyword">test</span></span><br><span class="line">  <span class="keyword">WHERE</span> last_name=<span class="string">'Widenius'</span> <span class="keyword">OR</span> first_name=<span class="string">'Michael'</span>;</span><br></pre></td></tr></table></figure>
+<p>假设您发出以下SELECT语句：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> tbl_name</span><br><span class="line">  <span class="keyword">WHERE</span> col1=val1 <span class="keyword">AND</span> col2=val2</span><br></pre></td></tr></table></figure>
+<p>如果col1和col2上存在多列索引，则可以直接获取相应的行。如果col1和col2上存在单独的单列索引，则优化程序会尝试使用索引合并优化。或者尝试通过确定哪个索引排除更多行并使用该索引来获取行来查找限制性最强的索引。</p>
+<p>如果表具有多列索引，则优化程序可以使用索引的任何最左前缀来查找行。例如，如果在(col1，col2，col3)上有三列索引，则在(col1)，(col1，col2)和(col1，col2，col3)上可以使用索引搜索功能。</p>
+<p>如果列不形成索引的最左前缀，则MySQL无法使用索引执行查找。假设您有这里显示的SELECT语句：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* use the index. */</span></span><br><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> tbl_name <span class="keyword">WHERE</span> col1=val1;</span><br><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> tbl_name <span class="keyword">WHERE</span> col1=val1 <span class="keyword">AND</span> col2=val2;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* do not use an index */</span></span><br><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> tbl_name <span class="keyword">WHERE</span> col2=val2;</span><br><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> tbl_name <span class="keyword">WHERE</span> col2=val2 <span class="keyword">AND</span> col3=val3;</span><br></pre></td></tr></table></figure>
+<h1 id="B-tree索引"><a href="#B-tree索引" class="headerlink" title="B-tree索引"></a>B-tree索引</h1><p>树在数据库索引中很常用的树数据结构。它始终保持数据有序，从而能够快速查找完全匹配(等于运算符)和范围(例如，大于，小于和BETWEEN运算符)。这种类型的索引可用于大多数存储引擎，例如InnoDB和MyISAM。</p>
+<p>因为B树节点可以有许多子节点，所以B树与二叉树不同，二叉树每个节点限制为2个子节点。</p>
+<p>与<a href="#hash索引">哈希索引</a>形成对比，哈希索引仅在<a href="/20190225173604/#Memory存储引擎">MEMORY存储引擎</a>中可用。MEMORY存储引擎也可以使用B树索引，如果某些查询使用范围运算符，则应为MEMORY表选择B树索引。</p>
+<p>术语B树的使用旨在作为一般索引设计类的参考。由于经典B树设计中不存在的复杂性，MySQL存储引擎使用的B树结构可以被视为变体。</p>
+<h1 id="hash索引"><a href="#hash索引" class="headerlink" title="hash索引"></a>hash索引</h1><p>哈希索引仅能用于相等运算符的查询，而不能用于范围运算符(如大于或BETWEEN)。它可用于MEMORY表。尽管由于历史原因，哈希索引是MEMORY表的默认值，但该存储引擎还支持B树索引，这对于通用查询来说通常是更好的选择。MySQL包含此索引类型的变体，即自适应哈希索引，如果需要，它将根据运行时条件自动构建InnoDB表。</p>
+<h1 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h1><p><a href="https://dev.mysql.com/doc/refman/5.6/en/mysql-indexes.html" target="_blank" rel="noopener">How MySQL Uses Indexes</a><br><a href="https://dev.mysql.com/doc/refman/5.6/en/index-btree-hash.html" target="_blank" rel="noopener">Comparison of B-Tree and Hash Indexes</a><br><a href="https://dev.mysql.com/doc/refman/5.6/en/multiple-column-indexes.html" target="_blank" rel="noopener">Multiple-Column Indexes</a></p>
+    </div>
+  </div>
+  
+  
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+      <span>
+        
+          <i class="iconfont icon-06tags"></i>标签: 
+          
+          <span class="span--tag">
+            <a href="/tags/翻译/">
+              #翻译
+            </a>
+          </span>
+          
+          <span class="span--tag">
+            <a href="/tags/MySQL/">
+              #MySQL
+            </a>
+          </span>
+          
+        
+      </span>
+    </div>
+    <div class="article-meta pull-right">
+    </div>
+  </div>
+</div>
+
+
+
+
+  <nav class="post-navigation">
+    
+    <div class="nav-pre">
+      <i class="iconfont icon-prev"></i>
+      上一篇:
+      <a href="/20190225173604/" target="_self">MySQL存储引擎的特点</a>
+    </div>
+    
+    
+    <div class="nav-next">
+      下一篇:
+      <a href="/20190301160919/" target="_self">MySQL语句执行过程简介</a>
+      <i class="iconfont icon-next"></i>
+    </div>
+    
+  </nav>
+  
+  
+
+</div>
+
+
+            <div class="back-to-top hidden">
+  <span>
+    <i class="iconfont icon-60"></i><span></span>%
+  </span>
+</div>
+
+<script>
+const updateIconToTop = percent => {
+  let dom = document.querySelector(".back-to-top span span");
+  dom.innerText = percent;
+  if(percent < 1) {
+    document.querySelector(".back-to-top").className = "back-to-top hidden";
+  } else {
+    document.querySelector(".back-to-top").className = "back-to-top";
+  }
+}
+
+const handleScoll = () => {
+  let isRunning = false;
+  return () => {
+    if (isRunning) return;
+    isRunning = true;
+    window.requestAnimationFrame(timestamp => {
+      let scrollTop =
+          document.documentElement.scrollTop || document.body.scrollTop,
+        scrollHeight =
+          document.documentElement.scrollHeight ||
+          document.body.scrollHeight,
+        clientHeight =
+          document.documentElement.clientHeight ||
+          document.body.clientHeight;
+      isRunning = false;
+      if (scrollTop <= 1) {
+        updateIconToTop(0);
+        return;
+      }
+      if (scrollTop + clientHeight >= scrollHeight) {
+        updateIconToTop(100);
+      } else {
+        updateIconToTop(parseInt(
+          100 * scrollTop / (scrollHeight - clientHeight),
+          10
+        ));
+      }
+    });
+  };
+}
+
+const backToTop = () => {
+  let scrollTop =
+      document.documentElement.scrollTop || document.body.scrollTop,
+    delay = 10,
+    time = 200;
+  if (scrollTop <= 20) {
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    return;
+  }
+  let step = Math.ceil(scrollTop * delay / time);
+  let timer = setInterval(() => {
+    scrollTop =
+      document.documentElement.scrollTop || document.body.scrollTop;
+    if (scrollTop - step <= 0) {
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+      clearInterval(timer);
+    } else {
+      document.documentElement.scrollTop = scrollTop - step;
+      document.body.scrollTop = scrollTop - step;
+    }
+  }, delay);
+}
+
+document.addEventListener("scroll", handleScoll(), false);
+
+document.querySelector(".back-to-top").addEventListener("click", backToTop, false);
+
+</script>
+        </div>
+        
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+<script>
+  (() => {
+    const mathjaxConfig = {
+      showProcessingMessages: false, //关闭js加载过程信息
+      messageStyle: "none", //不显示信息
+      jax: ["input/TeX", "output/HTML-CSS"],
+      tex2jax: {
+        inlineMath: [["$", "$"], ["\\(", "\\)"]], //行内公式选择符
+        displayMath: [["$$", "$$"], ["\\[", "\\]"]], //段内公式选择符
+        skipTags: ["script", "noscript", "style", "textarea", "pre", "code", "a"] //避开某些标签
+      },
+      "HTML-CSS": {
+        availableFonts: ["STIX", "TeX"], //可选字体
+        showMathMenu: false //关闭右击菜单显示
+      }
+    }
+
+    let mathjaxInterval = setInterval(() => {
+      if(!window.MathJax){
+        return;
+      }
+      window.MathJax.Hub.Config(mathjaxConfig)
+      window.MathJax.Hub.Queue(["Typeset", MathJax.Hub, document.getElementById('app')])
+
+      clearInterval(mathjaxInterval)
+    }, 10)    
+  })()
+</script>
+
+        
+    </body>
+</html>

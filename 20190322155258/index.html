@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  <meta name="author" content="sugarmix">
+  
+  
+  
+  <title>MySQL语句执行顺序简介 | SUGARMIX</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="数据库,MySQL,">
+  
+
+  
+    <meta name="description" content="真正的大师，永远都怀着一颗学徒的心">
+  
+
+  
+    <link rel="alternate" href="atom.xml" title="SUGARMIX" type="application/atom+xml">
+  
+
+  
+    <link rel="icon" href="/images/favicon.ico">
+    <link rel="apple-touch-icon" href="/images/touch-icon.png">
+  
+
+  <link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/icon/iconfont.css">
+<link rel="stylesheet" href="/css/github-markdown.css">
+<link rel="stylesheet" href="/css/gitalk.css">
+<link rel="stylesheet" href="/css/highlight.css">
+  
+  <script src="/js/util.js"></script>
+<script src="/js/hidden_header.js"></script>
+  
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js" async></script>
+</head>
+
+    <body>
+        
+        <div id="app">
+            <div class="header-wrap">
+  <header>
+    <div class="site-brand">
+      <div class="site-title">
+        <a href="/">SUGARMIX</a>
+      </div>
+    </div>
+    <nav class="site-navigation">
+      <ul class="nav-menu">
+      
+        <li class="nav-item" data-path="https://paste.sugarmix.me">
+          
+            <a 
+              href="https://paste.sugarmix.me"
+              target="_blank"
+            >
+              Pastbin
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          
+            <a 
+              href="/archives/"
+              target="_blank"
+            >
+              Archives
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="">
+          
+            <a href="javascript:void(0);" v-else>Me</a>
+            <ul class="nav-menu--dropdown">
+              
+                <li>
+                  <a 
+                    href="https://github.com/sugarmix" 
+                    target="_blank"
+                  >
+                    GitHub
+                  </a>
+                </li>
+              
+                <li>
+                  <a 
+                    href="mailto:sugarmix.me@outlook.com" 
+                    target="_blank"
+                  >
+                    Mail
+                  </a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+      </ul>
+    </nav>
+    <i class="iconfont icon-menu"></i>
+  </header>
+</div>
+
+<script>
+  let links = document.querySelectorAll('.nav-item');
+  for(let link of links){
+    let childrenLink = link.querySelector('ul');
+    link.addEventListener('mouseenter', () => {
+      if(childrenLink) {
+        childrenLink.className = "nav-menu--dropdown active";
+      }
+    })
+    link.addEventListener('mouseleave', () => {
+      if(childrenLink) {
+        childrenLink.className = "nav-menu--dropdown";
+      }
+    })
+  }
+  let rootRealPath = getRealPath(window.location.pathname, true);
+  for(let link of links) {
+    let linkPath = link.getAttribute("data-path");
+    if(linkPath && getRealPath(linkPath, true) === rootRealPath) {
+      link.className = "nav-item hover";
+    }
+  }
+
+  let iconMenu = document.querySelector("i.iconfont.icon-menu");
+  let iconMenuClicked = true;
+  let navDOM = document.querySelector("nav.site-navigation");
+  iconMenu.addEventListener("click", () => {
+    iconMenuClicked 
+      ? navDOM.className = "site-navigation active"
+      : navDOM.className = "site-navigation";
+    iconMenuClicked = !iconMenuClicked;
+  })
+</script>
+
+            
+
+
+
+
+
+
+
+
+<div class="container post-index">
+
+  
+
+<div class="post">
+  <h1 class="article-title">
+    <span>MySQL语句执行顺序简介</span>
+  </h1>
+  <div class="article-top-meta">
+    <span>
+      发布 : 
+      2019-03-22
+    </span>
+    
+      <span>
+        分类 : 
+          <a href="/categories/数据库/">
+            数据库
+          </a>
+      </span>
+    
+  </div>
+
+  <div class="article-content">
+    <div class="markdown-body">
+      <p>首先给出如下语句，并对该语句的执行过程进行解释。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> ...</span><br><span class="line"><span class="keyword">FROM</span> ...</span><br><span class="line"><span class="keyword">WHERE</span> ...</span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span> ...</span><br><span class="line"><span class="keyword">HAVING</span> ...</span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> ...</span><br></pre></td></tr></table></figure>
+<p>与SQL语句的书写顺序并不是一样的，而是按照下面的顺序来执行</p>
+<ol>
+<li>FROM: 需要从哪个数据表检索数据</li>
+<li>WHERE: 过滤表中数据的条件</li>
+<li>GROUP BY: 如何将上面过滤出的数据分组 </li>
+<li>HAVING: 对上面已经分组的数据进行过滤的条件  </li>
+<li>SELECT: 查看结果集中的哪个列，或列的计算结果 </li>
+<li>ORDER BY: 按照什么样的顺序来查看返回的数据</li>
+</ol>
+<h1 id="FROM"><a href="#FROM" class="headerlink" title="FROM"></a>FROM</h1><p>FROM后跟需要查询的表，可能是一个，也可能是多个。对于多个表的查询，不得不提到JOIN(连接)，能否合理使用JOIN也影响了执行效率的高低。</p>
+<p>首先对给出连接操作的种类：<strong>交叉连接</strong>、<strong>内连接</strong>、<strong>外连接</strong>、<strong>自然连接</strong>和<strong>直接连接</strong>。</p>
+<h2 id="交叉连接"><a href="#交叉连接" class="headerlink" title="交叉连接"></a>交叉连接</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">FROM table1,table2</span><br><span class="line"><span class="comment">-- 等价于</span></span><br><span class="line">FROM table1 CROSS JOIN table2</span><br></pre></td></tr></table></figure>
+<p>交叉连接产生的是两个表的笛卡尔积，交叉链接可能产生巨大的表，慎用。</p>
+<blockquote>
+<p>笛卡尔积：两个集合X和Y的笛卡尓积（Cartesian product），又称直积，表示为X × Y，第一个对象是X的成员而第二个对象是Y的所有可能有序对的其中一个成员</p>
+</blockquote>
+<h2 id="内连接"><a href="#内连接" class="headerlink" title="内连接"></a>内连接</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 一定要有 ON</span></span><br><span class="line">FROM table1 JOIN table2 ON table1.col1=table2.col2</span><br></pre></td></tr></table></figure>
+<p>如果不跟<code>ON</code>，则返回笛卡尔积。(与外链接没有区别吗？)<br><code>ON</code>可以被<code>WHERE</code>代替，但是<code>ON</code>效率更高。使用<code>WHERE</code>相当于先返回表格的笛卡尔积，再约束查询结果(猜测，带验证)。</p>
+<h2 id="外连接"><a href="#外连接" class="headerlink" title="外连接"></a>外连接</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 一定显示table1中的所有行，若table2中没有与table1匹配的，则显示null</span></span><br><span class="line">FROM table1 LEFT JOIN table2 on ...</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 一定显示table2中的所有行，若table1中没有与table2匹配的，则显示null</span></span><br><span class="line">FROM table1 RIGHT JOIN table2 on ...</span><br></pre></td></tr></table></figure>
+<h2 id="自然连接"><a href="#自然连接" class="headerlink" title="自然连接"></a>自然连接</h2><p>不允许指定<code>ON</code>，自动查找相同的列名进行连接。</p>
+<h2 id="直接连接"><a href="#直接连接" class="headerlink" title="直接连接"></a>直接连接</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 强制以table1为基本表</span></span><br><span class="line">FROM table1 STRAIGHT_JOIN table2</span><br></pre></td></tr></table></figure>
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><p>参考手册中给出的关于JOIN有关的操作</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">table_references:</span><br><span class="line">    escaped_table_reference [, escaped_table_reference] ...</span><br><span class="line"></span><br><span class="line">escaped_table_reference:</span><br><span class="line">    table_reference</span><br><span class="line">  | &#123; OJ table_reference &#125;</span><br><span class="line"></span><br><span class="line">table_reference:</span><br><span class="line">    table_factor</span><br><span class="line">  | joined_table</span><br><span class="line"></span><br><span class="line">table_factor:</span><br><span class="line">    tbl_name [PARTITION (partition_names)]</span><br><span class="line">        [[AS] alias] [index_hint_list]</span><br><span class="line">  | table_subquery [AS] alias [(col_list)]</span><br><span class="line">  | ( table_references )</span><br><span class="line"></span><br><span class="line">joined_table:</span><br><span class="line">    table_reference &#123;[INNER | CROSS] JOIN | STRAIGHT_JOIN&#125; table_factor [join_specification]</span><br><span class="line">  | table_reference &#123;LEFT|RIGHT&#125; [OUTER] JOIN table_reference join_specification</span><br><span class="line">  | table_reference NATURAL [INNER | &#123;LEFT|RIGHT&#125; [OUTER]] JOIN table_factor</span><br><span class="line"></span><br><span class="line">join_specification:</span><br><span class="line">    ON search_condition</span><br><span class="line">  | USING (join_column_list)</span><br><span class="line"></span><br><span class="line">join_column_list:</span><br><span class="line">    column_name [, column_name] ...</span><br><span class="line"></span><br><span class="line">index_hint_list:</span><br><span class="line">    index_hint [, index_hint] ...</span><br><span class="line"></span><br><span class="line">index_hint:</span><br><span class="line">    USE &#123;INDEX|KEY&#125;</span><br><span class="line">      [FOR &#123;JOIN|ORDER BY|GROUP BY&#125;] ([index_list])</span><br><span class="line">  | &#123;IGNORE|FORCE&#125; &#123;INDEX|KEY&#125;</span><br><span class="line">      [FOR &#123;JOIN|ORDER BY|GROUP BY&#125;] (index_list)</span><br><span class="line"></span><br><span class="line">index_list:</span><br><span class="line">    index_name [, index_name] ...</span><br></pre></td></tr></table></figure>
+<h1 id="WHERE"><a href="#WHERE" class="headerlink" title="WHERE"></a>WHERE</h1><p>根据指定条件是否要将结果返回查询的表中。在<a href="/20190226104504/">MySQL索引</a>中讲了一些WHERE的优化。<br>此外对语句中的AND、OR、=也可以进行化简，这类化简属于数理逻辑内容，仅列出一个作为参考。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(b&gt;=5 AND b=5) OR (b=6 AND 5=5) OR (b=7 AND 5=6)</span><br><span class="line"><span class="comment">-- 化简为</span></span><br><span class="line">b=5 OR b=6</span><br></pre></td></tr></table></figure>
+<h1 id="GROUP-BY"><a href="#GROUP-BY" class="headerlink" title="GROUP BY"></a>GROUP BY</h1><p>对结果分组</p>
+<h1 id="HAVING"><a href="#HAVING" class="headerlink" title="HAVING"></a>HAVING</h1><p>对上面已经分组的数据进行过滤的条件，此时是在被WHERE过滤后的表格进行操作，为了效率，尽可能的使用WHERE。若查询过程中出现聚合语句(SUM,MIN,MAX,AVG,COUNT)，则需要使用HAVING。</p>
+<h1 id="SELECT"><a href="#SELECT" class="headerlink" title="SELECT"></a>SELECT</h1><p>查看结果集中的哪个列，或列的计算结果。如果要显示的结果和查询过程中只使用了索引字段，则结果仅索引就可以返回，而不需要去查表。</p>
+<h1 id="ORDER-BY"><a href="#ORDER-BY" class="headerlink" title="ORDER BY"></a>ORDER BY</h1><p>按照什么样的顺序来查看返回的数据，排序操作必定消耗大量资源。</p>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p><a href="https://www.cnblogs.com/huminxxl/p/3149097.html" target="_blank" rel="noopener">SQL语句执行顺序</a><br><a href="https://blog.csdn.net/u011277123/article/details/54863371" target="_blank" rel="noopener">MySQL数据高级查询之连接查询、联合查询、子查询</a><br><a href="https://huoding.com/2013/06/04/261" target="_blank" rel="noopener">MySQL优化的奇技淫巧之STRAIGHT_JOIN</a><br><a href="https://dev.mysql.com/doc/refman/8.0/en/join.html" target="_blank" rel="noopener">JOIN Syntax</a><br><a href="http://www.orczhou.com/index.php/2013/04/how-mysql-choose-index-in-a-join/" target="_blank" rel="noopener">MySQL优化器如何选择索引和JOIN顺序</a><br><a href="https://blog.csdn.net/qmhball/article/details/7941638" target="_blank" rel="noopener">sql语句中WHERE与HAVING的区别</a></p>
+    </div>
+  </div>
+  
+  
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+      <span>
+        
+          <i class="iconfont icon-06tags"></i>标签: 
+          
+          <span class="span--tag">
+            <a href="/tags/MySQL/">
+              #MySQL
+            </a>
+          </span>
+          
+        
+      </span>
+    </div>
+    <div class="article-meta pull-right">
+    </div>
+  </div>
+</div>
+
+
+
+
+  <nav class="post-navigation">
+    
+    <div class="nav-pre">
+      <i class="iconfont icon-prev"></i>
+      上一篇:
+      <a href="/20190321112352/" target="_self">Edit Distance</a>
+    </div>
+    
+    
+    <div class="nav-next">
+      下一篇:
+      <a href="/20190327151300/" target="_self">MySQL事务的并发问题与解决办法</a>
+      <i class="iconfont icon-next"></i>
+    </div>
+    
+  </nav>
+  
+  
+
+</div>
+
+
+            <div class="back-to-top hidden">
+  <span>
+    <i class="iconfont icon-60"></i><span></span>%
+  </span>
+</div>
+
+<script>
+const updateIconToTop = percent => {
+  let dom = document.querySelector(".back-to-top span span");
+  dom.innerText = percent;
+  if(percent < 1) {
+    document.querySelector(".back-to-top").className = "back-to-top hidden";
+  } else {
+    document.querySelector(".back-to-top").className = "back-to-top";
+  }
+}
+
+const handleScoll = () => {
+  let isRunning = false;
+  return () => {
+    if (isRunning) return;
+    isRunning = true;
+    window.requestAnimationFrame(timestamp => {
+      let scrollTop =
+          document.documentElement.scrollTop || document.body.scrollTop,
+        scrollHeight =
+          document.documentElement.scrollHeight ||
+          document.body.scrollHeight,
+        clientHeight =
+          document.documentElement.clientHeight ||
+          document.body.clientHeight;
+      isRunning = false;
+      if (scrollTop <= 1) {
+        updateIconToTop(0);
+        return;
+      }
+      if (scrollTop + clientHeight >= scrollHeight) {
+        updateIconToTop(100);
+      } else {
+        updateIconToTop(parseInt(
+          100 * scrollTop / (scrollHeight - clientHeight),
+          10
+        ));
+      }
+    });
+  };
+}
+
+const backToTop = () => {
+  let scrollTop =
+      document.documentElement.scrollTop || document.body.scrollTop,
+    delay = 10,
+    time = 200;
+  if (scrollTop <= 20) {
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    return;
+  }
+  let step = Math.ceil(scrollTop * delay / time);
+  let timer = setInterval(() => {
+    scrollTop =
+      document.documentElement.scrollTop || document.body.scrollTop;
+    if (scrollTop - step <= 0) {
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+      clearInterval(timer);
+    } else {
+      document.documentElement.scrollTop = scrollTop - step;
+      document.body.scrollTop = scrollTop - step;
+    }
+  }, delay);
+}
+
+document.addEventListener("scroll", handleScoll(), false);
+
+document.querySelector(".back-to-top").addEventListener("click", backToTop, false);
+
+</script>
+        </div>
+        
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+<script>
+  (() => {
+    const mathjaxConfig = {
+      showProcessingMessages: false, //关闭js加载过程信息
+      messageStyle: "none", //不显示信息
+      jax: ["input/TeX", "output/HTML-CSS"],
+      tex2jax: {
+        inlineMath: [["$", "$"], ["\\(", "\\)"]], //行内公式选择符
+        displayMath: [["$$", "$$"], ["\\[", "\\]"]], //段内公式选择符
+        skipTags: ["script", "noscript", "style", "textarea", "pre", "code", "a"] //避开某些标签
+      },
+      "HTML-CSS": {
+        availableFonts: ["STIX", "TeX"], //可选字体
+        showMathMenu: false //关闭右击菜单显示
+      }
+    }
+
+    let mathjaxInterval = setInterval(() => {
+      if(!window.MathJax){
+        return;
+      }
+      window.MathJax.Hub.Config(mathjaxConfig)
+      window.MathJax.Hub.Queue(["Typeset", MathJax.Hub, document.getElementById('app')])
+
+      clearInterval(mathjaxInterval)
+    }, 10)    
+  })()
+</script>
+
+        
+    </body>
+</html>

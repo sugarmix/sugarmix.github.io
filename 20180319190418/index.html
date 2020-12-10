@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  <meta name="author" content="sugarmix">
+  
+  
+  
+  <title>关系模式符合的范式 | SUGARMIX</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="数据库,数据库,">
+  
+
+  
+    <meta name="description" content="真正的大师，永远都怀着一颗学徒的心">
+  
+
+  
+    <link rel="alternate" href="atom.xml" title="SUGARMIX" type="application/atom+xml">
+  
+
+  
+    <link rel="icon" href="/images/favicon.ico">
+    <link rel="apple-touch-icon" href="/images/touch-icon.png">
+  
+
+  <link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/icon/iconfont.css">
+<link rel="stylesheet" href="/css/github-markdown.css">
+<link rel="stylesheet" href="/css/gitalk.css">
+<link rel="stylesheet" href="/css/highlight.css">
+  
+  <script src="/js/util.js"></script>
+<script src="/js/hidden_header.js"></script>
+  
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js" async></script>
+</head>
+
+    <body>
+        
+        <div id="app">
+            <div class="header-wrap">
+  <header>
+    <div class="site-brand">
+      <div class="site-title">
+        <a href="/">SUGARMIX</a>
+      </div>
+    </div>
+    <nav class="site-navigation">
+      <ul class="nav-menu">
+      
+        <li class="nav-item" data-path="https://paste.sugarmix.me">
+          
+            <a 
+              href="https://paste.sugarmix.me"
+              target="_blank"
+            >
+              Pastbin
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          
+            <a 
+              href="/archives/"
+              target="_blank"
+            >
+              Archives
+            </a>
+          
+        </li>
+      
+        <li class="nav-item" data-path="">
+          
+            <a href="javascript:void(0);" v-else>Me</a>
+            <ul class="nav-menu--dropdown">
+              
+                <li>
+                  <a 
+                    href="https://github.com/sugarmix" 
+                    target="_blank"
+                  >
+                    GitHub
+                  </a>
+                </li>
+              
+                <li>
+                  <a 
+                    href="mailto:sugarmix.me@outlook.com" 
+                    target="_blank"
+                  >
+                    Mail
+                  </a>
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+      </ul>
+    </nav>
+    <i class="iconfont icon-menu"></i>
+  </header>
+</div>
+
+<script>
+  let links = document.querySelectorAll('.nav-item');
+  for(let link of links){
+    let childrenLink = link.querySelector('ul');
+    link.addEventListener('mouseenter', () => {
+      if(childrenLink) {
+        childrenLink.className = "nav-menu--dropdown active";
+      }
+    })
+    link.addEventListener('mouseleave', () => {
+      if(childrenLink) {
+        childrenLink.className = "nav-menu--dropdown";
+      }
+    })
+  }
+  let rootRealPath = getRealPath(window.location.pathname, true);
+  for(let link of links) {
+    let linkPath = link.getAttribute("data-path");
+    if(linkPath && getRealPath(linkPath, true) === rootRealPath) {
+      link.className = "nav-item hover";
+    }
+  }
+
+  let iconMenu = document.querySelector("i.iconfont.icon-menu");
+  let iconMenuClicked = true;
+  let navDOM = document.querySelector("nav.site-navigation");
+  iconMenu.addEventListener("click", () => {
+    iconMenuClicked 
+      ? navDOM.className = "site-navigation active"
+      : navDOM.className = "site-navigation";
+    iconMenuClicked = !iconMenuClicked;
+  })
+</script>
+
+            
+
+
+
+
+
+
+
+
+<div class="container post-index">
+
+  
+
+<div class="post">
+  <h1 class="article-title">
+    <span>关系模式符合的范式</span>
+  </h1>
+  <div class="article-top-meta">
+    <span>
+      发布 : 
+      2018-03-19
+    </span>
+    
+      <span>
+        分类 : 
+          <a href="/categories/数据库/">
+            数据库
+          </a>
+      </span>
+    
+  </div>
+
+  <div class="article-content">
+    <div class="markdown-body">
+      <h1 id="按规范设计的好处"><a href="#按规范设计的好处" class="headerlink" title="按规范设计的好处"></a>按规范设计的好处</h1><p>减少冗余。设计不良的数据表，存在大量冗余数据，这些数据浪费磁盘空间，还会影响数据修改的效率。下文讲看到冗余的例子。</p>
+<p>增强一致性。存在冗余数据越多，越容易造成数据不一致。接下来将逐渐增强对一致性的要求，不同层次的要求就出现了不同的范式。</p>
+<h1 id="一些定义"><a href="#一些定义" class="headerlink" title="一些定义"></a>一些定义</h1><h2 id="候选码"><a href="#候选码" class="headerlink" title="候选码"></a>候选码</h2><p>若关系中的某一 <strong>属性组</strong> 的值能唯一的标识一个元组,而其任何真子集都不能再标识,则称该属性组为候选码。下文中不加解释的 <strong>码</strong> 即为候选码。</p>
+<h2 id="主属性"><a href="#主属性" class="headerlink" title="主属性"></a>主属性</h2><p>包含在任意候选码中的属性</p>
+<h2 id="主码"><a href="#主码" class="headerlink" title="主码"></a>主码</h2><p><a href="#候选码">候选码</a>中任选一组，均可作为主码。</p>
+<h2 id="非主属性"><a href="#非主属性" class="headerlink" title="非主属性"></a>非主属性</h2><p>不包含在主码中的属性，选定主码后确定非主属性。</p>
+<p><em><strong> 非主属性 不等于 不是主属性的属性 </strong></em></p>
+<h2 id="函数依赖"><a href="#函数依赖" class="headerlink" title="函数依赖"></a>函数依赖</h2><p>B可以由A导出.则B依赖A</p>
+<p>$$<br>A \to B<br>$$</p>
+<h3 id="完全函数依赖"><a href="#完全函数依赖" class="headerlink" title="完全函数依赖"></a>完全函数依赖</h3><p>B可以由A导出,并且不能由A的任意子集导出,则B完全函数依赖A</p>
+<p>$$<br>(A \to B)\land(\lnot((\exists C \subsetneq A)\land(C \to B)))<br>$$</p>
+<h3 id="部分函数依赖"><a href="#部分函数依赖" class="headerlink" title="部分函数依赖"></a>部分函数依赖</h3><p>B可以由A导出,并且能由A的某个真子集导出,则B部分函数依赖A</p>
+<p>$$<br>(A \to B)\land((\exists C \subsetneq B)\land(C \to B))<br>$$</p>
+<h3 id="传递函数依赖"><a href="#传递函数依赖" class="headerlink" title="传递函数依赖"></a>传递函数依赖</h3><p>B可以由A导出,C可以由B导出,则C传递函数依赖A</p>
+<p>$$<br>(A \to B)\land(B \to C)<br>$$</p>
+<h1 id="第一范式"><a href="#第一范式" class="headerlink" title="第一范式"></a>第一范式</h1><h2 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h2><p>域都应该是原子性的</p>
+<h2 id="举例"><a href="#举例" class="headerlink" title="举例"></a>举例</h2><p>假如属性存在以下依赖关系</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">学号 → 学生姓名</span><br><span class="line">课程号 → 课程名 → 教材</span><br><span class="line">(学号,课程名) → 分数</span><br></pre></td></tr></table></figure>
+<p>能放到数据库的信息都符合第一范式,下面给出一个符合第一范式的例子</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">成绩(学号,学生姓名,课程号,课程名,教材,分数)</span><br></pre></td></tr></table></figure>
+<p>根据定义<br>主码:(学号,课程号)<br>非主属性:学生姓名,课程名,教材,分数</p>
+<h1 id="第二范式"><a href="#第二范式" class="headerlink" title="第二范式"></a>第二范式</h1><h2 id="定义-1"><a href="#定义-1" class="headerlink" title="定义"></a>定义</h2><p>在第一范式的基础上，非码属性必须完全依赖于<a href="#候选码">候选码</a>(在第一范式基础上消除<a href="#非主属性">非主属性</a>对<a href="#主码">主码</a>的<a href="#部分函数依赖">部分函数依赖</a>)</p>
+<h2 id="举例-1"><a href="#举例-1" class="headerlink" title="举例"></a>举例</h2><p>学生姓名依赖学号却不依赖课程号,所以非主属性(学生姓名)部分依赖主码(学号,课程号).<br>修改第一范式的例子使其符合第二范式</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">学生(学号,学生姓名)</span><br><span class="line">课程(课程号,课程名,教材)</span><br><span class="line">成绩(学号,课程号,分数)</span><br></pre></td></tr></table></figure>
+<h1 id="第三范式"><a href="#第三范式" class="headerlink" title="第三范式"></a>第三范式</h1><h2 id="官方定义"><a href="#官方定义" class="headerlink" title="官方定义"></a>官方定义</h2><p>任何非主属性不依赖于其它非主属性（在第二范式基础上消除<a href="#传递函数依赖">传递依赖</a>）</p>
+<h2 id="举例-2"><a href="#举例-2" class="headerlink" title="举例"></a>举例</h2><p>在第二范式中的<code>课程(课程号,课程名,教材)</code>存在<code>课程号 → 课程名 → 教材</code>依赖关系,非主属性(教材)传递依赖非主属性(课程号).<br>修改例子使其满足第三范式</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">学生(学号,学生姓名)</span><br><span class="line">课程(课程号,课程名)</span><br><span class="line">教材(课程名,教材)</span><br><span class="line">成绩(学号,课程号,分数)</span><br></pre></td></tr></table></figure>
+<h1 id="BC范式"><a href="#BC范式" class="headerlink" title="BC范式"></a>BC范式</h1><h2 id="定义-2"><a href="#定义-2" class="headerlink" title="定义"></a>定义</h2><p>在第三范式基础上，任何非主属性(其中包含主属性,神奇不神奇)不能对主码子集依赖(在第三范式基础上消除对主码子集的依赖).</p>
+<p>知乎上大佬给出的一个更精确的定义:消除主属性对于码的部分与传递函数依赖.</p>
+<p>因为第三范式已经解决其他依赖,此处只要解决那些原本可以被选为<strong>主码</strong>却沦为了<strong>非主属性</strong>的的<strong>主属性</strong>们,也就是说,此时,<strong>非主属性</strong>依旧是<strong>主属性</strong>.</p>
+<h2 id="举例-3"><a href="#举例-3" class="headerlink" title="举例"></a>举例</h2><p>下面这个例子抄自<a href="https://www.zhihu.com/question/24696366/answer/29189700" target="_blank" rel="noopener">知乎</a><br>某公司有若干个仓库:</p>
+<blockquote>
+<p>每个仓库只能有一名管理员<br>一名管理员只能在一个仓库中工作<br>一个仓库中可以存放多种物品<br>一种物品也可以存放在不同的仓库中<br>每种物品在每个仓库中都有对应的数量</p>
+</blockquote>
+<p>关系<code>仓库(仓库名,管理员,物品名,数量)</code>符合第三范式</p>
+<p>仓库 → 管理员<br>管理员 → 仓库<br>(仓库名,物品名) → 数量</p>
+<p>若选(仓库名,物品名)为主码,则主属性(管理员)部分依赖主码(依赖主码中的仓库名)</p>
+<p>修改关系使其符合BC范式</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">仓库（仓库名，管理员）</span><br><span class="line">库存（仓库名，物品名，数量）</span><br></pre></td></tr></table></figure>
+<h1 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h1><p><a href="https://www.zhihu.com/question/24696366/answer/29189700" target="_blank" rel="noopener">解释一下关系数据库的第一第二第三范式？ - 刘慰的回答 - 知乎</a></p>
+    </div>
+  </div>
+  
+  
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+      <span>
+        
+          <i class="iconfont icon-06tags"></i>标签: 
+          
+          <span class="span--tag">
+            <a href="/tags/数据库/">
+              #数据库
+            </a>
+          </span>
+          
+        
+      </span>
+    </div>
+    <div class="article-meta pull-right">
+    </div>
+  </div>
+</div>
+
+
+
+
+  <nav class="post-navigation">
+    
+    
+    <div class="nav-next">
+      下一篇:
+      <a href="/20180415221531/" target="_self">霍夫变换检测原理及Python实现</a>
+      <i class="iconfont icon-next"></i>
+    </div>
+    
+  </nav>
+  
+  
+
+</div>
+
+
+            <div class="back-to-top hidden">
+  <span>
+    <i class="iconfont icon-60"></i><span></span>%
+  </span>
+</div>
+
+<script>
+const updateIconToTop = percent => {
+  let dom = document.querySelector(".back-to-top span span");
+  dom.innerText = percent;
+  if(percent < 1) {
+    document.querySelector(".back-to-top").className = "back-to-top hidden";
+  } else {
+    document.querySelector(".back-to-top").className = "back-to-top";
+  }
+}
+
+const handleScoll = () => {
+  let isRunning = false;
+  return () => {
+    if (isRunning) return;
+    isRunning = true;
+    window.requestAnimationFrame(timestamp => {
+      let scrollTop =
+          document.documentElement.scrollTop || document.body.scrollTop,
+        scrollHeight =
+          document.documentElement.scrollHeight ||
+          document.body.scrollHeight,
+        clientHeight =
+          document.documentElement.clientHeight ||
+          document.body.clientHeight;
+      isRunning = false;
+      if (scrollTop <= 1) {
+        updateIconToTop(0);
+        return;
+      }
+      if (scrollTop + clientHeight >= scrollHeight) {
+        updateIconToTop(100);
+      } else {
+        updateIconToTop(parseInt(
+          100 * scrollTop / (scrollHeight - clientHeight),
+          10
+        ));
+      }
+    });
+  };
+}
+
+const backToTop = () => {
+  let scrollTop =
+      document.documentElement.scrollTop || document.body.scrollTop,
+    delay = 10,
+    time = 200;
+  if (scrollTop <= 20) {
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    return;
+  }
+  let step = Math.ceil(scrollTop * delay / time);
+  let timer = setInterval(() => {
+    scrollTop =
+      document.documentElement.scrollTop || document.body.scrollTop;
+    if (scrollTop - step <= 0) {
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+      clearInterval(timer);
+    } else {
+      document.documentElement.scrollTop = scrollTop - step;
+      document.body.scrollTop = scrollTop - step;
+    }
+  }, delay);
+}
+
+document.addEventListener("scroll", handleScoll(), false);
+
+document.querySelector(".back-to-top").addEventListener("click", backToTop, false);
+
+</script>
+        </div>
+        
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+<script>
+  (() => {
+    const mathjaxConfig = {
+      showProcessingMessages: false, //关闭js加载过程信息
+      messageStyle: "none", //不显示信息
+      jax: ["input/TeX", "output/HTML-CSS"],
+      tex2jax: {
+        inlineMath: [["$", "$"], ["\\(", "\\)"]], //行内公式选择符
+        displayMath: [["$$", "$$"], ["\\[", "\\]"]], //段内公式选择符
+        skipTags: ["script", "noscript", "style", "textarea", "pre", "code", "a"] //避开某些标签
+      },
+      "HTML-CSS": {
+        availableFonts: ["STIX", "TeX"], //可选字体
+        showMathMenu: false //关闭右击菜单显示
+      }
+    }
+
+    let mathjaxInterval = setInterval(() => {
+      if(!window.MathJax){
+        return;
+      }
+      window.MathJax.Hub.Config(mathjaxConfig)
+      window.MathJax.Hub.Queue(["Typeset", MathJax.Hub, document.getElementById('app')])
+
+      clearInterval(mathjaxInterval)
+    }, 10)    
+  })()
+</script>
+
+        
+    </body>
+</html>
