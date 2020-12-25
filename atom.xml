@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://blog.sugarmix.me/"/>
-  <updated>2020-05-17T17:13:38.639Z</updated>
+  <updated>2020-12-25T05:31:15.993Z</updated>
   <id>https://blog.sugarmix.me/</id>
   
   <author>
@@ -15,6 +15,27 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>《鲁迅全集》摘抄</title>
+    <link href="https://blog.sugarmix.me/20201225125556/"/>
+    <id>https://blog.sugarmix.me/20201225125556/</id>
+    <published>2020-12-25T04:55:57.000Z</published>
+    <updated>2020-12-25T05:31:15.993Z</updated>
+    
+    <content type="html"><![CDATA[<p>谁曾想一个工科学生在将来的某一天重读鲁迅，并愿意把它记录下来。</p><a id="more"></a><p>《端午节》</p><blockquote><p>人们是每苦于没有“自知之明”的。</p></blockquote><p>《影的告别》</p><blockquote><p>我不过一个影，要别你而沉默在黑暗里了。而然黑暗又会吞并我，然而光明又会使我消失。</p></blockquote><p>《希望》</p><blockquote><p>希望是甚么？是娼妓：她对谁都蛊惑，将一切都献给；待你牺牲了极多的宝贝——你的青春——她就弃掉你。</p></blockquote><p>《过客》</p><blockquote><p>倘使我得到了谁的布施，我就要想秃鹰看见死尸一样，在四近徘徊，祝愿她的灭亡，给我亲眼看见；或者诅咒她以外的一切全部灭亡，连我自己，因为我就应该得到诅咒。但我还没有这样的力量；即使有这力量，我也不愿意她有这样的境遇，因为他们大概总不愿意有这样的境遇。</p></blockquote><p>《随感录四十一》</p><blockquote><p>愿中国青年都摆脱冷气，只是向上走，不必听自暴自弃者流的话。能做事的做事，能发声的发声。有一分热，发一分光，就令萤火一般，也可以在黑暗里发一点光，不必等候炬火。  </p><p>此后如竟没有炬火：我便是唯一的光。</p></blockquote><p>《六十二 恨恨而死》</p><blockquote><p>古来很有几位恨恨而死的人物。他们一面说些“怀才不遇”，“天道宁论”的话，一面有钱的便狂嫖滥赌，没钱的便喝几十碗酒，——因为不平的缘故，于是后来就恨恨而死了。</p><p>我们应该趁他们活着的时候问他：诸公！您知道北京离昆仑山几里，弱水去黄河几丈么？火药除了做鞭炮，罗盘除了看风水，还有什么用处么？棉花是红的还是白的？谷子是长在树上，还是长在草上？桑见濮上如何情形，自由恋爱怎样态度？您在半夜里可忽然觉得有些羞，清早上可居然有点悔么？四斤的担，您能挑么？三里的道，您能跑么？</p><p>他们如果细细的想，慢慢的悔了，这便很有些希望。万一越发不平，越发愤怒，那便“爱莫能助”。——于是他们终于恨恨而死了。</p></blockquote>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;谁曾想一个工科学生在将来的某一天重读鲁迅，并愿意把它记录下来。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="默认" scheme="https://blog.sugarmix.me/categories/%E9%BB%98%E8%AE%A4/"/>
+    
+    
+    <category term="默认" scheme="https://blog.sugarmix.me/tags/%E9%BB%98%E8%AE%A4/"/>
+    
+  </entry>
   
   <entry>
     <title>Super Egg Drop</title>
@@ -59,29 +80,6 @@
   </entry>
   
   <entry>
-    <title>霍夫变换检测原理及Python实现</title>
-    <link href="https://blog.sugarmix.me/20180415221531/"/>
-    <id>https://blog.sugarmix.me/20180415221531/</id>
-    <published>2018-04-15T14:15:31.000Z</published>
-    <updated>2020-04-07T08:02:20.251Z</updated>
-    
-    <content type="html"><![CDATA[<p>随着人工智能的兴起，计算机视觉相关概念，如人脸识别、人脸检测逐渐进入大众视野。本篇文章介绍计算机视觉中最基础的知识，直线和圆的一种检测算法-霍夫变换。并在最后给出Python的样例代码。</p><a id="more"></a><h1 id="综述"><a href="#综述" class="headerlink" title="综述"></a>综述</h1><p>霍夫变换用来检测物图像中的特征(例如直线和圆).算法如下：</p><blockquote><p>根据被检测的图形，寻找特定的参数空间<br>原图像中所有的点在参数空间中执行投票,投票结果最大的点，即为要寻找的图形</p></blockquote><p>根据上面的描述不难看出,一般情况下：</p><blockquote><p>不同图形的参数空间不同<br>参数空间中的一个点可以表示原图像中的一个图形的所有信息  </p></blockquote><h1 id="检测直线"><a href="#检测直线" class="headerlink" title="检测直线"></a>检测直线</h1><p>截距和斜率两个参数可以确定一条直线，但斜率无穷大甚至不存在时,无法在计算机中准确表示.所以在判定直线时,需要选定另一个参数空间</p><div align="center"><img src="https://upload.wikimedia.org/wikipedia/commons/e/e6/R_theta_line.GIF" alt="霍夫变换检测直线使用的参数空间"><br></div><p>$$r=x\cos \theta +y\sin \theta$$</p><p>此时任意一条直线均可以用$r$(直线到圆心的距离)和$\theta$(嗯....不好描述看上图吧)唯一表示.</p><p>现在思考一个简单的问题，根据上述公式，已知两点$(x_1,y_1)$,$(x_2,y_2)$,能否确定$r$和$\theta$,$\theta\subseteq \left ( -\frac{\pi }{2} ,\frac{\pi }{2} \right )$.如果不知道怎么确定就洗洗睡吧</p><p>也就是说，若已知图像中有且仅有一条直线，且不考虑像素带来的偏差(即所有点的坐标都是实数),则可以根据(直线上的)两点确定直线的具体位置.</p><p>上述过程是求解一个二元一次方程组.方程组中的每个方程代表一条曲线.解为两条曲线交点.</p><div align="center"><br><img src="https://docs.opencv.org/2.4/_images/Hough_Lines_Tutorial_Theory_1.jpg" alt="一个点在参数空间代表的曲线"><br></div><p>如果在同一条直线上选取三个点,三个点在参数空间做出的曲线必然相交与同一点，且该点表示原图像中的一条直线.以此类推,原图中同一直线上所有点在参数空间中做出的所有曲线必定相交与一点</p><div align="center"><br><img src="https://docs.opencv.org/2.4/_images/Hough_Lines_Tutorial_Theory_2.jpg" alt="多条曲线在参数空间的交点"><br></div><p>以上讨论是基于所有坐标均为实数,在实际中,像素为整数,无法在参数空间做出一条真正连续的曲线,最精确的近似是在参数空间做出连续的像素点.所以要将上述连续过程离散化.离散化后的曲线所经过的像素点,就是其投票的点.多条曲线的交点,必然是得票数最高的点.用得票数最高的点代替连续曲线的交点,此时该点为检测出的直线对应的参数点.至此,完成直线检测</p><p>因为存在误差,所以投票后的点会集中在一个区域,而不是某个特定的点,这也就解释了为什么会检测出多条几乎重叠的曲线.</p><p>上述描述中,基于这样一个假设,即图像中的所有点非黑即白,现实中的图像并非如此,所以在霍夫变换检测前,一般先进行边缘检测,边缘检测后返回的图像就是非黑即白(是边缘,或者不是边缘).</p><h1 id="检测圆"><a href="#检测圆" class="headerlink" title="检测圆"></a>检测圆</h1><p>就像开头提到的,检测圆与检测直线有着不同的参数空间.其他过程与检测直线完全相同</p><div align="center"><br>$x=x_0+r\cos\theta$<br>$y=y_0+r\sin\theta$<br></div><p>我们假定知道所需检测的圆的半径$r$.以原图像中的点为圆心,以$r$为半径在参数空间做圆,投票最多的点即为圆心,因为已知半径,圆检测完成.<br>上述假设已知半径.实际使用中,只需给出半径的范围,并遍历之,在所有遍历结果中找投票数最大的,即为被检测的圆</p><p>下图中,半径为$r$的红圆为期待被检测到的圆,每个蓝色的圆均是以红圆周上的点为圆心,以$r$为半径得到的圆,重叠部分最多的点即为被检测圆的圆心.</p><div align="center"><br><img src="/20180415221531/circle.png" alt="检测圆"><br></div><h1 id="Python实现"><a href="#Python实现" class="headerlink" title="Python实现"></a>Python实现</h1><p>由于时间原因,此处仅给出openCV中霍夫变换检测<a href="https://github.com/opencv/opencv/blob/master/samples/python/houghlines.py" target="_blank" rel="noopener">直线</a>和<a href="https://github.com/opencv/opencv/blob/master/samples/python/houghcircles.py" target="_blank" rel="noopener">圆</a>的样例.</p><h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://docs.opencv.org/2.4/doc/tutorials/imgproc/imgtrans/hough_lines/hough_lines.html" target="_blank" rel="noopener">Hough Line Transform</a><br><a href="https://zh.wikipedia.org/wiki/%E9%9C%8D%E5%A4%AB%E5%8F%98%E6%8D%A2" target="_blank" rel="noopener">霍夫变换</a></p>]]></content>
-    
-    
-    <summary type="html">&lt;p&gt;随着人工智能的兴起，计算机视觉相关概念，如人脸识别、人脸检测逐渐进入大众视野。本篇文章介绍计算机视觉中最基础的知识，直线和圆的一种检测算法-霍夫变换。并在最后给出Python的样例代码。&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="图像" scheme="https://blog.sugarmix.me/categories/%E5%9B%BE%E5%83%8F/"/>
-    
-    
-    <category term="图像" scheme="https://blog.sugarmix.me/tags/%E5%9B%BE%E5%83%8F/"/>
-    
-    <category term="openCV" scheme="https://blog.sugarmix.me/tags/openCV/"/>
-    
-  </entry>
-  
-  <entry>
     <title>关系模式符合的范式</title>
     <link href="https://blog.sugarmix.me/20180319190418/"/>
     <id>https://blog.sugarmix.me/20180319190418/</id>
@@ -103,26 +101,23 @@
   </entry>
   
   <entry>
-    <title>MySQL存储引擎的特点</title>
-    <link href="https://blog.sugarmix.me/20190225173604/"/>
-    <id>https://blog.sugarmix.me/20190225173604/</id>
-    <published>2019-02-25T09:36:09.000Z</published>
+    <title>批量修改Hexo文件名</title>
+    <link href="https://blog.sugarmix.me/20181229230044/"/>
+    <id>https://blog.sugarmix.me/20181229230044/</id>
+    <published>2018-12-29T15:00:44.000Z</published>
     <updated>2020-04-07T08:02:20.251Z</updated>
     
-    <content type="html"><![CDATA[<p>每个MySQL存储引擎都满足特定需求。因此，引擎的选择主要取决于您希望在应用程序中完成的任务。</p><p>每个存储引擎的完整功能超出了本文的范围。我们将仅讨论各种存储引擎的不同以及它们的适应场景。</p><a id="more"></a><h1 id="InnoDB存储引擎"><a href="#InnoDB存储引擎" class="headerlink" title="InnoDB存储引擎"></a>InnoDB存储引擎</h1><p>InnoDB用于大多数数据库服务器，因为它支持事务，符合ACID。</p><p>原子性是增强数据库中数据的完整性的一种特性。当影响多个表的事务发生时，必须全部完成，否则回滚。</p><p>一致性意味着数据在保存到磁盘之前能够通过验证规则。</p><p>隔离性允许数据库隔离来自不同并发用户的事务。</p><p>持久性可确保在事务完成后被保存。</p><p>因此，如果您的应用程序需要上述功能，请选择InnoDB。</p><p>InnoDB的另一大优势是支持外键约束。这样可以保持所有相关数据库表的完整性。检查插入，更新和删除操作以确保多个表之间保持一致。</p><p>由于其持续改进，InnoDB不太容易发生数据库崩溃。如果在事务完成之前出现了问题，服务器重启后，InnoDB将完成操作或撤消更改。</p><p>InnoDB支持B-Tree索引和FULLTEXT索引，底层分别使用B-Tree和Inverted Lists实现。</p><h1 id="MyISAM存储引擎"><a href="#MyISAM存储引擎" class="headerlink" title="MyISAM存储引擎"></a>MyISAM存储引擎</h1><p>对于那些读取操作比写入操作更多的应用，MyISAM具有更好的性能。对于初学者来是很容易设计和创建一个数据库，因为它不支持外键(foreign keys)。使用外键需要有经验的配置来避免不合法的删除和更新操作。</p><p>与InnoDB相比，该引擎占用更少的磁盘空间，因此适用于磁盘空间受限制的应用。</p><p>MyISAM不符合ACID，因此它没有回滚功能。当事务失败时，必须手动删除数据。这个引擎支持并发插入操作。</p><p>MyISAM支持R-Tree索引。</p><h1 id="CSV存储引擎"><a href="#CSV存储引擎" class="headerlink" title="CSV存储引擎"></a>CSV存储引擎</h1><p>CSV代表逗号分隔值(Comma Separated Values)。这个引擎保存用逗号分割的明文数据。</p><p>当创建表格的时候会自动创建一个 <code>.CSV</code> 文件。</p><p>CSV文件的例子如下</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&quot;75521&quot;,&quot;JOHN DOE&quot;</span><br><span class="line">&quot;75522&quot;,&quot;BABY DOE&quot;</span><br></pre></td></tr></table></figure><p>这个引擎的唯一优点是容易被Office软件读取。</p><p>CSV引擎不支持索引和事务，很少被使用。</p><h1 id="NDB存储引擎"><a href="#NDB存储引擎" class="headerlink" title="NDB存储引擎"></a>NDB存储引擎</h1><p>NDB 代表网络数据库(Network DataBase).它用于需要高级别可用性的集群环境中。NDB使用无共享体系结构，适用于创建分布式容错数据库体系结构。</p><p>如果你在运行一个至关重要(mission critical)的应用，并且数据需要冗余备份，选择NDB。然而，这个引擎需要一系列服务器来保存冗余数据。</p><p>大多数软件仓库的MySQL默认不安装这个引擎，需要下载MSQL社区版。</p><p>NDB具有InnoDB的大部分功能，可以扩展到128TB（7.5.2版本）。在线时间为99.999％，故障节点的恢复时间不到一秒。</p><h1 id="Blackhole存储引擎"><a href="#Blackhole存储引擎" class="headerlink" title="Blackhole存储引擎"></a>Blackhole存储引擎</h1><p>黑洞引擎接受数据并将其丢弃。您可以使用此存储引擎创建表并向其插入数据，但后续读取将返回空集。引擎支持索引。</p><p>Blackhole引擎可用于验证转储文件语法并测量二进制日志记录的开销，甚至可以查找数据库中的性能瓶颈。</p><h1 id="Memory存储引擎"><a href="#Memory存储引擎" class="headerlink" title="Memory存储引擎"></a>Memory存储引擎</h1><p>内存存储引擎用于将数据存储在内存中以用于特殊目的。使用此引擎容易崩溃，它的数据应该来源于其他永久存储的表。</p><p>内存存储引擎支持索引和加密。表中数据的大小受限于服务器上的可用内存。</p><p>可以使用此引擎存储非关键任务数据，例如会话(session)管理信息或只需最少更新的只读数据。请注意，重新启动服务器将擦除所有数据。</p><h1 id="Archive存储引擎"><a href="#Archive存储引擎" class="headerlink" title="Archive存储引擎"></a>Archive存储引擎</h1><p>如果你想在数据库中存储很多不常被使用的数据，例如历史信息，请使用存档存储引擎。该引擎使用非常小的空间中存储大量信息。</p><p>它支持压缩和加密，但缺少索引和事务功能。因此，它仅适用于归档数据，不应该被用于需要被快速更改、需要大量读写的信息。</p><h1 id="Federated存储引擎"><a href="#Federated存储引擎" class="headerlink" title="Federated存储引擎"></a>Federated存储引擎</h1><p>从没有集群和复制技术的远程MySQL服务器获取数据时，适合使用联合(Federated)存储引擎。</p><p>如果从使用联合引擎定义的本地表查询数据，则会从定义的远程服务器自动检索数据。因此，联合表需要本地和远程服务器。</p><p>远程服务器保存表定义和关联数据，而本地服务器仅保存包含指向远程服务器的连接字符串的定义。远程服务器上的存储引擎可以是任何类型，例如InnoDB或MyISAM。</p><p>MySQL默认不支持此引擎，使用需要启动。</p><p>联合存储引擎可以用作将数据写入远程服务器的代理。它只是一个指向远程服务器中另一个表的表。它应该很少被使用，因为它在连接表时非常慢并且在涉及事务时具有奇怪的行为。</p><h1 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h1><p><a href="https://medium.com/@Alibaba_Cloud/how-to-choose-mysql-storage-engine-on-alibaba-cloud-d56687934c28" target="_blank" rel="noopener">How to Choose MySQL Storage Engine on Alibaba Cloud</a></p>]]></content>
+    <content type="html"><![CDATA[<p>众所周知Hexo是个纯静态页面生成工具，使用<code>hexo new title</code>可生成标题为title的文章。若文章题目中出现中文，编码后肉眼不可识别中文意思；若不转码，中文作为url的一部分总会出现种种问题。本文将阐述解决上述问题的方法。</p><a id="more"></a><p>第一种，在创建文章的时候有意识的使用英文标题。第二中，使用当前时间作为文件名(即URL中的地址)，新建文件后再从文件中修改标题。</p><p>本文对第二种方法进行介绍，使用脚本创建新文章，注意时间是精确到秒，该脚本放在博客的根目录</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line">DATE=date +%Y%m%d%H%M%S</span><br><span class="line">hexo new <span class="string">"<span class="variable">$DATE</span>"</span></span><br><span class="line">vim <span class="built_in">source</span>/_posts/<span class="variable">$DATE</span>.md</span><br></pre></td></tr></table></figure><p>但是问题来了，如果已经写了很多很多的文章了，而且想批量修改成上述格式怎么办呢？下面给出批量修改文件名的脚本，将此脚本放到<code>_post</code>目录，执行即可，最终文件的格式将与上述格式相同</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">ls | grep <span class="string">".md"</span> &gt; filename.txt</span><br><span class="line">num=`cat filename.txt|wc -l`</span><br><span class="line"><span class="built_in">echo</span> <span class="string">"Start"</span></span><br><span class="line"><span class="keyword">for</span>((i=1;i&lt;=<span class="variable">$num</span>;i++));</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">    filename=`cat filename.txt|awk NR==<span class="variable">$i</span>`</span><br><span class="line">    date=`cat <span class="variable">$filename</span>|grep <span class="string">"date: "</span>`</span><br><span class="line"></span><br><span class="line">    year=`<span class="built_in">echo</span> <span class="variable">$date</span>|cut -c 7-10`</span><br><span class="line">    mon=`<span class="built_in">echo</span> <span class="variable">$date</span>|cut -c 12-13`</span><br><span class="line">    day=`<span class="built_in">echo</span> <span class="variable">$date</span>|cut -c 15-16`</span><br><span class="line">    hour=`<span class="built_in">echo</span> <span class="variable">$date</span>|cut -c 18-19`</span><br><span class="line">    min=`<span class="built_in">echo</span> <span class="variable">$date</span>|cut -c 21-22`</span><br><span class="line">    sec=`<span class="built_in">echo</span> <span class="variable">$date</span>|cut -c 24-25`</span><br><span class="line"></span><br><span class="line">    oldname=`<span class="built_in">echo</span> <span class="variable">$&#123;filename%.md&#125;</span>`</span><br><span class="line">    newname=<span class="variable">$year</span><span class="variable">$mon</span><span class="variable">$day</span><span class="variable">$hour</span><span class="variable">$min</span><span class="variable">$sec</span></span><br><span class="line"></span><br><span class="line">    mv <span class="variable">$oldname</span> <span class="variable">$newname</span></span><br><span class="line">    mv <span class="variable">$oldname</span>.md <span class="variable">$newname</span>.md</span><br><span class="line">    <span class="built_in">echo</span> <span class="string">"Renamed Number: <span class="variable">$i</span>"</span></span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"Done"</span></span><br></pre></td></tr></table></figure><p>执行此脚本时，同时会重命名放图片的文件夹，若该文件夹不存在，则会有一系列输出，正常情况不要慌。</p><p>此时默认生成的链接里，会出现两部分日期，修改配置文件<code>_config.yml</code></p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">permalink: :title/</span><br></pre></td></tr></table></figure><p>因为修改了文章链接，所有依赖链接工作的工具都会收影响，比如访客计数，评论系统等等。</p><p>最后提一句，不要在Telegram里直接保存代码，bash中的反引号会被处理掉。</p>]]></content>
     
     
-    <summary type="html">&lt;p&gt;每个MySQL存储引擎都满足特定需求。因此，引擎的选择主要取决于您希望在应用程序中完成的任务。&lt;/p&gt;
-&lt;p&gt;每个存储引擎的完整功能超出了本文的范围。我们将仅讨论各种存储引擎的不同以及它们的适应场景。&lt;/p&gt;</summary>
+    <summary type="html">&lt;p&gt;众所周知Hexo是个纯静态页面生成工具，使用&lt;code&gt;hexo new title&lt;/code&gt;可生成标题为title的文章。若文章题目中出现中文，编码后肉眼不可识别中文意思；若不转码，中文作为url的一部分总会出现种种问题。本文将阐述解决上述问题的方法。&lt;/p&gt;</summary>
     
     
     
-    <category term="数据库" scheme="https://blog.sugarmix.me/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
+    <category term="网站" scheme="https://blog.sugarmix.me/categories/%E7%BD%91%E7%AB%99/"/>
     
     
-    <category term="MySQL" scheme="https://blog.sugarmix.me/tags/MySQL/"/>
-    
-    <category term="翻译" scheme="https://blog.sugarmix.me/tags/%E7%BF%BB%E8%AF%91/"/>
+    <category term="网站" scheme="https://blog.sugarmix.me/tags/%E7%BD%91%E7%AB%99/"/>
     
   </entry>
   
