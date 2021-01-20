@@ -80,6 +80,27 @@
   </entry>
   
   <entry>
+    <title>批量修改Hexo文件名</title>
+    <link href="https://blog.sugarmix.me/20181229230044/"/>
+    <id>https://blog.sugarmix.me/20181229230044/</id>
+    <published>2018-12-29T15:00:44.000Z</published>
+    <updated>2020-04-07T08:02:20.251Z</updated>
+    
+    <content type="html"><![CDATA[<p>众所周知Hexo是个纯静态页面生成工具，使用<code>hexo new title</code>可生成标题为title的文章。若文章题目中出现中文，编码后肉眼不可识别中文意思；若不转码，中文作为url的一部分总会出现种种问题。本文将阐述解决上述问题的方法。</p><a id="more"></a><p>第一种，在创建文章的时候有意识的使用英文标题。第二中，使用当前时间作为文件名(即URL中的地址)，新建文件后再从文件中修改标题。</p><p>本文对第二种方法进行介绍，使用脚本创建新文章，注意时间是精确到秒，该脚本放在博客的根目录</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line">DATE=date +%Y%m%d%H%M%S</span><br><span class="line">hexo new <span class="string">"<span class="variable">$DATE</span>"</span></span><br><span class="line">vim <span class="built_in">source</span>/_posts/<span class="variable">$DATE</span>.md</span><br></pre></td></tr></table></figure><p>但是问题来了，如果已经写了很多很多的文章了，而且想批量修改成上述格式怎么办呢？下面给出批量修改文件名的脚本，将此脚本放到<code>_post</code>目录，执行即可，最终文件的格式将与上述格式相同</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">ls | grep <span class="string">".md"</span> &gt; filename.txt</span><br><span class="line">num=`cat filename.txt|wc -l`</span><br><span class="line"><span class="built_in">echo</span> <span class="string">"Start"</span></span><br><span class="line"><span class="keyword">for</span>((i=1;i&lt;=<span class="variable">$num</span>;i++));</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">    filename=`cat filename.txt|awk NR==<span class="variable">$i</span>`</span><br><span class="line">    date=`cat <span class="variable">$filename</span>|grep <span class="string">"date: "</span>`</span><br><span class="line"></span><br><span class="line">    year=`<span class="built_in">echo</span> <span class="variable">$date</span>|cut -c 7-10`</span><br><span class="line">    mon=`<span class="built_in">echo</span> <span class="variable">$date</span>|cut -c 12-13`</span><br><span class="line">    day=`<span class="built_in">echo</span> <span class="variable">$date</span>|cut -c 15-16`</span><br><span class="line">    hour=`<span class="built_in">echo</span> <span class="variable">$date</span>|cut -c 18-19`</span><br><span class="line">    min=`<span class="built_in">echo</span> <span class="variable">$date</span>|cut -c 21-22`</span><br><span class="line">    sec=`<span class="built_in">echo</span> <span class="variable">$date</span>|cut -c 24-25`</span><br><span class="line"></span><br><span class="line">    oldname=`<span class="built_in">echo</span> <span class="variable">$&#123;filename%.md&#125;</span>`</span><br><span class="line">    newname=<span class="variable">$year</span><span class="variable">$mon</span><span class="variable">$day</span><span class="variable">$hour</span><span class="variable">$min</span><span class="variable">$sec</span></span><br><span class="line"></span><br><span class="line">    mv <span class="variable">$oldname</span> <span class="variable">$newname</span></span><br><span class="line">    mv <span class="variable">$oldname</span>.md <span class="variable">$newname</span>.md</span><br><span class="line">    <span class="built_in">echo</span> <span class="string">"Renamed Number: <span class="variable">$i</span>"</span></span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"Done"</span></span><br></pre></td></tr></table></figure><p>执行此脚本时，同时会重命名放图片的文件夹，若该文件夹不存在，则会有一系列输出，正常情况不要慌。</p><p>此时默认生成的链接里，会出现两部分日期，修改配置文件<code>_config.yml</code></p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">permalink: :title/</span><br></pre></td></tr></table></figure><p>因为修改了文章链接，所有依赖链接工作的工具都会收影响，比如访客计数，评论系统等等。</p><p>最后提一句，不要在Telegram里直接保存代码，bash中的反引号会被处理掉。</p>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;众所周知Hexo是个纯静态页面生成工具，使用&lt;code&gt;hexo new title&lt;/code&gt;可生成标题为title的文章。若文章题目中出现中文，编码后肉眼不可识别中文意思；若不转码，中文作为url的一部分总会出现种种问题。本文将阐述解决上述问题的方法。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="网站" scheme="https://blog.sugarmix.me/categories/%E7%BD%91%E7%AB%99/"/>
+    
+    
+    <category term="网站" scheme="https://blog.sugarmix.me/tags/%E7%BD%91%E7%AB%99/"/>
+    
+  </entry>
+  
+  <entry>
     <title>关系模式符合的范式</title>
     <link href="https://blog.sugarmix.me/20180319190418/"/>
     <id>https://blog.sugarmix.me/20180319190418/</id>
@@ -97,29 +118,6 @@
     
     
     <category term="数据库" scheme="https://blog.sugarmix.me/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>霍夫变换检测原理及Python实现</title>
-    <link href="https://blog.sugarmix.me/20180415221531/"/>
-    <id>https://blog.sugarmix.me/20180415221531/</id>
-    <published>2018-04-15T14:15:31.000Z</published>
-    <updated>2020-04-07T08:02:20.251Z</updated>
-    
-    <content type="html"><![CDATA[<p>随着人工智能的兴起，计算机视觉相关概念，如人脸识别、人脸检测逐渐进入大众视野。本篇文章介绍计算机视觉中最基础的知识，直线和圆的一种检测算法-霍夫变换。并在最后给出Python的样例代码。</p><a id="more"></a><h1 id="综述"><a href="#综述" class="headerlink" title="综述"></a>综述</h1><p>霍夫变换用来检测物图像中的特征(例如直线和圆).算法如下：</p><blockquote><p>根据被检测的图形，寻找特定的参数空间<br>原图像中所有的点在参数空间中执行投票,投票结果最大的点，即为要寻找的图形</p></blockquote><p>根据上面的描述不难看出,一般情况下：</p><blockquote><p>不同图形的参数空间不同<br>参数空间中的一个点可以表示原图像中的一个图形的所有信息  </p></blockquote><h1 id="检测直线"><a href="#检测直线" class="headerlink" title="检测直线"></a>检测直线</h1><p>截距和斜率两个参数可以确定一条直线，但斜率无穷大甚至不存在时,无法在计算机中准确表示.所以在判定直线时,需要选定另一个参数空间</p><div align="center"><img src="https://upload.wikimedia.org/wikipedia/commons/e/e6/R_theta_line.GIF" alt="霍夫变换检测直线使用的参数空间"><br></div><p>$$r=x\cos \theta +y\sin \theta$$</p><p>此时任意一条直线均可以用$r$(直线到圆心的距离)和$\theta$(嗯....不好描述看上图吧)唯一表示.</p><p>现在思考一个简单的问题，根据上述公式，已知两点$(x_1,y_1)$,$(x_2,y_2)$,能否确定$r$和$\theta$,$\theta\subseteq \left ( -\frac{\pi }{2} ,\frac{\pi }{2} \right )$.如果不知道怎么确定就洗洗睡吧</p><p>也就是说，若已知图像中有且仅有一条直线，且不考虑像素带来的偏差(即所有点的坐标都是实数),则可以根据(直线上的)两点确定直线的具体位置.</p><p>上述过程是求解一个二元一次方程组.方程组中的每个方程代表一条曲线.解为两条曲线交点.</p><div align="center"><br><img src="https://docs.opencv.org/2.4/_images/Hough_Lines_Tutorial_Theory_1.jpg" alt="一个点在参数空间代表的曲线"><br></div><p>如果在同一条直线上选取三个点,三个点在参数空间做出的曲线必然相交与同一点，且该点表示原图像中的一条直线.以此类推,原图中同一直线上所有点在参数空间中做出的所有曲线必定相交与一点</p><div align="center"><br><img src="https://docs.opencv.org/2.4/_images/Hough_Lines_Tutorial_Theory_2.jpg" alt="多条曲线在参数空间的交点"><br></div><p>以上讨论是基于所有坐标均为实数,在实际中,像素为整数,无法在参数空间做出一条真正连续的曲线,最精确的近似是在参数空间做出连续的像素点.所以要将上述连续过程离散化.离散化后的曲线所经过的像素点,就是其投票的点.多条曲线的交点,必然是得票数最高的点.用得票数最高的点代替连续曲线的交点,此时该点为检测出的直线对应的参数点.至此,完成直线检测</p><p>因为存在误差,所以投票后的点会集中在一个区域,而不是某个特定的点,这也就解释了为什么会检测出多条几乎重叠的曲线.</p><p>上述描述中,基于这样一个假设,即图像中的所有点非黑即白,现实中的图像并非如此,所以在霍夫变换检测前,一般先进行边缘检测,边缘检测后返回的图像就是非黑即白(是边缘,或者不是边缘).</p><h1 id="检测圆"><a href="#检测圆" class="headerlink" title="检测圆"></a>检测圆</h1><p>就像开头提到的,检测圆与检测直线有着不同的参数空间.其他过程与检测直线完全相同</p><div align="center"><br>$x=x_0+r\cos\theta$<br>$y=y_0+r\sin\theta$<br></div><p>我们假定知道所需检测的圆的半径$r$.以原图像中的点为圆心,以$r$为半径在参数空间做圆,投票最多的点即为圆心,因为已知半径,圆检测完成.<br>上述假设已知半径.实际使用中,只需给出半径的范围,并遍历之,在所有遍历结果中找投票数最大的,即为被检测的圆</p><p>下图中,半径为$r$的红圆为期待被检测到的圆,每个蓝色的圆均是以红圆周上的点为圆心,以$r$为半径得到的圆,重叠部分最多的点即为被检测圆的圆心.</p><div align="center"><br><img src="/20180415221531/circle.png" alt="检测圆"><br></div><h1 id="Python实现"><a href="#Python实现" class="headerlink" title="Python实现"></a>Python实现</h1><p>由于时间原因,此处仅给出openCV中霍夫变换检测<a href="https://github.com/opencv/opencv/blob/master/samples/python/houghlines.py" target="_blank" rel="noopener">直线</a>和<a href="https://github.com/opencv/opencv/blob/master/samples/python/houghcircles.py" target="_blank" rel="noopener">圆</a>的样例.</p><h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://docs.opencv.org/2.4/doc/tutorials/imgproc/imgtrans/hough_lines/hough_lines.html" target="_blank" rel="noopener">Hough Line Transform</a><br><a href="https://zh.wikipedia.org/wiki/%E9%9C%8D%E5%A4%AB%E5%8F%98%E6%8D%A2" target="_blank" rel="noopener">霍夫变换</a></p>]]></content>
-    
-    
-    <summary type="html">&lt;p&gt;随着人工智能的兴起，计算机视觉相关概念，如人脸识别、人脸检测逐渐进入大众视野。本篇文章介绍计算机视觉中最基础的知识，直线和圆的一种检测算法-霍夫变换。并在最后给出Python的样例代码。&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="图像" scheme="https://blog.sugarmix.me/categories/%E5%9B%BE%E5%83%8F/"/>
-    
-    
-    <category term="图像" scheme="https://blog.sugarmix.me/tags/%E5%9B%BE%E5%83%8F/"/>
-    
-    <category term="openCV" scheme="https://blog.sugarmix.me/tags/openCV/"/>
     
   </entry>
   
