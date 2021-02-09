@@ -124,6 +124,194 @@
       </tags>
   </entry>
   <entry>
+    <title>MySQL存储引擎的特点</title>
+    <url>/20190225173604/</url>
+    <content><![CDATA[<p>每个MySQL存储引擎都满足特定需求。因此，引擎的选择主要取决于您希望在应用程序中完成的任务。</p>
+<p>每个存储引擎的完整功能超出了本文的范围。我们将仅讨论各种存储引擎的不同以及它们的适应场景。</p>
+<a id="more"></a>
+<h1 id="InnoDB存储引擎"><a href="#InnoDB存储引擎" class="headerlink" title="InnoDB存储引擎"></a>InnoDB存储引擎</h1><p>InnoDB用于大多数数据库服务器，因为它支持事务，符合ACID。</p>
+<p>原子性是增强数据库中数据的完整性的一种特性。当影响多个表的事务发生时，必须全部完成，否则回滚。</p>
+<p>一致性意味着数据在保存到磁盘之前能够通过验证规则。</p>
+<p>隔离性允许数据库隔离来自不同并发用户的事务。</p>
+<p>持久性可确保在事务完成后被保存。</p>
+<p>因此，如果您的应用程序需要上述功能，请选择InnoDB。</p>
+<p>InnoDB的另一大优势是支持外键约束。这样可以保持所有相关数据库表的完整性。检查插入，更新和删除操作以确保多个表之间保持一致。</p>
+<p>由于其持续改进，InnoDB不太容易发生数据库崩溃。如果在事务完成之前出现了问题，服务器重启后，InnoDB将完成操作或撤消更改。</p>
+<p>InnoDB支持B-Tree索引和FULLTEXT索引，底层分别使用B-Tree和Inverted Lists实现。</p>
+<h1 id="MyISAM存储引擎"><a href="#MyISAM存储引擎" class="headerlink" title="MyISAM存储引擎"></a>MyISAM存储引擎</h1><p>对于那些读取操作比写入操作更多的应用，MyISAM具有更好的性能。对于初学者来是很容易设计和创建一个数据库，因为它不支持外键(foreign keys)。使用外键需要有经验的配置来避免不合法的删除和更新操作。</p>
+<p>与InnoDB相比，该引擎占用更少的磁盘空间，因此适用于磁盘空间受限制的应用。</p>
+<p>MyISAM不符合ACID，因此它没有回滚功能。当事务失败时，必须手动删除数据。这个引擎支持并发插入操作。</p>
+<p>MyISAM支持R-Tree索引。</p>
+<h1 id="CSV存储引擎"><a href="#CSV存储引擎" class="headerlink" title="CSV存储引擎"></a>CSV存储引擎</h1><p>CSV代表逗号分隔值(Comma Separated Values)。这个引擎保存用逗号分割的明文数据。</p>
+<p>当创建表格的时候会自动创建一个 <code>.CSV</code> 文件。</p>
+<p>CSV文件的例子如下</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&quot;75521&quot;,&quot;JOHN DOE&quot;</span><br><span class="line">&quot;75522&quot;,&quot;BABY DOE&quot;</span><br></pre></td></tr></table></figure>
+<p>这个引擎的唯一优点是容易被Office软件读取。</p>
+<p>CSV引擎不支持索引和事务，很少被使用。</p>
+<h1 id="NDB存储引擎"><a href="#NDB存储引擎" class="headerlink" title="NDB存储引擎"></a>NDB存储引擎</h1><p>NDB 代表网络数据库(Network DataBase).它用于需要高级别可用性的集群环境中。NDB使用无共享体系结构，适用于创建分布式容错数据库体系结构。</p>
+<p>如果你在运行一个至关重要(mission critical)的应用，并且数据需要冗余备份，选择NDB。然而，这个引擎需要一系列服务器来保存冗余数据。</p>
+<p>大多数软件仓库的MySQL默认不安装这个引擎，需要下载MSQL社区版。</p>
+<p>NDB具有InnoDB的大部分功能，可以扩展到128TB（7.5.2版本）。在线时间为99.999％，故障节点的恢复时间不到一秒。</p>
+<h1 id="Blackhole存储引擎"><a href="#Blackhole存储引擎" class="headerlink" title="Blackhole存储引擎"></a>Blackhole存储引擎</h1><p>黑洞引擎接受数据并将其丢弃。您可以使用此存储引擎创建表并向其插入数据，但后续读取将返回空集。引擎支持索引。</p>
+<p>Blackhole引擎可用于验证转储文件语法并测量二进制日志记录的开销，甚至可以查找数据库中的性能瓶颈。</p>
+<h1 id="Memory存储引擎"><a href="#Memory存储引擎" class="headerlink" title="Memory存储引擎"></a>Memory存储引擎</h1><p>内存存储引擎用于将数据存储在内存中以用于特殊目的。使用此引擎容易崩溃，它的数据应该来源于其他永久存储的表。</p>
+<p>内存存储引擎支持索引和加密。表中数据的大小受限于服务器上的可用内存。</p>
+<p>可以使用此引擎存储非关键任务数据，例如会话(session)管理信息或只需最少更新的只读数据。请注意，重新启动服务器将擦除所有数据。</p>
+<h1 id="Archive存储引擎"><a href="#Archive存储引擎" class="headerlink" title="Archive存储引擎"></a>Archive存储引擎</h1><p>如果你想在数据库中存储很多不常被使用的数据，例如历史信息，请使用存档存储引擎。该引擎使用非常小的空间中存储大量信息。</p>
+<p>它支持压缩和加密，但缺少索引和事务功能。因此，它仅适用于归档数据，不应该被用于需要被快速更改、需要大量读写的信息。</p>
+<h1 id="Federated存储引擎"><a href="#Federated存储引擎" class="headerlink" title="Federated存储引擎"></a>Federated存储引擎</h1><p>从没有集群和复制技术的远程MySQL服务器获取数据时，适合使用联合(Federated)存储引擎。</p>
+<p>如果从使用联合引擎定义的本地表查询数据，则会从定义的远程服务器自动检索数据。因此，联合表需要本地和远程服务器。</p>
+<p>远程服务器保存表定义和关联数据，而本地服务器仅保存包含指向远程服务器的连接字符串的定义。远程服务器上的存储引擎可以是任何类型，例如InnoDB或MyISAM。</p>
+<p>MySQL默认不支持此引擎，使用需要启动。</p>
+<p>联合存储引擎可以用作将数据写入远程服务器的代理。它只是一个指向远程服务器中另一个表的表。它应该很少被使用，因为它在连接表时非常慢并且在涉及事务时具有奇怪的行为。</p>
+<h1 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h1><p><a href="https://medium.com/@Alibaba_Cloud/how-to-choose-mysql-storage-engine-on-alibaba-cloud-d56687934c28" target="_blank" rel="noopener">How to Choose MySQL Storage Engine on Alibaba Cloud</a></p>
+]]></content>
+      <categories>
+        <category>数据库</category>
+      </categories>
+      <tags>
+        <tag>MySQL</tag>
+        <tag>翻译</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>MySQL语句执行过程简介</title>
+    <url>/20190301160919/</url>
+    <content><![CDATA[<p>昔日庖丁解牛，未见全牛，所赖者是其对牛内部骨架结构的了解，对于MySQL亦是如此，只有更加全面地了解SQL语句执行的每个过程，才能更好的进行SQL的设计和优化。</p>
+<p>当希望MySQL能够以更高的性能运行查询时，最好的办法就是弄清楚MySQL是如何优化和执行查询的。一旦理解了这一点，很多查询优化工作实际上就是遵循一些原则能够按照预想的合理的方式运行。</p>
+<a id="more"></a>
+<h1 id="总述"><a href="#总述" class="headerlink" title="总述"></a>总述</h1><p>如下图所示，当向MySQL发送一个请求的时候，MySQL到底做了什么：</p>
+<ol>
+<li>客户端发送一条查询给服务器。</li>
+<li>服务器先检查查询缓存，如果命中了缓存，则立刻返回存储在缓存中的结果。否则进入下一阶段。</li>
+<li>服务器端进行SQL解析、预处理，再由优化器生成对应的执行计划。</li>
+<li>MySQL根据优化器生成的执行计划，再调用存储引擎的API来执行查询。</li>
+<li>将结果返回给客户端。</li>
+</ol>
+<p><img src="/20190301160919/sql_statement_execution_process.jpg" alt></p>
+<h1 id="查询缓存"><a href="#查询缓存" class="headerlink" title="查询缓存"></a>查询缓存</h1><p>MySQL查询缓存保存查询返回的完整结构。当查询命中该缓存时，MySQL会立刻返回结果，跳过了解析、优化和执行阶段<br>查询缓存系统会跟踪查询中涉及的每个表，如果这些表发生了变化，那么和这个表相关的所有缓存数据都将失效。<br>MySQL将缓存存放在一个引用表中，通过一个哈希值引用，这个哈希值包括了以下因素，即查询本身、当前要查询的数据库、客户端协议的版本等一些其他可能影响返回结果的信息。<br>当判断缓存是否命中时，MySQL不会进行解析查询语句，而是直接使用SQL语句和客户端发送过来的其他原始信息。所以，任何字符上的不同，例如空格、注解等都会导致缓存的不命中。<br>当查询语句中有一些不确定的数据时，则不会被缓存。例如包含函数NOW()或者CURRENT_DATE()的查询不会缓存。包含任何用户自定义函数，存储函数，用户变量，临时表，mysql数据库中的系统表或者包含任何列级别权限的表，都不会被缓存。<br>有一点需要注意，MySQL并不是会因为查询中包含一个不确定的函数而不检查查询缓存，因为检查查询缓存之前，MySQL不会解析查询语句，所以也无法知道语句中是否有不确定的函数。<br>事实则是，如果查询语句中包含任何的不确定的函数，那么其查询结果不会被缓存，因为查询缓存中也无法找到对应的缓存结果。<br>有关查询缓存的配置如下所示。</p>
+<ul>
+<li>query_cache_type:是否打开查询缓存。可以设置为OFF、ON和DEMAND。DEMAND表示只有在查询语句中明确写明SQL_CACHE的语句才会放入查询缓存。</li>
+<li>query_cache_size:查询缓存使用的总内存空间。</li>
+<li>query_cache_min_res_unit:在查询缓存中分配内存块时的最小单元。较小的该值可以减少碎片导致的内存空间浪费，但是会导致更频繁的内存块操作。</li>
+<li>query_cache_limit:MySQL能够查询的最大查询结果。如果查询结果大于这个值，则不会被缓存。因为查询缓存在数据生成的时候就开始尝试缓存数据，所以当结果全部返回后，MySQL才知道查询结果是否超出限制。超出之后，才会将结果从查询缓存中删除。</li>
+</ul>
+<h1 id="解析和预处理"><a href="#解析和预处理" class="headerlink" title="解析和预处理"></a>解析和预处理</h1><p>解析器通过关键字将SQL语句进行解析，并生成对应的解析树。MySQL解析器将使用MySQL语法规则验证和解析查询。<br>预处理器则根据一些MySQL规则进行进一步检查解析书是否合法，例如检查数据表和数据列是否存在，还会解析名字和别名，看看它们是否有歧义。</p>
+<h1 id="查询优化器"><a href="#查询优化器" class="headerlink" title="查询优化器"></a>查询优化器</h1><p>查询优化器会将解析树转化成执行计划。一条查询可以有多种执行方法，最后都是返回相同结果。优化器的作用就是找到这其中最好的执行计划。<br>生成执行计划的过程会消耗较多的时间，特别是存在许多可选的执行计划时。如果在一条SQL语句执行的过程中将该语句对应的最终执行计划进行缓存，当相似的语句再次被输入服务器时，就可以直接使用已缓存的执行计划，从而跳过SQL语句生成执行计划的整个过程，进而可以提高语句的执行速度。</p>
+<p>MySQL使用基于成本的查询优化器(Cost-Based Optimizer，CBO)。它会尝试预测一个查询使用某种执行计划时的成本，并选择其中成本最少的一个。</p>
+<p>优化器会根据优化规则对关系表达式进行转换，这里的转换是说一个关系表达式经过优化规则后会生成另外一个关系表达式，同时原有表达式也会保留，经过一系列转换后会生成多个执行计划，然后CBO会根据统计信息和代价模型(Cost Model)计算每个执行计划的Cost，从中挑选Cost最小的执行计划。由上可知，CBO中有两个依赖：统计信息和代价模型。统计信息的准确与否、代价模型的合理与否都会影响CBO选择最优计划。</p>
+<h1 id="查询执行引擎"><a href="#查询执行引擎" class="headerlink" title="查询执行引擎"></a>查询执行引擎</h1><p>在解析和优化阶段，MySQL将生成查询对应的执行计划，MySQL的查询执行引擎根据这个执行计划来完成整个查询。这里执行计划是一个数据结构，而不是和其他的关系型数据库那样生成对应的字节码。</p>
+<h1 id="返回结果给客户端"><a href="#返回结果给客户端" class="headerlink" title="返回结果给客户端"></a>返回结果给客户端</h1><p>如果查询可以被缓存，那么MySQL在这个阶段页会将结果存放到查询缓存中。<br>MySQL将结果集返回给客户端是一个增量、逐步返回的过程。在查询生成第一条结果时，MySQL就可以开始向客户端逐步返回结果集了。</p>
+<h1 id="原文链接"><a href="#原文链接" class="headerlink" title="原文链接"></a>原文链接</h1><p><a href="https://cloud.tencent.com/developer/article/1200822" target="_blank" rel="noopener">SQL语句执行过程详解</a></p>
+]]></content>
+      <categories>
+        <category>数据库</category>
+      </categories>
+      <tags>
+        <tag>MySQL</tag>
+        <tag>转载</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Super Egg Drop</title>
+    <url>/20190315095242/</url>
+    <content><![CDATA[<p>鸡蛋从楼上掉下来，在某层以上一定会破，在某层以及以下一定不会破，若鸡蛋破碎则不能再次使用，现在有K个鸡蛋N层楼，每次可以在某层楼扔一个鸡蛋探测，在最坏的情况下，至少需要多少次才能准确探测出在第几层鸡蛋会破碎？</p>
+<a id="more"></a>
+<h1 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h1><p>You are given <code>K</code> eggs, and you have access to a building with <code>N</code> floors from 1 to N.<br>Each egg is identical in function, and if an egg breaks, you cannot drop it again.<br>You know that there exists a floor <code>F</code> with <code>0 &lt;= F &lt;= N</code> such that any egg dropped at a floor higher than F will break, and any egg dropped at or below floor F will not break.<br>Each move, you may take an egg (if you have an unbroken one) and drop it from any floor <code>X</code> (with <code>1 &lt;= X &lt;= N</code>).<br>Your goal is to know with certainty what the value of F is.<br>What is the minimum number of moves that you need to know with certainty what F is, regardless of the initial value of F?</p>
+<h1 id="正面解决"><a href="#正面解决" class="headerlink" title="正面解决"></a>正面解决</h1><p>即根据题目意思直接计算 F</p>
+<h2 id="暴力破解"><a href="#暴力破解" class="headerlink" title="暴力破解"></a>暴力破解</h2><p>可以确定算法正确。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">superEggDrop</span><span class="params">(<span class="keyword">int</span> K, <span class="keyword">int</span> N)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> t;</span><br><span class="line">        <span class="keyword">if</span> (K == <span class="number">0</span> || N == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="comment">/* 没有鸡蛋或者没有楼层的时候肯定是 0  */</span></span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (K == <span class="number">1</span>) &#123;</span><br><span class="line">            <span class="comment">/* 仅有一个鸡蛋，只能从最底层开始尝试，有几层就要尝试几次 */</span></span><br><span class="line">            <span class="keyword">return</span> N;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">/* 尝试最底层，如果鸡蛋没碎，确定结果；如果鸡蛋碎了，则问题转化为，K-1个鸡蛋探索N-1个楼层 */</span></span><br><span class="line">            t = Math.max(<span class="keyword">this</span>.superEggDrop(K, <span class="number">0</span>), <span class="keyword">this</span>.superEggDrop(K - <span class="number">1</span>, N - <span class="number">1</span>));</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; N; i++) &#123;</span><br><span class="line">                <span class="comment">/* </span></span><br><span class="line"><span class="comment">                 * 尝试第i+1层，如果鸡蛋没碎，则问题转化为K个鸡蛋探索i层，即第一层到第i层(i-1+1)；</span></span><br><span class="line"><span class="comment">                 * 如果鸡蛋碎了，则问题转化为，K-1个鸡蛋探索N-i-1个楼层，即第i+2层到N层(N-(i+2)+1)；</span></span><br><span class="line"><span class="comment">                 */</span></span><br><span class="line">                t = Math.min(t, Math.max(<span class="keyword">this</span>.superEggDrop(K, i), <span class="keyword">this</span>.superEggDrop(K - <span class="number">1</span>, N - i - <span class="number">1</span>)));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> t + <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>K=3,N=26</p>
+</blockquote>
+<p>不出意外的超时了。</p>
+<h2 id="备忘录"><a href="#备忘录" class="headerlink" title="备忘录"></a>备忘录</h2><p>分析上述算法超时的原因，存在太多重复的递归运算，使用备忘录消除重复计算。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="comment">/* 备忘录 */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span>[][] note = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">101</span>][<span class="number">10001</span>];</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">superEggDrop</span><span class="params">(<span class="keyword">int</span> K, <span class="keyword">int</span> N)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> t;</span><br><span class="line">        <span class="keyword">if</span> (K == <span class="number">0</span> || N == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (K == <span class="number">1</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> N;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="keyword">this</span>.note[K][N] != <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="comment">/* 如果曾经计算过直接返回 */</span></span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">this</span>.note[K][N];</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            t = Math.max(<span class="keyword">this</span>.superEggDrop(K, <span class="number">0</span>), <span class="keyword">this</span>.superEggDrop(K - <span class="number">1</span>, N - <span class="number">1</span>));</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; N; i++) &#123;</span><br><span class="line">                t = Math.min(t, Math.max(<span class="keyword">this</span>.superEggDrop(K, i), <span class="keyword">this</span>.superEggDrop(K - <span class="number">1</span>, N - i - <span class="number">1</span>)));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">/* 返回前保存计算的值 */</span></span><br><span class="line">        <span class="keyword">this</span>.note[K][N] = t + <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">return</span> t + <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>K=6,N=2000</p>
+</blockquote>
+<p>原本以为这样可以不优雅的通过，然而却依旧超时。</p>
+<h2 id="消除递归"><a href="#消除递归" class="headerlink" title="消除递归"></a>消除递归</h2><p>上述算法虽然消除了重复的递归运算，但依旧存在大量递归，递归本身消耗的时间太多，使用动态规划填表的方式消除递归。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">superEggDrop</span><span class="params">(<span class="keyword">int</span> K, <span class="keyword">int</span> N)</span> </span>&#123;</span><br><span class="line">        <span class="comment">/* 二维数组初始值为0 */</span></span><br><span class="line">        <span class="keyword">int</span>[][] table = <span class="keyword">new</span> <span class="keyword">int</span>[K + <span class="number">1</span>][N + <span class="number">1</span>];</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= N; i++) &#123;</span><br><span class="line">            <span class="comment">/* 初始化1个鸡蛋i层楼尝试i次的情况 */</span></span><br><span class="line">            table[<span class="number">1</span>][i] = i;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= K; i++) &#123;</span><br><span class="line">            <span class="comment">/* 初始化i个鸡蛋在1层楼尝试1次的情况 */</span></span><br><span class="line">            table[i][<span class="number">1</span>] = <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/* 开始填表，思路同递归算法 */</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> k = <span class="number">2</span>; k &lt;= K; k++) &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> n = <span class="number">2</span>; n &lt;= N; n++) &#123;</span><br><span class="line">                <span class="keyword">int</span> t = Math.max(table[k][<span class="number">0</span>], table[k - <span class="number">1</span>][n - <span class="number">1</span>]);</span><br><span class="line">                <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; n; i++) &#123;</span><br><span class="line">                    t = Math.min(t, Math.max(table[k][i], table[k - <span class="number">1</span>][n - i - <span class="number">1</span>]));</span><br><span class="line">                &#125;</span><br><span class="line">                table[k][n] = t + <span class="number">1</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> table[K][N];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>K=7,N=10000</p>
+</blockquote>
+<p>意外的超时了。</p>
+<h2 id="减少遍历"><a href="#减少遍历" class="headerlink" title="减少遍历"></a>减少遍历</h2><p>此处存在大量无价值的遍历，考虑到随着i增加，<code>table[k][i]</code>,<code>table[k - 1][n - i - 1]</code>分别单调增加和减少，故其两个中较大值，一定出现在中间位置。可以使用二分法找出最合适的<code>i</code>。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; n; i++) &#123;</span><br><span class="line">    t = Math.min(t, Math.max(table[k][i], table[k - <span class="number">1</span>][n - i - <span class="number">1</span>]));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="另一个思路"><a href="#另一个思路" class="headerlink" title="另一个思路"></a>另一个思路</h1><p>K个鸡蛋，尝试M次，最多可以尝试到的楼层个数为<code>table[K][M]</code>。尝试某一层，若在该层碎了，则使用<code>K-1</code>个鸡蛋探索<code>M-1</code>次，若没碎，使用<code>K</code>个鸡蛋探索<code>M-1</code>次，当前探索的本层为<code>1</code>。虽然不知道尝试的哪一层，但是知道存在某一层，尝试后会得到的结果为<code>table[K][M]</code>。<br>当 <code>table[k][m-1] &lt; F &lt;= table[k][m]</code> 时，m即为探索的次数，注意鸡蛋可能给多了所以使用k而不是K，其中k&lt;=K。此时需要预估最大尝试次数M。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">superEggDrop</span><span class="params">(<span class="keyword">int</span> K, <span class="keyword">int</span> N)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> M = N;</span><br><span class="line">        <span class="keyword">int</span> i, j;</span><br><span class="line">        <span class="keyword">int</span>[][] table = <span class="keyword">new</span> <span class="keyword">int</span>[K + <span class="number">1</span>][M + <span class="number">1</span>];</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (i = <span class="number">1</span>; i &lt;= M; i++) &#123;</span><br><span class="line">            <span class="comment">/* 1个鸡蛋尝试i次 */</span></span><br><span class="line">            table[<span class="number">1</span>][i] = i;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (j = <span class="number">1</span>; j &lt;= K; j++) &#123;</span><br><span class="line">            <span class="comment">/* j个鸡蛋尝试1次 */</span></span><br><span class="line">            table[j][<span class="number">1</span>] = <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * 策略是：尽可能的多使用鸡蛋，少使用尝试次数</span></span><br><span class="line"><span class="comment">         * 故遍历时，内层遍历鸡蛋，让鸡蛋先用完，</span></span><br><span class="line"><span class="comment">         * 外层遍历尝试次数，不得已的时候增加尝试次数</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (i = <span class="number">2</span>; i &lt;= M; i++) &#123;</span><br><span class="line">            <span class="keyword">for</span> (j = <span class="number">2</span>; j &lt;= K; j++) &#123;</span><br><span class="line">                table[j][i] = table[j - <span class="number">1</span>][i - <span class="number">1</span>] + table[j][i - <span class="number">1</span>] + <span class="number">1</span>;</span><br><span class="line">                <span class="keyword">if</span> (table[j][i] &gt;= N) &#123;</span><br><span class="line">                    <span class="keyword">return</span> i;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * 楼层数为1,或鸡蛋数为1时会走到这里</span></span><br><span class="line"><span class="comment">         * 楼层数为1时返回1，鸡蛋数为1时返回楼层数</span></span><br><span class="line"><span class="comment">         * 综上返回楼层数即可</span></span><br><span class="line"><span class="comment">         * */</span></span><br><span class="line">        <span class="keyword">return</span> N;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>Accepted</p>
+</blockquote>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>至此，问题终于解决。最棒的情况是可以独立快速的解决问题，在认真思考后依旧不能给出合适的答案时，寻求帮助也是个不错的选择。</p>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p><a href="https://leetcode.com/problems/super-egg-drop/" target="_blank" rel="noopener">Super Egg Drop</a><br><a href="https://www.cnblogs.com/Phantom01/p/9490508.html" target="_blank" rel="noopener">Leetcode 887 Super Egg Drop(扔鸡蛋) DP</a><br><a href="https://leetcode.com/problems/super-egg-drop/solution/" target="_blank" rel="noopener">Super Egg Drop Solution</a></p>
+]]></content>
+      <categories>
+        <category>算法</category>
+      </categories>
+      <tags>
+        <tag>动态规划</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>内存数据存储系统Redis与Memcached对比</title>
+    <url>/20190220102211/</url>
+    <content><![CDATA[<p>Redis和Memcached都是内存数据存储系统。Redis将大部分数据存储在内存中。它支持多种数据类型，包括字符串，哈希表和链列等。在本文中，我们将研究Redis和Memcached之间的区别。</p>
+<a id="more"></a>
+<h1 id="功能比较"><a href="#功能比较" class="headerlink" title="功能比较"></a>功能比较</h1><p>Redis的作者对Redis和Memcached有如下比较：</p>
+<blockquote>
+<p><strong><em>服务器端数据操作</em></strong><br>Redis拥有更多数据结构，支持服务端(Redis服务)直接对数据进行操作(如对整数的+1和-1操作)。对于类似的操作，在Memcached中，需要将数据复制到客户端，修改后，在服务端(Memcached服务)重新设置该值。这极大地增加了网络IO。在Redis中，这些复杂的操作与一般的GET/SET操作一样高效。因此，如果您需要缓存来支持更复杂的结构和操作，Redis是一个不错的选择。</p>
+</blockquote>
+<blockquote>
+<p><strong><em>内存使用效率比较</em></strong><br>由于使用了简单的键值存储，Memcached具有更高的内存利用率。但是，如果Redis采用哈希结构，由于其组合压缩模式，它将具有比Memcached更高的内存利用率。</p>
+</blockquote>
+<blockquote>
+<p><strong><em>性能比较</em></strong><br>Redis仅使用单核，而Memcached使用多核。因此，在一般情况下，就核心而言，Redis在小型数据存储方面的性能高于Memcached。在存储10万(100k)条及以上的数据时，Memcached优于Redis。虽然Redis也对存储大数据进行了一些优化，但它仍然不如Memcached。</p>
+</blockquote>
+<p>现在做一些支持上述观点的讨论。</p>
+<h1 id="对不同数据类型的支持"><a href="#对不同数据类型的支持" class="headerlink" title="对不同数据类型的支持"></a>对不同数据类型的支持</h1><p>Memcached仅支持简单键值结构的数据记录，Redis支持更丰富的数据类型，包括String，Hash，List，Set和Sorted Set。Redis在内部使用redisObject来表示所有键和值。redisObject的主要信息如下所示：<br><img src="/20190220102211/redis_core_object.png" alt><br>该类型表示值对象的数据类型。编码指示Redis中不同数据类型的存储方法，例如type = string表示该值存储一般字符串，相应的编码可以是raw或int。如果为int，则Redis将关联的字符串存储并表示为值类型。当然，前提是可以用值表示字符串，例如字符串“123”和“456”。只有启用Redis虚拟内存功能后，才会为内存分配vm字段。默认情况下此功能处于关闭状态。现在让我们讨论一些数据类型。</p>
+<h2 id="String"><a href="#String" class="headerlink" title="String"></a>String</h2><p><strong>常用命令：</strong>set/get/decr/incr/mget等。<br><strong>应用场景：</strong>String是最常见的数据类型，通用key/value属于此类别。<br><strong>实现方法：</strong>String是字符串，redisObject默认情况下使用String(被保存的数据都被视为字符串)。当调用INCR或DECR操作时，系统会将其转换为值类型以进行计算(只有进行数值计算时，才将字符串类型转换为数值类型)。此时，redisObject的编码字段为int。</p>
+<h2 id="Hash"><a href="#Hash" class="headerlink" title="Hash"></a>Hash</h2><p><strong>常用命令：</strong>hget/hset/hgetall等。<br><strong>应用场景：</strong>存储用户信息对象数据，包括用户ID，用户名，年龄和生日;通过用户ID检索用户名，年龄或生日。<br><strong>实现方法：</strong>Redis中的Hash是内部存储值的HashMap，并提供直接访问此map成员的接口。如图所示，Key是用户ID，Value是map。此映射的键是成员属性名称，值是属性值。通过这种方式，可以直接执行更改并通过内部映射的键访问数据（在Redis中，内部映射键称为字段），即通过密钥（用户ID）+字段（属性标记）到对相应的属性数据执行操作。</p>
+<p>当前HashMap有两种实现方式：当HashMap中只有少数成员时，Redis会选择一维数组来实现紧凑存储以节省内存，而不是实际意义上的HashMap结构。此时，相应值redisObject的编码是zipmap。当成员数量增加时，Redis会将它们转换为真正意义上的HashMap，此时的编码将是ht。<br><img src="/20190220102211/hash.png" alt></p>
+<h2 id="List"><a href="#List" class="headerlink" title="List"></a>List</h2><p><strong>常用命令：</strong>lpush/rpush/lpop/rpop/lrange。<br><strong>应用场景：</strong>Redis List是Redis中最重要的数据结构。实际上，可以使用Redis的list结构实现Twitter的following list和fans list 。<br><strong>实现方法：</strong>通过双向链表，支持反向查找和遍历以方便操作。但它也带来了一些额外的内存开销。Redis中的许多实现（包括发送缓冲队列）也采用此数据结构。</p>
+<h2 id="Set"><a href="#Set" class="headerlink" title="Set"></a>Set</h2><p><strong>常用命令：</strong>sadd/spop/smembers/sunion等。<br><strong>应用场景：</strong>Redis set提供了与list类似的外部列表功能。它的特殊之处在于set可以自动删除重复项。当您需要存储没有任何重复的数据list时，set是一个不错的选择。此外，set提供了一个重要的接口来判断一个成员是否在一个集合中，list不提供此功能。<br><strong>实现方法：</strong>set的内部实现是一个HashMap，其值始终为null。它实际上通过计算哈希值来快速删除重复项。实际上，这也是为什么set可以判断成员是否在集合内的原因。</p>
+<h2 id="Sorted-Set"><a href="#Sorted-Set" class="headerlink" title="Sorted Set"></a>Sorted Set</h2><p><strong>常用命令：</strong>zadd/zrange/zrem/zcard等。<br><strong>应用场景：</strong>Redis Sorted Set(排序集)的应用场景与集合的应用场景类似。不同之处在于，set不会自动对数据进行排序，但是排序集可以通过用户提供的优先级参数对成员进行排序。而且，后者还会自动对插入的数据进行排序。当您需要一个没有重复数据的有序集合列表时，您可以选择Sorted Set数据结构，例如Twitter的公共时间线，它可以将发布时间作为优先级参数，并自动对按时间获取的数据进行排序。<br><strong>实现方法：</strong>Redis sorted set在内部使用HashMap和SkipList来确保高效的数据存储和排序。HashMap存储成员和优先级参数之间的映射;而SkipList存储所有成员。排序依赖于存储在HashMap中的优先级参数。使用SkipList结构可以提高搜索效率并简化实现。</p>
+<h1 id="不同的内存管理方案"><a href="#不同的内存管理方案" class="headerlink" title="不同的内存管理方案"></a>不同的内存管理方案</h1><p>在Redis中，数据不一定完全保存在内存中。这是Redis和Memcached的主要区别。当物理内存已满时，Redis可能会将长时间未使用的值交换到磁盘。Redis仅缓存所有键(key)信息。如果发现内存使用率超过阈值，则会触发交换操作。Redis根据<code>swappability = age * log(size_in_memory)</code>计算要交换到磁盘的键的值。然后，将值保存到磁盘并从内存中擦除。此功能使Redis能够维护大于其机器内存容量的数据。机器内存必须保留所有键，并且不会把所有数据都交换到硬盘(内存中一定存在没有被交换的数据)。</p>
+<p>当Redis进行数据交换时，提供服务的主线程和执行交换操作的子线程将共享这部分内存。此时Redis将阻止数据更新操作，直到子线程完成交换操作。当从Redis读取数据时，如果读取键对应的值不在内存中，则Redis需要从交换文件加载相应的数据，然后将其返回给请求者。这里存在I/O线程池的问题。默认情况下，Redis会拥塞，也就是说，只有在成功加载所有交换文件后才会响应。当有少量客户端时，此策略适用于成批操作。但是如果你在一个大型网站程序中应用Redis，它就无法满足高并发性要求。但是，可以设置Redis运行的I/O线程池大小，并使用并发读取加载位于交换文件的数据的请求，以缩短拥塞时间。</p>
+<p>对于像Redis和Memcached这样基于内存的数据库系统，内存管理效率是影响系统性能的关键。在C语言中，malloc/free是最传统的分配和释放内存的方法。然而，这个方法隐藏了巨大的缺陷：首先，对于开发者来说，分配和释放不匹配很容易导致内存泄漏；其次，频繁的调用将使重新循环利用内存变得困难(内存碎片)，减少了内存的利用率；最后，系统调用将比一般函数调用消耗更大的系统开销。因此，为了提高内存管理效率，内存管理不会直接使用malloc/free调用作为解决方案。Redis和Memcached都采用他们自己设计的内存管理机制，但实现方法差异很大。接下来我们介绍这两种机制。</p>
+<p>默认情况下，Memcached使用Slab Allocation机制进行内存管理。其主要思想是将分配的内存分段为预定义的特定长度的块，用这些块来存储长度相匹配的键值数据记录，以完全解决内存片段(外碎片)问题。理想状态下，slab的分配机制设计应该满足外部数据存储的需求，也就是说，它有助于在Slab Allocation系统中存储所有不同长度的键值数据。但是，Memcached的其他内存请求申请是通过一般的malloc/free调用发生的。通常，这些请求的数量小，频率低，不会影响整体系统性能。Slab Allocation的原理非常简单。首先它从操作系统申请一大块内存，把他们分成一系列大小不同的小块，然后把相同大小的小块放到Slab Class中。其中，块是用于存储键值数据的最小单元。通过在Memcached启动时创建增长因子，可以控制每个Slab类的大小。假设图中的生长因子是1.25。如果第一组中的块大小为88字节，则第二组中的块将为112字节。其余的块遵循相同的规则。<br><img src="/20190220102211/slab_class.png" alt><br>当Memcached接收到客户端发送的数据时，首先根据数据大小选择最合适的Slab Class，然后在Memcached中查询包含Slab Class的空闲块列表，以找到用于存储数据的块。当一段数据过期或废弃被丢弃时，回收占用的块，并将其恢复到空闲列表。</p>
+<p>从上面的过程中，我们可以看到Memcached具有非常高的内存管理效率，不会导致内存碎片。然而，它最大的缺点是它可能造成空间浪费。由于操作系统会在特定长度的内存空间中分配每个块，因此较长的数据可能无法完全利用该空间。如图所示，当我们将100字节的数据缓存到128字节的块中时，未使用的28字节会浪费掉。<br><img src="/20190220102211/memcached_mem_waste.png" alt></p>
+<p>Redis的内存管理的实现主要通过源代码中的两个文件zmalloc.h和zmalloc.c来完成。为了便于内存管理，Redis会在内存分配后将内存大小存储在内存块头中。如图所示，real_ptr是Redis调用malloc后返回的指针。Redis将内存块大小存储在头中，并且内存占用的大小是可确定的，即系统返回size_t类型的长度，然后返回ret_ptr。当需要释放内存时，系统将ret_ptr传递给内存管理程序。通过ret_ptr，程序可以轻松计算real_ptr的值，然后通过real_ptr释放内存。<br><img src="/20190220102211/redis_mem.png" alt><br>Redis通过定义长度为ZMALLOC_MAX_ALLOC_STAT的数组来记录所有内存的分布。数组中的每个元素表示当前程序分配的内存块数，内存块的大小是元素的下标。在源代码中，此数组是zmalloc_allocations。zmalloc_allocations[16]表示以16字节长度分配的内存块数。zmalloc.c包含一个used_memory的静态变量，用于记录当前分配的内存的总大小。所以一般来说，Redis采用封装的malloc/free，与Memcached的内存管理机制相比要简单得多。</p>
+<h1 id="数据持久性支持"><a href="#数据持久性支持" class="headerlink" title="数据持久性支持"></a>数据持久性支持</h1><p>虽然是基于内存的存储，但Redis支持内存数据持久性，并提供两种主要的持久性策略：RDB快照和AOF日志。Memcached不支持数据持久性操作。</p>
+<h2 id="RDB快照"><a href="#RDB快照" class="headerlink" title="RDB快照"></a>RDB快照</h2><p>Redis支持将当前数据的快照存储到数据文件中以实现持久性，即RDB快照。但是，我们如何为连续写入数据的数据库生成快照呢？Redis利用fork命令的copy on write机制。在创建快照时，当前进程会fork一个子进程，使所有数据循环并将它们写入RDB文件。我们可以通过Redis的save命令配置RDB快照生成的时间。例如，如果要每10分钟配置一次快照生成，则可以在每1,000次写入后配置快照生成。您还可以配置多个规则以便一起实施。这些规则的定义在Redis的配置文件中。您还可以在Redis运行期间使用Redis的CONFIG SET命令设置规则，而无需重新启动Redis。</p>
+<p>Redis的RDB文件在某种程度上是不可破坏的，因为它在新进程中执行其写操作。生成新的RDB文件后，Redis生成的子进程将首先将数据写入临时文件，然后通过原子重命名系统调用将临时文件重命名为RDB文件，以便RDB文件在Redis发生错误后始终可用。同时，Redis的RDB文件也是Redis主从同步内部实现的一个链接。但是，RDB的缺点在于，一旦数据库遇到某些问题，保存在RDB文件中的数据可能不是最新的，从最后一个RDB文件生成到Redis失败期间数据丢失。请注意，对于某些企业来说，这是可以容忍的。</p>
+<h2 id="AOF日志"><a href="#AOF日志" class="headerlink" title="AOF日志"></a>AOF日志</h2><p>AOF日志的全程是 Append Only File。它是一个附加的日志文件。与通用数据库的binlog不同，AOF是一个可识别的明文(recognizable plaintext)，其内容是Redis标准命令。Rdeis仅把引起数据更改的命令添加到AOF。每个更改数据的命令都会生成一个日志。AOF文件将变得越来越大。Redis提供了另一个功能-AOF重写。AOF重写的功能是重新生成AOF文件。新AOF文件中，每条记录只有一个操作，而不像在旧的AOF文件中那样，记录了对同一个值的多次操作。生成过程类似于RDB快照，即分支进程，遍历数据并将数据写入新的临时AOF文件。将数据写入新文件时，它会将所有写操作日志写入旧的AOF文件，并同时将它们记录在内存缓冲区中。完成操作后，系统会一次将缓冲区中的所有日志写入临时文件。此后，它将调用atomic rename命令以使用新的AOF文件替换旧的AOF文件。</p>
+<p>AOF是写文件操作，旨在将操作日志写入磁盘。它还涉及我们前面提到的写操作过程。在Redis调用AOF的写入操作后，它使用appendfsync选项通过调用fsync命令来控制将数据写入磁盘的时间。以下appendfsync中的三个设置选项具有从低到强的安全强度。</p>
+<ul>
+<li><p>appendfsync no：当我们将appendfsync设置为no时，Redis不会主动调用fsync来将AOF日志同步到磁盘。同步将完全依赖于操作系统调试。大多数Linux操作系统每30秒执行一次fsync操作，以将缓冲区中的数据写入磁盘。</p>
+</li>
+<li><p>appendfsync everysec：当我们将appendfsync设置为everysec时，Redis将默认每隔一秒调用一次fsync，以将缓冲区中的数据写入磁盘。但是当fsync调用持续时间超过1秒时，Redis将采用fsync延迟等待一秒钟。也就是说，Redis将在两秒后调用fsync。无论执行多长时间，它都将执行此fsync。此时，由于文件描述符在文件fsync期间会遇到拥塞，因此当前的写操作将遇到类似的拥塞。结论是，在绝大多数情况下，Redis将每隔一秒执行一次fsync。在最坏的情况下，它将每两秒执行一次fsync操作。大多数数据库系统将此操作称为组提交，即将多个写入的数据组合在一起并一次将日志写入磁盘。</p>
+</li>
+<li>appednfsync always：当我们将appendfsync设置为always时，每次写操作都会调用fsync一次。这时，数据是最安全的。当然，由于它每次都执行fsync，因此会影响性能。</li>
+</ul>
+<p>对于一般业务需求，我们建议您使用RDB进行持久化，因为RDB开销远低于AOF日志。对于无法承受任何数据丢失风险的应用程序，我们建议您使用AOF日志。</p>
+<h1 id="集群管理的差异"><a href="#集群管理的差异" class="headerlink" title="集群管理的差异"></a>集群管理的差异</h1><p>Memcached是一个全内存数据缓冲系统。虽然Redis支持数据持久性，但全内存是其高性能的本质。对于基于内存的存储，物理机的内存大小是系统的最大数据存储容量。如果要处理的数据大小超过单个计算机的物理内存大小，则需要构建分布式群集以扩展存储容量。</p>
+<p>Memcached本身不支持分布式模式。您只能通过分布式算法(如Consistent Hash)在客户端实现Memcached的分布式存储。下图演示了Memcached的分布式存储实现架构。在客户端向Memcached集群发送数据之前，它首先通过嵌套分布式算法计算数据的目标节点，然后嵌套分布式算法直接将数据发送到节点进行存储。但是当客户端查询数据时，还需要计算用作查询数据位置的节点，然后直接将查询请求发送到节点以获取数据。<br><img src="/20190220102211/memcached_distribution.png" alt></p>
+<p>与只能在客户端实现分布式存储的Memcached相比，Redis更喜欢在服务器端构建分布式存储。最新版本的Redis支持分布式存储。Redis Cluster是Redis的高级版本，可实现分布式存储并允许SPOF。它没有中心节点，能够进行线性扩展。下图提供了Redis Cluster的分布式存储架构。节点间通信遵循二进制协议，但节点 - 客户端通信遵循ASCII协议。在数据放置策略中，Redis Cluster将整个密钥数值范围划分为4,096个散列槽，并允许在每个节点上存储一个或多个散列槽。也就是说，当前的Redis群集最多支持4,096个节点。Redis Cluster使用的分布式算法也很简单：crc16（key）％HASH_SLOTS_NUMBER。<br><img src="/20190220102211/redis_distribution.png" alt></p>
+<h1 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h1><p>在本文中，我们讨论了Redis和Memcached之间的差异。我们首先列出了Redis的作者Salvatore Sanfilippo提出的几点比较。此后，我们进一步阐述了Redis和Memcached之间的关键点，即支持的数据类型，集群管理，数据持久性支持和内存管理方案。</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p>原文：<a href="https://medium.com/@Alibaba_Cloud/redis-vs-memcached-in-memory-data-storage-systems-3395279b0941" target="_blank" rel="noopener">Redis vs. Memcached: In-Memory Data Storage Systems</a></p>
+]]></content>
+      <categories>
+        <category>数据库</category>
+      </categories>
+      <tags>
+        <tag>翻译</tag>
+        <tag>Redis</tag>
+        <tag>Memcached</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>MySQL索引</title>
     <url>/20190226104504/</url>
     <content><![CDATA[<p>索引用于快速查找具有特定列值的行。如果没有索引，MySQL必须从第一行开始，然后读取整个表以查找相关行。表越大，成本越高。如果表中有相关​​列的索引，MySQL可以快速确定要在数据文件中间寻找的位置，而无需查看所有数据。这比按顺序读取每一行要快得多。本文将介绍如何使用索引，以及索引是如何工作的。</p>
@@ -185,156 +373,6 @@
       </tags>
   </entry>
   <entry>
-    <title>MySQL存储引擎的特点</title>
-    <url>/20190225173604/</url>
-    <content><![CDATA[<p>每个MySQL存储引擎都满足特定需求。因此，引擎的选择主要取决于您希望在应用程序中完成的任务。</p>
-<p>每个存储引擎的完整功能超出了本文的范围。我们将仅讨论各种存储引擎的不同以及它们的适应场景。</p>
-<a id="more"></a>
-<h1 id="InnoDB存储引擎"><a href="#InnoDB存储引擎" class="headerlink" title="InnoDB存储引擎"></a>InnoDB存储引擎</h1><p>InnoDB用于大多数数据库服务器，因为它支持事务，符合ACID。</p>
-<p>原子性是增强数据库中数据的完整性的一种特性。当影响多个表的事务发生时，必须全部完成，否则回滚。</p>
-<p>一致性意味着数据在保存到磁盘之前能够通过验证规则。</p>
-<p>隔离性允许数据库隔离来自不同并发用户的事务。</p>
-<p>持久性可确保在事务完成后被保存。</p>
-<p>因此，如果您的应用程序需要上述功能，请选择InnoDB。</p>
-<p>InnoDB的另一大优势是支持外键约束。这样可以保持所有相关数据库表的完整性。检查插入，更新和删除操作以确保多个表之间保持一致。</p>
-<p>由于其持续改进，InnoDB不太容易发生数据库崩溃。如果在事务完成之前出现了问题，服务器重启后，InnoDB将完成操作或撤消更改。</p>
-<p>InnoDB支持B-Tree索引和FULLTEXT索引，底层分别使用B-Tree和Inverted Lists实现。</p>
-<h1 id="MyISAM存储引擎"><a href="#MyISAM存储引擎" class="headerlink" title="MyISAM存储引擎"></a>MyISAM存储引擎</h1><p>对于那些读取操作比写入操作更多的应用，MyISAM具有更好的性能。对于初学者来是很容易设计和创建一个数据库，因为它不支持外键(foreign keys)。使用外键需要有经验的配置来避免不合法的删除和更新操作。</p>
-<p>与InnoDB相比，该引擎占用更少的磁盘空间，因此适用于磁盘空间受限制的应用。</p>
-<p>MyISAM不符合ACID，因此它没有回滚功能。当事务失败时，必须手动删除数据。这个引擎支持并发插入操作。</p>
-<p>MyISAM支持R-Tree索引。</p>
-<h1 id="CSV存储引擎"><a href="#CSV存储引擎" class="headerlink" title="CSV存储引擎"></a>CSV存储引擎</h1><p>CSV代表逗号分隔值(Comma Separated Values)。这个引擎保存用逗号分割的明文数据。</p>
-<p>当创建表格的时候会自动创建一个 <code>.CSV</code> 文件。</p>
-<p>CSV文件的例子如下</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&quot;75521&quot;,&quot;JOHN DOE&quot;</span><br><span class="line">&quot;75522&quot;,&quot;BABY DOE&quot;</span><br></pre></td></tr></table></figure>
-<p>这个引擎的唯一优点是容易被Office软件读取。</p>
-<p>CSV引擎不支持索引和事务，很少被使用。</p>
-<h1 id="NDB存储引擎"><a href="#NDB存储引擎" class="headerlink" title="NDB存储引擎"></a>NDB存储引擎</h1><p>NDB 代表网络数据库(Network DataBase).它用于需要高级别可用性的集群环境中。NDB使用无共享体系结构，适用于创建分布式容错数据库体系结构。</p>
-<p>如果你在运行一个至关重要(mission critical)的应用，并且数据需要冗余备份，选择NDB。然而，这个引擎需要一系列服务器来保存冗余数据。</p>
-<p>大多数软件仓库的MySQL默认不安装这个引擎，需要下载MSQL社区版。</p>
-<p>NDB具有InnoDB的大部分功能，可以扩展到128TB（7.5.2版本）。在线时间为99.999％，故障节点的恢复时间不到一秒。</p>
-<h1 id="Blackhole存储引擎"><a href="#Blackhole存储引擎" class="headerlink" title="Blackhole存储引擎"></a>Blackhole存储引擎</h1><p>黑洞引擎接受数据并将其丢弃。您可以使用此存储引擎创建表并向其插入数据，但后续读取将返回空集。引擎支持索引。</p>
-<p>Blackhole引擎可用于验证转储文件语法并测量二进制日志记录的开销，甚至可以查找数据库中的性能瓶颈。</p>
-<h1 id="Memory存储引擎"><a href="#Memory存储引擎" class="headerlink" title="Memory存储引擎"></a>Memory存储引擎</h1><p>内存存储引擎用于将数据存储在内存中以用于特殊目的。使用此引擎容易崩溃，它的数据应该来源于其他永久存储的表。</p>
-<p>内存存储引擎支持索引和加密。表中数据的大小受限于服务器上的可用内存。</p>
-<p>可以使用此引擎存储非关键任务数据，例如会话(session)管理信息或只需最少更新的只读数据。请注意，重新启动服务器将擦除所有数据。</p>
-<h1 id="Archive存储引擎"><a href="#Archive存储引擎" class="headerlink" title="Archive存储引擎"></a>Archive存储引擎</h1><p>如果你想在数据库中存储很多不常被使用的数据，例如历史信息，请使用存档存储引擎。该引擎使用非常小的空间中存储大量信息。</p>
-<p>它支持压缩和加密，但缺少索引和事务功能。因此，它仅适用于归档数据，不应该被用于需要被快速更改、需要大量读写的信息。</p>
-<h1 id="Federated存储引擎"><a href="#Federated存储引擎" class="headerlink" title="Federated存储引擎"></a>Federated存储引擎</h1><p>从没有集群和复制技术的远程MySQL服务器获取数据时，适合使用联合(Federated)存储引擎。</p>
-<p>如果从使用联合引擎定义的本地表查询数据，则会从定义的远程服务器自动检索数据。因此，联合表需要本地和远程服务器。</p>
-<p>远程服务器保存表定义和关联数据，而本地服务器仅保存包含指向远程服务器的连接字符串的定义。远程服务器上的存储引擎可以是任何类型，例如InnoDB或MyISAM。</p>
-<p>MySQL默认不支持此引擎，使用需要启动。</p>
-<p>联合存储引擎可以用作将数据写入远程服务器的代理。它只是一个指向远程服务器中另一个表的表。它应该很少被使用，因为它在连接表时非常慢并且在涉及事务时具有奇怪的行为。</p>
-<h1 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h1><p><a href="https://medium.com/@Alibaba_Cloud/how-to-choose-mysql-storage-engine-on-alibaba-cloud-d56687934c28" target="_blank" rel="noopener">How to Choose MySQL Storage Engine on Alibaba Cloud</a></p>
-]]></content>
-      <categories>
-        <category>数据库</category>
-      </categories>
-      <tags>
-        <tag>MySQL</tag>
-        <tag>翻译</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>内存数据存储系统Redis与Memcached对比</title>
-    <url>/20190220102211/</url>
-    <content><![CDATA[<p>Redis和Memcached都是内存数据存储系统。Redis将大部分数据存储在内存中。它支持多种数据类型，包括字符串，哈希表和链列等。在本文中，我们将研究Redis和Memcached之间的区别。</p>
-<a id="more"></a>
-<h1 id="功能比较"><a href="#功能比较" class="headerlink" title="功能比较"></a>功能比较</h1><p>Redis的作者对Redis和Memcached有如下比较：</p>
-<blockquote>
-<p><strong><em>服务器端数据操作</em></strong><br>Redis拥有更多数据结构，支持服务端(Redis服务)直接对数据进行操作(如对整数的+1和-1操作)。对于类似的操作，在Memcached中，需要将数据复制到客户端，修改后，在服务端(Memcached服务)重新设置该值。这极大地增加了网络IO。在Redis中，这些复杂的操作与一般的GET/SET操作一样高效。因此，如果您需要缓存来支持更复杂的结构和操作，Redis是一个不错的选择。</p>
-</blockquote>
-<blockquote>
-<p><strong><em>内存使用效率比较</em></strong><br>由于使用了简单的键值存储，Memcached具有更高的内存利用率。但是，如果Redis采用哈希结构，由于其组合压缩模式，它将具有比Memcached更高的内存利用率。</p>
-</blockquote>
-<blockquote>
-<p><strong><em>性能比较</em></strong><br>Redis仅使用单核，而Memcached使用多核。因此，在一般情况下，就核心而言，Redis在小型数据存储方面的性能高于Memcached。在存储10万(100k)条及以上的数据时，Memcached优于Redis。虽然Redis也对存储大数据进行了一些优化，但它仍然不如Memcached。</p>
-</blockquote>
-<p>现在做一些支持上述观点的讨论。</p>
-<h1 id="对不同数据类型的支持"><a href="#对不同数据类型的支持" class="headerlink" title="对不同数据类型的支持"></a>对不同数据类型的支持</h1><p>Memcached仅支持简单键值结构的数据记录，Redis支持更丰富的数据类型，包括String，Hash，List，Set和Sorted Set。Redis在内部使用redisObject来表示所有键和值。redisObject的主要信息如下所示：<br><img src="/20190220102211/redis_core_object.png" alt><br>该类型表示值对象的数据类型。编码指示Redis中不同数据类型的存储方法，例如type = string表示该值存储一般字符串，相应的编码可以是raw或int。如果为int，则Redis将关联的字符串存储并表示为值类型。当然，前提是可以用值表示字符串，例如字符串“123”和“456”。只有启用Redis虚拟内存功能后，才会为内存分配vm字段。默认情况下此功能处于关闭状态。现在让我们讨论一些数据类型。</p>
-<h2 id="String"><a href="#String" class="headerlink" title="String"></a>String</h2><p><strong>常用命令：</strong>set/get/decr/incr/mget等。<br><strong>应用场景：</strong>String是最常见的数据类型，通用key/value属于此类别。<br><strong>实现方法：</strong>String是字符串，redisObject默认情况下使用String(被保存的数据都被视为字符串)。当调用INCR或DECR操作时，系统会将其转换为值类型以进行计算(只有进行数值计算时，才将字符串类型转换为数值类型)。此时，redisObject的编码字段为int。</p>
-<h2 id="Hash"><a href="#Hash" class="headerlink" title="Hash"></a>Hash</h2><p><strong>常用命令：</strong>hget/hset/hgetall等。<br><strong>应用场景：</strong>存储用户信息对象数据，包括用户ID，用户名，年龄和生日;通过用户ID检索用户名，年龄或生日。<br><strong>实现方法：</strong>Redis中的Hash是内部存储值的HashMap，并提供直接访问此map成员的接口。如图所示，Key是用户ID，Value是map。此映射的键是成员属性名称，值是属性值。通过这种方式，可以直接执行更改并通过内部映射的键访问数据（在Redis中，内部映射键称为字段），即通过密钥（用户ID）+字段（属性标记）到对相应的属性数据执行操作。</p>
-<p>当前HashMap有两种实现方式：当HashMap中只有少数成员时，Redis会选择一维数组来实现紧凑存储以节省内存，而不是实际意义上的HashMap结构。此时，相应值redisObject的编码是zipmap。当成员数量增加时，Redis会将它们转换为真正意义上的HashMap，此时的编码将是ht。<br><img src="/20190220102211/hash.png" alt></p>
-<h2 id="List"><a href="#List" class="headerlink" title="List"></a>List</h2><p><strong>常用命令：</strong>lpush/rpush/lpop/rpop/lrange。<br><strong>应用场景：</strong>Redis List是Redis中最重要的数据结构。实际上，可以使用Redis的list结构实现Twitter的following list和fans list 。<br><strong>实现方法：</strong>通过双向链表，支持反向查找和遍历以方便操作。但它也带来了一些额外的内存开销。Redis中的许多实现（包括发送缓冲队列）也采用此数据结构。</p>
-<h2 id="Set"><a href="#Set" class="headerlink" title="Set"></a>Set</h2><p><strong>常用命令：</strong>sadd/spop/smembers/sunion等。<br><strong>应用场景：</strong>Redis set提供了与list类似的外部列表功能。它的特殊之处在于set可以自动删除重复项。当您需要存储没有任何重复的数据list时，set是一个不错的选择。此外，set提供了一个重要的接口来判断一个成员是否在一个集合中，list不提供此功能。<br><strong>实现方法：</strong>set的内部实现是一个HashMap，其值始终为null。它实际上通过计算哈希值来快速删除重复项。实际上，这也是为什么set可以判断成员是否在集合内的原因。</p>
-<h2 id="Sorted-Set"><a href="#Sorted-Set" class="headerlink" title="Sorted Set"></a>Sorted Set</h2><p><strong>常用命令：</strong>zadd/zrange/zrem/zcard等。<br><strong>应用场景：</strong>Redis Sorted Set(排序集)的应用场景与集合的应用场景类似。不同之处在于，set不会自动对数据进行排序，但是排序集可以通过用户提供的优先级参数对成员进行排序。而且，后者还会自动对插入的数据进行排序。当您需要一个没有重复数据的有序集合列表时，您可以选择Sorted Set数据结构，例如Twitter的公共时间线，它可以将发布时间作为优先级参数，并自动对按时间获取的数据进行排序。<br><strong>实现方法：</strong>Redis sorted set在内部使用HashMap和SkipList来确保高效的数据存储和排序。HashMap存储成员和优先级参数之间的映射;而SkipList存储所有成员。排序依赖于存储在HashMap中的优先级参数。使用SkipList结构可以提高搜索效率并简化实现。</p>
-<h1 id="不同的内存管理方案"><a href="#不同的内存管理方案" class="headerlink" title="不同的内存管理方案"></a>不同的内存管理方案</h1><p>在Redis中，数据不一定完全保存在内存中。这是Redis和Memcached的主要区别。当物理内存已满时，Redis可能会将长时间未使用的值交换到磁盘。Redis仅缓存所有键(key)信息。如果发现内存使用率超过阈值，则会触发交换操作。Redis根据<code>swappability = age * log(size_in_memory)</code>计算要交换到磁盘的键的值。然后，将值保存到磁盘并从内存中擦除。此功能使Redis能够维护大于其机器内存容量的数据。机器内存必须保留所有键，并且不会把所有数据都交换到硬盘(内存中一定存在没有被交换的数据)。</p>
-<p>当Redis进行数据交换时，提供服务的主线程和执行交换操作的子线程将共享这部分内存。此时Redis将阻止数据更新操作，直到子线程完成交换操作。当从Redis读取数据时，如果读取键对应的值不在内存中，则Redis需要从交换文件加载相应的数据，然后将其返回给请求者。这里存在I/O线程池的问题。默认情况下，Redis会拥塞，也就是说，只有在成功加载所有交换文件后才会响应。当有少量客户端时，此策略适用于成批操作。但是如果你在一个大型网站程序中应用Redis，它就无法满足高并发性要求。但是，可以设置Redis运行的I/O线程池大小，并使用并发读取加载位于交换文件的数据的请求，以缩短拥塞时间。</p>
-<p>对于像Redis和Memcached这样基于内存的数据库系统，内存管理效率是影响系统性能的关键。在C语言中，malloc/free是最传统的分配和释放内存的方法。然而，这个方法隐藏了巨大的缺陷：首先，对于开发者来说，分配和释放不匹配很容易导致内存泄漏；其次，频繁的调用将使重新循环利用内存变得困难(内存碎片)，减少了内存的利用率；最后，系统调用将比一般函数调用消耗更大的系统开销。因此，为了提高内存管理效率，内存管理不会直接使用malloc/free调用作为解决方案。Redis和Memcached都采用他们自己设计的内存管理机制，但实现方法差异很大。接下来我们介绍这两种机制。</p>
-<p>默认情况下，Memcached使用Slab Allocation机制进行内存管理。其主要思想是将分配的内存分段为预定义的特定长度的块，用这些块来存储长度相匹配的键值数据记录，以完全解决内存片段(外碎片)问题。理想状态下，slab的分配机制设计应该满足外部数据存储的需求，也就是说，它有助于在Slab Allocation系统中存储所有不同长度的键值数据。但是，Memcached的其他内存请求申请是通过一般的malloc/free调用发生的。通常，这些请求的数量小，频率低，不会影响整体系统性能。Slab Allocation的原理非常简单。首先它从操作系统申请一大块内存，把他们分成一系列大小不同的小块，然后把相同大小的小块放到Slab Class中。其中，块是用于存储键值数据的最小单元。通过在Memcached启动时创建增长因子，可以控制每个Slab类的大小。假设图中的生长因子是1.25。如果第一组中的块大小为88字节，则第二组中的块将为112字节。其余的块遵循相同的规则。<br><img src="/20190220102211/slab_class.png" alt><br>当Memcached接收到客户端发送的数据时，首先根据数据大小选择最合适的Slab Class，然后在Memcached中查询包含Slab Class的空闲块列表，以找到用于存储数据的块。当一段数据过期或废弃被丢弃时，回收占用的块，并将其恢复到空闲列表。</p>
-<p>从上面的过程中，我们可以看到Memcached具有非常高的内存管理效率，不会导致内存碎片。然而，它最大的缺点是它可能造成空间浪费。由于操作系统会在特定长度的内存空间中分配每个块，因此较长的数据可能无法完全利用该空间。如图所示，当我们将100字节的数据缓存到128字节的块中时，未使用的28字节会浪费掉。<br><img src="/20190220102211/memcached_mem_waste.png" alt></p>
-<p>Redis的内存管理的实现主要通过源代码中的两个文件zmalloc.h和zmalloc.c来完成。为了便于内存管理，Redis会在内存分配后将内存大小存储在内存块头中。如图所示，real_ptr是Redis调用malloc后返回的指针。Redis将内存块大小存储在头中，并且内存占用的大小是可确定的，即系统返回size_t类型的长度，然后返回ret_ptr。当需要释放内存时，系统将ret_ptr传递给内存管理程序。通过ret_ptr，程序可以轻松计算real_ptr的值，然后通过real_ptr释放内存。<br><img src="/20190220102211/redis_mem.png" alt><br>Redis通过定义长度为ZMALLOC_MAX_ALLOC_STAT的数组来记录所有内存的分布。数组中的每个元素表示当前程序分配的内存块数，内存块的大小是元素的下标。在源代码中，此数组是zmalloc_allocations。zmalloc_allocations[16]表示以16字节长度分配的内存块数。zmalloc.c包含一个used_memory的静态变量，用于记录当前分配的内存的总大小。所以一般来说，Redis采用封装的malloc/free，与Memcached的内存管理机制相比要简单得多。</p>
-<h1 id="数据持久性支持"><a href="#数据持久性支持" class="headerlink" title="数据持久性支持"></a>数据持久性支持</h1><p>虽然是基于内存的存储，但Redis支持内存数据持久性，并提供两种主要的持久性策略：RDB快照和AOF日志。Memcached不支持数据持久性操作。</p>
-<h2 id="RDB快照"><a href="#RDB快照" class="headerlink" title="RDB快照"></a>RDB快照</h2><p>Redis支持将当前数据的快照存储到数据文件中以实现持久性，即RDB快照。但是，我们如何为连续写入数据的数据库生成快照呢？Redis利用fork命令的copy on write机制。在创建快照时，当前进程会fork一个子进程，使所有数据循环并将它们写入RDB文件。我们可以通过Redis的save命令配置RDB快照生成的时间。例如，如果要每10分钟配置一次快照生成，则可以在每1,000次写入后配置快照生成。您还可以配置多个规则以便一起实施。这些规则的定义在Redis的配置文件中。您还可以在Redis运行期间使用Redis的CONFIG SET命令设置规则，而无需重新启动Redis。</p>
-<p>Redis的RDB文件在某种程度上是不可破坏的，因为它在新进程中执行其写操作。生成新的RDB文件后，Redis生成的子进程将首先将数据写入临时文件，然后通过原子重命名系统调用将临时文件重命名为RDB文件，以便RDB文件在Redis发生错误后始终可用。同时，Redis的RDB文件也是Redis主从同步内部实现的一个链接。但是，RDB的缺点在于，一旦数据库遇到某些问题，保存在RDB文件中的数据可能不是最新的，从最后一个RDB文件生成到Redis失败期间数据丢失。请注意，对于某些企业来说，这是可以容忍的。</p>
-<h2 id="AOF日志"><a href="#AOF日志" class="headerlink" title="AOF日志"></a>AOF日志</h2><p>AOF日志的全程是 Append Only File。它是一个附加的日志文件。与通用数据库的binlog不同，AOF是一个可识别的明文(recognizable plaintext)，其内容是Redis标准命令。Rdeis仅把引起数据更改的命令添加到AOF。每个更改数据的命令都会生成一个日志。AOF文件将变得越来越大。Redis提供了另一个功能-AOF重写。AOF重写的功能是重新生成AOF文件。新AOF文件中，每条记录只有一个操作，而不像在旧的AOF文件中那样，记录了对同一个值的多次操作。生成过程类似于RDB快照，即分支进程，遍历数据并将数据写入新的临时AOF文件。将数据写入新文件时，它会将所有写操作日志写入旧的AOF文件，并同时将它们记录在内存缓冲区中。完成操作后，系统会一次将缓冲区中的所有日志写入临时文件。此后，它将调用atomic rename命令以使用新的AOF文件替换旧的AOF文件。</p>
-<p>AOF是写文件操作，旨在将操作日志写入磁盘。它还涉及我们前面提到的写操作过程。在Redis调用AOF的写入操作后，它使用appendfsync选项通过调用fsync命令来控制将数据写入磁盘的时间。以下appendfsync中的三个设置选项具有从低到强的安全强度。</p>
-<ul>
-<li><p>appendfsync no：当我们将appendfsync设置为no时，Redis不会主动调用fsync来将AOF日志同步到磁盘。同步将完全依赖于操作系统调试。大多数Linux操作系统每30秒执行一次fsync操作，以将缓冲区中的数据写入磁盘。</p>
-</li>
-<li><p>appendfsync everysec：当我们将appendfsync设置为everysec时，Redis将默认每隔一秒调用一次fsync，以将缓冲区中的数据写入磁盘。但是当fsync调用持续时间超过1秒时，Redis将采用fsync延迟等待一秒钟。也就是说，Redis将在两秒后调用fsync。无论执行多长时间，它都将执行此fsync。此时，由于文件描述符在文件fsync期间会遇到拥塞，因此当前的写操作将遇到类似的拥塞。结论是，在绝大多数情况下，Redis将每隔一秒执行一次fsync。在最坏的情况下，它将每两秒执行一次fsync操作。大多数数据库系统将此操作称为组提交，即将多个写入的数据组合在一起并一次将日志写入磁盘。</p>
-</li>
-<li>appednfsync always：当我们将appendfsync设置为always时，每次写操作都会调用fsync一次。这时，数据是最安全的。当然，由于它每次都执行fsync，因此会影响性能。</li>
-</ul>
-<p>对于一般业务需求，我们建议您使用RDB进行持久化，因为RDB开销远低于AOF日志。对于无法承受任何数据丢失风险的应用程序，我们建议您使用AOF日志。</p>
-<h1 id="集群管理的差异"><a href="#集群管理的差异" class="headerlink" title="集群管理的差异"></a>集群管理的差异</h1><p>Memcached是一个全内存数据缓冲系统。虽然Redis支持数据持久性，但全内存是其高性能的本质。对于基于内存的存储，物理机的内存大小是系统的最大数据存储容量。如果要处理的数据大小超过单个计算机的物理内存大小，则需要构建分布式群集以扩展存储容量。</p>
-<p>Memcached本身不支持分布式模式。您只能通过分布式算法(如Consistent Hash)在客户端实现Memcached的分布式存储。下图演示了Memcached的分布式存储实现架构。在客户端向Memcached集群发送数据之前，它首先通过嵌套分布式算法计算数据的目标节点，然后嵌套分布式算法直接将数据发送到节点进行存储。但是当客户端查询数据时，还需要计算用作查询数据位置的节点，然后直接将查询请求发送到节点以获取数据。<br><img src="/20190220102211/memcached_distribution.png" alt></p>
-<p>与只能在客户端实现分布式存储的Memcached相比，Redis更喜欢在服务器端构建分布式存储。最新版本的Redis支持分布式存储。Redis Cluster是Redis的高级版本，可实现分布式存储并允许SPOF。它没有中心节点，能够进行线性扩展。下图提供了Redis Cluster的分布式存储架构。节点间通信遵循二进制协议，但节点 - 客户端通信遵循ASCII协议。在数据放置策略中，Redis Cluster将整个密钥数值范围划分为4,096个散列槽，并允许在每个节点上存储一个或多个散列槽。也就是说，当前的Redis群集最多支持4,096个节点。Redis Cluster使用的分布式算法也很简单：crc16（key）％HASH_SLOTS_NUMBER。<br><img src="/20190220102211/redis_distribution.png" alt></p>
-<h1 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h1><p>在本文中，我们讨论了Redis和Memcached之间的差异。我们首先列出了Redis的作者Salvatore Sanfilippo提出的几点比较。此后，我们进一步阐述了Redis和Memcached之间的关键点，即支持的数据类型，集群管理，数据持久性支持和内存管理方案。</p>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p>原文：<a href="https://medium.com/@Alibaba_Cloud/redis-vs-memcached-in-memory-data-storage-systems-3395279b0941" target="_blank" rel="noopener">Redis vs. Memcached: In-Memory Data Storage Systems</a></p>
-]]></content>
-      <categories>
-        <category>数据库</category>
-      </categories>
-      <tags>
-        <tag>翻译</tag>
-        <tag>Redis</tag>
-        <tag>Memcached</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Super Egg Drop</title>
-    <url>/20190315095242/</url>
-    <content><![CDATA[<p>鸡蛋从楼上掉下来，在某层以上一定会破，在某层以及以下一定不会破，若鸡蛋破碎则不能再次使用，现在有K个鸡蛋N层楼，每次可以在某层楼扔一个鸡蛋探测，在最坏的情况下，至少需要多少次才能准确探测出在第几层鸡蛋会破碎？</p>
-<a id="more"></a>
-<h1 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h1><p>You are given <code>K</code> eggs, and you have access to a building with <code>N</code> floors from 1 to N.<br>Each egg is identical in function, and if an egg breaks, you cannot drop it again.<br>You know that there exists a floor <code>F</code> with <code>0 &lt;= F &lt;= N</code> such that any egg dropped at a floor higher than F will break, and any egg dropped at or below floor F will not break.<br>Each move, you may take an egg (if you have an unbroken one) and drop it from any floor <code>X</code> (with <code>1 &lt;= X &lt;= N</code>).<br>Your goal is to know with certainty what the value of F is.<br>What is the minimum number of moves that you need to know with certainty what F is, regardless of the initial value of F?</p>
-<h1 id="正面解决"><a href="#正面解决" class="headerlink" title="正面解决"></a>正面解决</h1><p>即根据题目意思直接计算 F</p>
-<h2 id="暴力破解"><a href="#暴力破解" class="headerlink" title="暴力破解"></a>暴力破解</h2><p>可以确定算法正确。</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">superEggDrop</span><span class="params">(<span class="keyword">int</span> K, <span class="keyword">int</span> N)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> t;</span><br><span class="line">        <span class="keyword">if</span> (K == <span class="number">0</span> || N == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="comment">/* 没有鸡蛋或者没有楼层的时候肯定是 0  */</span></span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (K == <span class="number">1</span>) &#123;</span><br><span class="line">            <span class="comment">/* 仅有一个鸡蛋，只能从最底层开始尝试，有几层就要尝试几次 */</span></span><br><span class="line">            <span class="keyword">return</span> N;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">/* 尝试最底层，如果鸡蛋没碎，确定结果；如果鸡蛋碎了，则问题转化为，K-1个鸡蛋探索N-1个楼层 */</span></span><br><span class="line">            t = Math.max(<span class="keyword">this</span>.superEggDrop(K, <span class="number">0</span>), <span class="keyword">this</span>.superEggDrop(K - <span class="number">1</span>, N - <span class="number">1</span>));</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; N; i++) &#123;</span><br><span class="line">                <span class="comment">/* </span></span><br><span class="line"><span class="comment">                 * 尝试第i+1层，如果鸡蛋没碎，则问题转化为K个鸡蛋探索i层，即第一层到第i层(i-1+1)；</span></span><br><span class="line"><span class="comment">                 * 如果鸡蛋碎了，则问题转化为，K-1个鸡蛋探索N-i-1个楼层，即第i+2层到N层(N-(i+2)+1)；</span></span><br><span class="line"><span class="comment">                 */</span></span><br><span class="line">                t = Math.min(t, Math.max(<span class="keyword">this</span>.superEggDrop(K, i), <span class="keyword">this</span>.superEggDrop(K - <span class="number">1</span>, N - i - <span class="number">1</span>)));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> t + <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>K=3,N=26</p>
-</blockquote>
-<p>不出意外的超时了。</p>
-<h2 id="备忘录"><a href="#备忘录" class="headerlink" title="备忘录"></a>备忘录</h2><p>分析上述算法超时的原因，存在太多重复的递归运算，使用备忘录消除重复计算。</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="comment">/* 备忘录 */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span>[][] note = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">101</span>][<span class="number">10001</span>];</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">superEggDrop</span><span class="params">(<span class="keyword">int</span> K, <span class="keyword">int</span> N)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> t;</span><br><span class="line">        <span class="keyword">if</span> (K == <span class="number">0</span> || N == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (K == <span class="number">1</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> N;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="keyword">this</span>.note[K][N] != <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="comment">/* 如果曾经计算过直接返回 */</span></span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">this</span>.note[K][N];</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            t = Math.max(<span class="keyword">this</span>.superEggDrop(K, <span class="number">0</span>), <span class="keyword">this</span>.superEggDrop(K - <span class="number">1</span>, N - <span class="number">1</span>));</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; N; i++) &#123;</span><br><span class="line">                t = Math.min(t, Math.max(<span class="keyword">this</span>.superEggDrop(K, i), <span class="keyword">this</span>.superEggDrop(K - <span class="number">1</span>, N - i - <span class="number">1</span>)));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">/* 返回前保存计算的值 */</span></span><br><span class="line">        <span class="keyword">this</span>.note[K][N] = t + <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">return</span> t + <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>K=6,N=2000</p>
-</blockquote>
-<p>原本以为这样可以不优雅的通过，然而却依旧超时。</p>
-<h2 id="消除递归"><a href="#消除递归" class="headerlink" title="消除递归"></a>消除递归</h2><p>上述算法虽然消除了重复的递归运算，但依旧存在大量递归，递归本身消耗的时间太多，使用动态规划填表的方式消除递归。</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">superEggDrop</span><span class="params">(<span class="keyword">int</span> K, <span class="keyword">int</span> N)</span> </span>&#123;</span><br><span class="line">        <span class="comment">/* 二维数组初始值为0 */</span></span><br><span class="line">        <span class="keyword">int</span>[][] table = <span class="keyword">new</span> <span class="keyword">int</span>[K + <span class="number">1</span>][N + <span class="number">1</span>];</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= N; i++) &#123;</span><br><span class="line">            <span class="comment">/* 初始化1个鸡蛋i层楼尝试i次的情况 */</span></span><br><span class="line">            table[<span class="number">1</span>][i] = i;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= K; i++) &#123;</span><br><span class="line">            <span class="comment">/* 初始化i个鸡蛋在1层楼尝试1次的情况 */</span></span><br><span class="line">            table[i][<span class="number">1</span>] = <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/* 开始填表，思路同递归算法 */</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> k = <span class="number">2</span>; k &lt;= K; k++) &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> n = <span class="number">2</span>; n &lt;= N; n++) &#123;</span><br><span class="line">                <span class="keyword">int</span> t = Math.max(table[k][<span class="number">0</span>], table[k - <span class="number">1</span>][n - <span class="number">1</span>]);</span><br><span class="line">                <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; n; i++) &#123;</span><br><span class="line">                    t = Math.min(t, Math.max(table[k][i], table[k - <span class="number">1</span>][n - i - <span class="number">1</span>]));</span><br><span class="line">                &#125;</span><br><span class="line">                table[k][n] = t + <span class="number">1</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> table[K][N];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>K=7,N=10000</p>
-</blockquote>
-<p>意外的超时了。</p>
-<h2 id="减少遍历"><a href="#减少遍历" class="headerlink" title="减少遍历"></a>减少遍历</h2><p>此处存在大量无价值的遍历，考虑到随着i增加，<code>table[k][i]</code>,<code>table[k - 1][n - i - 1]</code>分别单调增加和减少，故其两个中较大值，一定出现在中间位置。可以使用二分法找出最合适的<code>i</code>。</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; n; i++) &#123;</span><br><span class="line">    t = Math.min(t, Math.max(table[k][i], table[k - <span class="number">1</span>][n - i - <span class="number">1</span>]));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h1 id="另一个思路"><a href="#另一个思路" class="headerlink" title="另一个思路"></a>另一个思路</h1><p>K个鸡蛋，尝试M次，最多可以尝试到的楼层个数为<code>table[K][M]</code>。尝试某一层，若在该层碎了，则使用<code>K-1</code>个鸡蛋探索<code>M-1</code>次，若没碎，使用<code>K</code>个鸡蛋探索<code>M-1</code>次，当前探索的本层为<code>1</code>。虽然不知道尝试的哪一层，但是知道存在某一层，尝试后会得到的结果为<code>table[K][M]</code>。<br>当 <code>table[k][m-1] &lt; F &lt;= table[k][m]</code> 时，m即为探索的次数，注意鸡蛋可能给多了所以使用k而不是K，其中k&lt;=K。此时需要预估最大尝试次数M。</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">superEggDrop</span><span class="params">(<span class="keyword">int</span> K, <span class="keyword">int</span> N)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> M = N;</span><br><span class="line">        <span class="keyword">int</span> i, j;</span><br><span class="line">        <span class="keyword">int</span>[][] table = <span class="keyword">new</span> <span class="keyword">int</span>[K + <span class="number">1</span>][M + <span class="number">1</span>];</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (i = <span class="number">1</span>; i &lt;= M; i++) &#123;</span><br><span class="line">            <span class="comment">/* 1个鸡蛋尝试i次 */</span></span><br><span class="line">            table[<span class="number">1</span>][i] = i;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (j = <span class="number">1</span>; j &lt;= K; j++) &#123;</span><br><span class="line">            <span class="comment">/* j个鸡蛋尝试1次 */</span></span><br><span class="line">            table[j][<span class="number">1</span>] = <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * 策略是：尽可能的多使用鸡蛋，少使用尝试次数</span></span><br><span class="line"><span class="comment">         * 故遍历时，内层遍历鸡蛋，让鸡蛋先用完，</span></span><br><span class="line"><span class="comment">         * 外层遍历尝试次数，不得已的时候增加尝试次数</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (i = <span class="number">2</span>; i &lt;= M; i++) &#123;</span><br><span class="line">            <span class="keyword">for</span> (j = <span class="number">2</span>; j &lt;= K; j++) &#123;</span><br><span class="line">                table[j][i] = table[j - <span class="number">1</span>][i - <span class="number">1</span>] + table[j][i - <span class="number">1</span>] + <span class="number">1</span>;</span><br><span class="line">                <span class="keyword">if</span> (table[j][i] &gt;= N) &#123;</span><br><span class="line">                    <span class="keyword">return</span> i;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * 楼层数为1,或鸡蛋数为1时会走到这里</span></span><br><span class="line"><span class="comment">         * 楼层数为1时返回1，鸡蛋数为1时返回楼层数</span></span><br><span class="line"><span class="comment">         * 综上返回楼层数即可</span></span><br><span class="line"><span class="comment">         * */</span></span><br><span class="line">        <span class="keyword">return</span> N;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>Accepted</p>
-</blockquote>
-<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>至此，问题终于解决。最棒的情况是可以独立快速的解决问题，在认真思考后依旧不能给出合适的答案时，寻求帮助也是个不错的选择。</p>
-<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p><a href="https://leetcode.com/problems/super-egg-drop/" target="_blank" rel="noopener">Super Egg Drop</a><br><a href="https://www.cnblogs.com/Phantom01/p/9490508.html" target="_blank" rel="noopener">Leetcode 887 Super Egg Drop(扔鸡蛋) DP</a><br><a href="https://leetcode.com/problems/super-egg-drop/solution/" target="_blank" rel="noopener">Super Egg Drop Solution</a></p>
-]]></content>
-      <categories>
-        <category>算法</category>
-      </categories>
-      <tags>
-        <tag>动态规划</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Minimum Window Substring</title>
     <url>/20190320093728/</url>
     <content><![CDATA[<p>有两个字符串S和T，从S中找出一个最小的子串，该子串中包含T中的所有元素。如，当S=&quot;ADOBECODEBANC&quot;, T=&quot;ABC&quot;时，需要寻找的字串就为&quot;BANC&quot;。字符串T中的元素不要求按顺序出现在S中。</p>
@@ -365,41 +403,188 @@
       </tags>
   </entry>
   <entry>
-    <title>MySQL语句执行过程简介</title>
-    <url>/20190301160919/</url>
-    <content><![CDATA[<p>昔日庖丁解牛，未见全牛，所赖者是其对牛内部骨架结构的了解，对于MySQL亦是如此，只有更加全面地了解SQL语句执行的每个过程，才能更好的进行SQL的设计和优化。</p>
-<p>当希望MySQL能够以更高的性能运行查询时，最好的办法就是弄清楚MySQL是如何优化和执行查询的。一旦理解了这一点，很多查询优化工作实际上就是遵循一些原则能够按照预想的合理的方式运行。</p>
+    <title>MySQL语句执行顺序简介</title>
+    <url>/20190322155258/</url>
+    <content><![CDATA[<p>本篇文章侧重于一条SQL语句提交后，对于这条语句中不同部分的执行先后顺序，对于普通MySQL更实用。<a href="/20190301160919/">MySQL语句执行过程简介</a>侧重于讲解底层的的原理。</p>
 <a id="more"></a>
-<h1 id="总述"><a href="#总述" class="headerlink" title="总述"></a>总述</h1><p>如下图所示，当向MySQL发送一个请求的时候，MySQL到底做了什么：</p>
+<p>首先给出如下语句，并对该语句的执行过程进行解释。</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> ...</span><br><span class="line"><span class="keyword">FROM</span> ...</span><br><span class="line"><span class="keyword">WHERE</span> ...</span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span> ...</span><br><span class="line"><span class="keyword">HAVING</span> ...</span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> ...</span><br></pre></td></tr></table></figure>
+<p>与SQL语句的书写顺序并不是一样的，而是按照下面的顺序来执行</p>
 <ol>
-<li>客户端发送一条查询给服务器。</li>
-<li>服务器先检查查询缓存，如果命中了缓存，则立刻返回存储在缓存中的结果。否则进入下一阶段。</li>
-<li>服务器端进行SQL解析、预处理，再由优化器生成对应的执行计划。</li>
-<li>MySQL根据优化器生成的执行计划，再调用存储引擎的API来执行查询。</li>
-<li>将结果返回给客户端。</li>
+<li>FROM: 需要从哪个数据表检索数据</li>
+<li>WHERE: 过滤表中数据的条件</li>
+<li>GROUP BY: 如何将上面过滤出的数据分组 </li>
+<li>HAVING: 对上面已经分组的数据进行过滤的条件  </li>
+<li>SELECT: 查看结果集中的哪个列，或列的计算结果 </li>
+<li>ORDER BY: 按照什么样的顺序来查看返回的数据</li>
 </ol>
-<p><img src="/20190301160919/sql_statement_execution_process.jpg" alt></p>
-<h1 id="查询缓存"><a href="#查询缓存" class="headerlink" title="查询缓存"></a>查询缓存</h1><p>MySQL查询缓存保存查询返回的完整结构。当查询命中该缓存时，MySQL会立刻返回结果，跳过了解析、优化和执行阶段<br>查询缓存系统会跟踪查询中涉及的每个表，如果这些表发生了变化，那么和这个表相关的所有缓存数据都将失效。<br>MySQL将缓存存放在一个引用表中，通过一个哈希值引用，这个哈希值包括了以下因素，即查询本身、当前要查询的数据库、客户端协议的版本等一些其他可能影响返回结果的信息。<br>当判断缓存是否命中时，MySQL不会进行解析查询语句，而是直接使用SQL语句和客户端发送过来的其他原始信息。所以，任何字符上的不同，例如空格、注解等都会导致缓存的不命中。<br>当查询语句中有一些不确定的数据时，则不会被缓存。例如包含函数NOW()或者CURRENT_DATE()的查询不会缓存。包含任何用户自定义函数，存储函数，用户变量，临时表，mysql数据库中的系统表或者包含任何列级别权限的表，都不会被缓存。<br>有一点需要注意，MySQL并不是会因为查询中包含一个不确定的函数而不检查查询缓存，因为检查查询缓存之前，MySQL不会解析查询语句，所以也无法知道语句中是否有不确定的函数。<br>事实则是，如果查询语句中包含任何的不确定的函数，那么其查询结果不会被缓存，因为查询缓存中也无法找到对应的缓存结果。<br>有关查询缓存的配置如下所示。</p>
-<ul>
-<li>query_cache_type:是否打开查询缓存。可以设置为OFF、ON和DEMAND。DEMAND表示只有在查询语句中明确写明SQL_CACHE的语句才会放入查询缓存。</li>
-<li>query_cache_size:查询缓存使用的总内存空间。</li>
-<li>query_cache_min_res_unit:在查询缓存中分配内存块时的最小单元。较小的该值可以减少碎片导致的内存空间浪费，但是会导致更频繁的内存块操作。</li>
-<li>query_cache_limit:MySQL能够查询的最大查询结果。如果查询结果大于这个值，则不会被缓存。因为查询缓存在数据生成的时候就开始尝试缓存数据，所以当结果全部返回后，MySQL才知道查询结果是否超出限制。超出之后，才会将结果从查询缓存中删除。</li>
-</ul>
-<h1 id="解析和预处理"><a href="#解析和预处理" class="headerlink" title="解析和预处理"></a>解析和预处理</h1><p>解析器通过关键字将SQL语句进行解析，并生成对应的解析树。MySQL解析器将使用MySQL语法规则验证和解析查询。<br>预处理器则根据一些MySQL规则进行进一步检查解析书是否合法，例如检查数据表和数据列是否存在，还会解析名字和别名，看看它们是否有歧义。</p>
-<h1 id="查询优化器"><a href="#查询优化器" class="headerlink" title="查询优化器"></a>查询优化器</h1><p>查询优化器会将解析树转化成执行计划。一条查询可以有多种执行方法，最后都是返回相同结果。优化器的作用就是找到这其中最好的执行计划。<br>生成执行计划的过程会消耗较多的时间，特别是存在许多可选的执行计划时。如果在一条SQL语句执行的过程中将该语句对应的最终执行计划进行缓存，当相似的语句再次被输入服务器时，就可以直接使用已缓存的执行计划，从而跳过SQL语句生成执行计划的整个过程，进而可以提高语句的执行速度。</p>
-<p>MySQL使用基于成本的查询优化器(Cost-Based Optimizer，CBO)。它会尝试预测一个查询使用某种执行计划时的成本，并选择其中成本最少的一个。</p>
-<p>优化器会根据优化规则对关系表达式进行转换，这里的转换是说一个关系表达式经过优化规则后会生成另外一个关系表达式，同时原有表达式也会保留，经过一系列转换后会生成多个执行计划，然后CBO会根据统计信息和代价模型(Cost Model)计算每个执行计划的Cost，从中挑选Cost最小的执行计划。由上可知，CBO中有两个依赖：统计信息和代价模型。统计信息的准确与否、代价模型的合理与否都会影响CBO选择最优计划。</p>
-<h1 id="查询执行引擎"><a href="#查询执行引擎" class="headerlink" title="查询执行引擎"></a>查询执行引擎</h1><p>在解析和优化阶段，MySQL将生成查询对应的执行计划，MySQL的查询执行引擎根据这个执行计划来完成整个查询。这里执行计划是一个数据结构，而不是和其他的关系型数据库那样生成对应的字节码。</p>
-<h1 id="返回结果给客户端"><a href="#返回结果给客户端" class="headerlink" title="返回结果给客户端"></a>返回结果给客户端</h1><p>如果查询可以被缓存，那么MySQL在这个阶段页会将结果存放到查询缓存中。<br>MySQL将结果集返回给客户端是一个增量、逐步返回的过程。在查询生成第一条结果时，MySQL就可以开始向客户端逐步返回结果集了。</p>
-<h1 id="原文链接"><a href="#原文链接" class="headerlink" title="原文链接"></a>原文链接</h1><p><a href="https://cloud.tencent.com/developer/article/1200822" target="_blank" rel="noopener">SQL语句执行过程详解</a></p>
+<h1 id="FROM"><a href="#FROM" class="headerlink" title="FROM"></a>FROM</h1><p>FROM后跟需要查询的表，可能是一个，也可能是多个。对于多个表的查询，不得不提到JOIN(连接)，能否合理使用JOIN也影响了执行效率的高低。</p>
+<p>首先对给出连接操作的种类：<strong>交叉连接</strong>、<strong>内连接</strong>、<strong>外连接</strong>、<strong>自然连接</strong>和<strong>直接连接</strong>。</p>
+<h2 id="交叉连接"><a href="#交叉连接" class="headerlink" title="交叉连接"></a>交叉连接</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">FROM table1,table2</span><br><span class="line"><span class="comment">-- 等价于</span></span><br><span class="line">FROM table1 CROSS JOIN table2</span><br></pre></td></tr></table></figure>
+<p>交叉连接产生的是两个表的笛卡尔积，交叉链接可能产生巨大的表，慎用。</p>
+<blockquote>
+<p>笛卡尔积：两个集合X和Y的笛卡尓积（Cartesian product），又称直积，表示为X × Y，第一个对象是X的成员而第二个对象是Y的所有可能有序对的其中一个成员</p>
+</blockquote>
+<h2 id="内连接"><a href="#内连接" class="headerlink" title="内连接"></a>内连接</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">-- 一定要有 ON</span></span><br><span class="line">FROM table1 JOIN table2 ON table1.col1=table2.col2</span><br></pre></td></tr></table></figure>
+<p>如果不跟<code>ON</code>，则返回笛卡尔积。(与外链接没有区别吗？)<br><code>ON</code>可以被<code>WHERE</code>代替，但是<code>ON</code>效率更高。使用<code>WHERE</code>相当于先返回表格的笛卡尔积，再约束查询结果(猜测，带验证)。</p>
+<h2 id="外连接"><a href="#外连接" class="headerlink" title="外连接"></a>外连接</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">-- 一定显示table1中的所有行，若table2中没有与table1匹配的，则显示null</span></span><br><span class="line">FROM table1 LEFT JOIN table2 on ...</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 一定显示table2中的所有行，若table1中没有与table2匹配的，则显示null</span></span><br><span class="line">FROM table1 RIGHT JOIN table2 on ...</span><br></pre></td></tr></table></figure>
+<h2 id="自然连接"><a href="#自然连接" class="headerlink" title="自然连接"></a>自然连接</h2><p>不允许指定<code>ON</code>，自动查找相同的列名进行连接。</p>
+<h2 id="直接连接"><a href="#直接连接" class="headerlink" title="直接连接"></a>直接连接</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">-- 强制以table1为基本表</span></span><br><span class="line">FROM table1 STRAIGHT_JOIN table2</span><br></pre></td></tr></table></figure>
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><p>参考手册中给出的关于JOIN有关的操作</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">table_references:</span><br><span class="line">    escaped_table_reference [, escaped_table_reference] ...</span><br><span class="line"></span><br><span class="line">escaped_table_reference:</span><br><span class="line">    table_reference</span><br><span class="line">  | &#123; OJ table_reference &#125;</span><br><span class="line"></span><br><span class="line">table_reference:</span><br><span class="line">    table_factor</span><br><span class="line">  | joined_table</span><br><span class="line"></span><br><span class="line">table_factor:</span><br><span class="line">    tbl_name [PARTITION (partition_names)]</span><br><span class="line">        [[AS] alias] [index_hint_list]</span><br><span class="line">  | table_subquery [AS] alias [(col_list)]</span><br><span class="line">  | ( table_references )</span><br><span class="line"></span><br><span class="line">joined_table:</span><br><span class="line">    table_reference &#123;[INNER | CROSS] JOIN | STRAIGHT_JOIN&#125; table_factor [join_specification]</span><br><span class="line">  | table_reference &#123;LEFT|RIGHT&#125; [OUTER] JOIN table_reference join_specification</span><br><span class="line">  | table_reference NATURAL [INNER | &#123;LEFT|RIGHT&#125; [OUTER]] JOIN table_factor</span><br><span class="line"></span><br><span class="line">join_specification:</span><br><span class="line">    ON search_condition</span><br><span class="line">  | USING (join_column_list)</span><br><span class="line"></span><br><span class="line">join_column_list:</span><br><span class="line">    column_name [, column_name] ...</span><br><span class="line"></span><br><span class="line">index_hint_list:</span><br><span class="line">    index_hint [, index_hint] ...</span><br><span class="line"></span><br><span class="line">index_hint:</span><br><span class="line">    USE &#123;INDEX|KEY&#125;</span><br><span class="line">      [FOR &#123;JOIN|ORDER BY|GROUP BY&#125;] ([index_list])</span><br><span class="line">  | &#123;IGNORE|FORCE&#125; &#123;INDEX|KEY&#125;</span><br><span class="line">      [FOR &#123;JOIN|ORDER BY|GROUP BY&#125;] (index_list)</span><br><span class="line"></span><br><span class="line">index_list:</span><br><span class="line">    index_name [, index_name] ...</span><br></pre></td></tr></table></figure>
+<h1 id="WHERE"><a href="#WHERE" class="headerlink" title="WHERE"></a>WHERE</h1><p>根据指定条件是否要将结果返回查询的表中。在<a href="/20190226104504/">MySQL索引</a>中讲了一些WHERE的优化。<br>此外对语句中的AND、OR、=也可以进行化简，这类化简属于数理逻辑内容，仅列出一个作为参考。</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">(b&gt;=5 AND b=5) OR (b=6 AND 5=5) OR (b=7 AND 5=6)</span><br><span class="line"><span class="comment">-- 化简为</span></span><br><span class="line">b=5 OR b=6</span><br></pre></td></tr></table></figure>
+<h1 id="GROUP-BY"><a href="#GROUP-BY" class="headerlink" title="GROUP BY"></a>GROUP BY</h1><p>对结果分组</p>
+<h1 id="HAVING"><a href="#HAVING" class="headerlink" title="HAVING"></a>HAVING</h1><p>对上面已经分组的数据进行过滤的条件，此时是在被WHERE过滤后的表格进行操作，为了效率，尽可能的使用WHERE。若查询过程中出现聚合语句(SUM,MIN,MAX,AVG,COUNT)，则需要使用HAVING。</p>
+<h1 id="SELECT"><a href="#SELECT" class="headerlink" title="SELECT"></a>SELECT</h1><p>查看结果集中的哪个列，或列的计算结果。如果要显示的结果和查询过程中只使用了索引字段，则结果仅索引就可以返回，而不需要去查表。</p>
+<h1 id="ORDER-BY"><a href="#ORDER-BY" class="headerlink" title="ORDER BY"></a>ORDER BY</h1><p>按照什么样的顺序来查看返回的数据，排序操作必定消耗大量资源。</p>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p><a href="https://www.cnblogs.com/huminxxl/p/3149097.html" target="_blank" rel="noopener">SQL语句执行顺序</a><br><a href="https://blog.csdn.net/u011277123/article/details/54863371" target="_blank" rel="noopener">MySQL数据高级查询之连接查询、联合查询、子查询</a><br><a href="https://huoding.com/2013/06/04/261" target="_blank" rel="noopener">MySQL优化的奇技淫巧之STRAIGHT_JOIN</a><br><a href="https://dev.mysql.com/doc/refman/8.0/en/join.html" target="_blank" rel="noopener">JOIN Syntax</a><br><a href="http://www.orczhou.com/index.php/2013/04/how-mysql-choose-index-in-a-join/" target="_blank" rel="noopener">MySQL优化器如何选择索引和JOIN顺序</a><br><a href="https://blog.csdn.net/qmhball/article/details/7941638" target="_blank" rel="noopener">sql语句中WHERE与HAVING的区别</a></p>
 ]]></content>
       <categories>
         <category>数据库</category>
       </categories>
       <tags>
         <tag>MySQL</tag>
-        <tag>转载</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Divisor Game</title>
+    <url>/20190623223142/</url>
+    <content><![CDATA[<p>这是一个在LeetCode被标记为Easy的题目，具体描述如下。</p>
+<p>爱丽丝和鲍勃一起玩游戏，他们轮流行动。爱丽丝先手开局。<br>最初，黑板上有一个数字 N 。在每个玩家的回合，玩家需要执行以下操作：</p>
+<ul>
+<li>选出任一 x，满足 0 &lt; x &lt; N 且 N % x == 0 。</li>
+<li>用 N - x 替换黑板上的数字 N 。</li>
+</ul>
+<p>如果玩家无法执行这些操作，就会输掉游戏。<br>只有在爱丽丝在游戏中取得胜利时才返回 True，否则返回 false。假设两个玩家都以最佳状态参与游戏。</p>
+<a id="more"></a>
+<p>题目中的假设玩家都以最佳状态参与游戏，也就是说，某个玩家若能赢则必须赢，不存在放水的情况。</p>
+<p>比如，初始状态N=4,Alice必定选择将数字替换成3(4-1),并获得游戏的胜利，而不会选择替换成2(4-2)。</p>
+<p>先看一下这个题目的一般思路。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">divisorGame</span><span class="params">(<span class="keyword">int</span> N)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(N==<span class="number">2</span>)&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span>(N==<span class="number">3</span>)&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>;i&lt;N;i++)&#123;</span><br><span class="line">        <span class="keyword">if</span>(N%i==<span class="number">0</span>)&#123;</span><br><span class="line">            <span class="comment">// 进行一次操作后存在让Bob一定失败的情况</span></span><br><span class="line">            <span class="keyword">if</span>(divisorGame(N-i)==<span class="keyword">false</span>)&#123;</span><br><span class="line">                <span class="comment">// Alice一定胜利</span></span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 若不能保证Alice一定胜利，那么Bob一定胜利。</span></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这是一个常规的递归思路，但是这个算法超时，即使用了备忘录也会超时。</p>
+<p>现在有两个思路：</p>
+<ol>
+<li>把这个递归过程反过来，用动态规划</li>
+<li>用数学方法推出一个公式。一开始就有这样一个想法，但是没有想出公式的样子</li>
+</ol>
+<p>瞄了一眼其他人的算法。当数字为偶数时为真(Alice胜利)，奇数时为假(Bob胜利)。下面用数学归纳法证明。</p>
+<p>初始状态：2为真，3为假。<br>4存在因子1,4-1的状态为假，故4的状态为真。(前面的算法描述)<br>5仅存在一个因子1，5-1=4状态为真，不存在为假的状态。故5的状态为假。  </p>
+<p>对于接下来的偶数，都可以将状态转换到比它小1的奇数，<em>奇数状态为假</em>，偶数状态必为真。</p>
+<p>接下来要证明奇数的状态一定为假。奇数进行一次转换后必定为偶数。因为：</p>
+<ol>
+<li>奇数减奇数一定为偶数。</li>
+<li>奇数的因子一定是奇数</li>
+</ol>
+<p>由因为偶数一定为真，故奇数一定为假。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">divisorGame</span><span class="params">(<span class="keyword">int</span> N)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> N%<span class="number">2</span>==<span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><a href="https://leetcode.com/problems/divisor-game/" target="_blank" rel="noopener">Divisor Game</a></p>
+]]></content>
+      <categories>
+        <category>算法</category>
+      </categories>
+      <tags>
+        <tag>数学</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>C++函数指针到UE4委托代理</title>
+    <url>/20190821135227/</url>
+    <content><![CDATA[<p>Delegate: A type of variable storing a reference to a method with a particular signature, analogous to a function pointer</p>
+<a id="more"></a>
+<h1 id="函数指针"><a href="#函数指针" class="headerlink" title="函数指针"></a>函数指针</h1><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// demo</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// f是一个函数，函数的参数是 int，返回值是指向函数的指针</span></span><br><span class="line"><span class="comment">// 被指向的函数的参数和返回值分别是(int*,int) 和 int</span></span><br><span class="line"><span class="keyword">int</span>(*f(<span class="keyword">int</span>)) (<span class="keyword">int</span>*, <span class="keyword">int</span>);</span><br><span class="line"><span class="comment">// 这个函数刚好符合上面的函数返回值的要求</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fun</span><span class="params">(<span class="keyword">int</span>*, <span class="keyword">int</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> a = <span class="number">1</span>, b = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// pf是一个指向函数的指针</span></span><br><span class="line">    <span class="comment">// 被指向的函数的参数列表和返回值分别是，(int*,int) 和 int</span></span><br><span class="line">    <span class="keyword">int</span>(*pf) (<span class="keyword">int</span>*, <span class="keyword">int</span>) = &amp;fun;</span><br><span class="line">    <span class="comment">// int(*pf) (int*, int) = fun; 效果同上</span></span><br><span class="line"></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt; pf(&amp;a, b)&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>; <span class="comment">// 2</span></span><br><span class="line"></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; ((*f(<span class="number">1</span>))(&amp;a, b)) &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>; <span class="comment">// 1 2</span></span><br><span class="line">    <span class="comment">// std::cout &lt;&lt; (f(1)(&amp;a, b)) &lt;&lt; std::endl; 效果同上</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fun</span><span class="params">(<span class="keyword">int</span>* a, <span class="keyword">int</span> b)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> *a + b;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span>(*f(<span class="keyword">int</span> a)) (<span class="keyword">int</span>* b, <span class="keyword">int</span> c)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; a &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    <span class="keyword">return</span> fun;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="UE4-委托代理"><a href="#UE4-委托代理" class="headerlink" title="UE4 委托代理"></a>UE4 委托代理</h1><p>Wiki里对委托(Delegate)的解释</p>
+<blockquote>
+<p>a type of variable storing a reference to a method with a particular signature, analogous to a function pointer</p>
+</blockquote>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">//OnlyDelegateTest.h</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">pragma</span> once</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"CoreMinimal.h"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"UObject/NoExportTypes.h"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"OnlyDelegateTest.generated.h"</span></span></span><br><span class="line"></span><br><span class="line">DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnlyDelegateTestSignature);</span><br><span class="line"></span><br><span class="line">UCLASS(Blueprintable)</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">FAITHGAME_API</span> <span class="title">UOnlyDelegateTest</span> :</span> <span class="keyword">public</span> UObject</span><br><span class="line">&#123;</span><br><span class="line">    GENERATED_BODY()</span><br><span class="line">    </span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    UFUNCTION(BlueprintCallable, Category = <span class="string">"DelegateTest"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">static</span> UOnlyDelegateTest* <span class="title">get_instance_ptr</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">static</span> UOnlyDelegateTest&amp; <span class="title">get_instance</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="keyword">static</span> UOnlyDelegateTest* instance_;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    UFUNCTION(BlueprintCallable, Category = <span class="string">"DelegateTest"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">execute_broadcast_in_cpp</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> class UWorld* <span class="title">GetWorld</span><span class="params">()</span> <span class="keyword">const</span> <span class="keyword">override</span></span>;</span><br><span class="line">    UPROPERTY(Transient)</span><br><span class="line">    UWorld * World;</span><br><span class="line">    </span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    UPROPERTY(BlueprintAssignable, Category = <span class="string">"DelegateTest"</span>)</span><br><span class="line">    FOnlyDelegateTestSignature OnlyTestDelegate;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// OnlyDelegateTest.cpp</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"etc..."</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"OnlyDelegateTest.h"</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 类外定义静态变量</span></span><br><span class="line">UOnlyDelegateTest* UOnlyDelegateTest::instance_ = <span class="literal">nullptr</span>;</span><br><span class="line"></span><br><span class="line"><span class="function">UOnlyDelegateTest* <span class="title">UOnlyDelegateTest::get_instance_ptr</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="literal">nullptr</span> != instance_) <span class="keyword">return</span> instance_;</span><br><span class="line"></span><br><span class="line">    instance_ = NewObject&lt;UOnlyDelegateTest&gt;();</span><br><span class="line">    instance_-&gt;AddToRoot();</span><br><span class="line">    <span class="keyword">return</span> instance_;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">UOnlyDelegateTest&amp; <span class="title">UOnlyDelegateTest::get_instance</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> *get_instance_ptr();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">UOnlyDelegateTest::execute_broadcast_in_cpp</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    OnlyTestDelegate.Broadcast();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">UWorld* <span class="title">UOnlyDelegateTest::GetWorld</span><span class="params">()</span> <span class="keyword">const</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> World;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>默认</category>
+      </categories>
+      <tags>
+        <tag>默认</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Largest Rectangle in Histogram</title>
+    <url>/20190320105022/</url>
+    <content><![CDATA[<p>一些紧密排列宽度为1高度已知(如2,1,5,6,2,3)的长方形，在这个拼出的图形中，寻找一个面积最大的长方形，返回这个长方形的面积。如本题中的5,6可拼出面积为10的长方形。</p>
+<a id="more"></a>
+<h1 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h1><p>Given n non-negative integers representing the histogram&#39;s bar height where the width of each bar is 1, find the area of largest rectangle in the histogram.</p>
+<p>Example:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Input: [2,1,5,6,2,3]</span><br><span class="line">Output: 10</span><br></pre></td></tr></table></figure>
+<h1 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h1><p>整个思路来源于参考资料，把参考资料中的内容转化为自己容易理解的语言。对于每个长方形，必定存在左右边界，以及该边界对应的一个最大的高度。暴力搜索是一个思路，但是暴力搜索存在的一个缺陷是，有太多不必要的计算。比如输入数据为<code>[1,2,3]</code>，那么没有必要计算<code>[1]</code>和<code>[1,2]</code>这两种情况，这两种情况下，高度最高都是<code>1</code>,但是宽度却没有达到最大的<code>3</code>。存在这两个冗余的原因是没有确定一个合理的右界。若数组递增，则一定不会出现右界，所以右界出现在数组减小时。理论上，右界左边的都可以是左界，但是考虑<code>[1,2,3,2,1]</code>,在<code>3</code>时出现第一次下降，右界为<code>3</code>。虽然此时可以计算<code>[3]</code>、<code>[2,3]</code>、<code>[1,2,3]</code>,但是<code>3</code>的右面还存在<code>2</code>,当<code>2</code>成为边界时还会计算<code>[2,3,2]</code>,所以边界为<code>3</code>时，没有必要计算<code>[2,3]</code>和<code>[1,2,3]</code>。所以确定左边界的条件是，左边界的极限值要大于右边界右面的值。左边界从右边界向左逐渐逼近左边界的极限，在这个过程中，左边界的高度始终为可以使用的最大高度，该高度逐渐下降。宽度则为左边界到有边界的间隔。根据边界和高度可以计算面积。左右边界各访问一次数组，时间复杂度为<code>O(2n)=O(n)</code>。</p>
+<p>栈可以满足上面对左边界的描述。当右边界扩大时，将其入栈作为将来要使用的左边界。输入数据最后如果是个递增序列，递增的那部分就不会被考虑，右边界会扩展到最后而的不到左边界。在整个数组最后添加一个<code>0</code>使其最后一定不是一个递增序列。</p>
+<p>同理，也应该在数组最开始位置添加一个<code>0</code>。但是可以使用数组为空时返回位置为<code>-1</code>解决这个问题。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">largestRectangleArea</span><span class="params">(<span class="keyword">int</span>[] heights)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> maxArea = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">int</span>[] tmp = <span class="keyword">new</span> <span class="keyword">int</span>[heights.length + <span class="number">1</span>];</span><br><span class="line">        System.arraycopy(heights, <span class="number">0</span>, tmp, <span class="number">0</span>, heights.length);</span><br><span class="line">        heights = tmp;</span><br><span class="line">        Stack&lt;Integer&gt; index = <span class="keyword">new</span> Stack&lt;&gt;();</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; heights.length; i++) &#123;</span><br><span class="line">            <span class="keyword">while</span> (!index.empty() &amp;&amp; heights[i] &lt; heights[index.peek()]) &#123;</span><br><span class="line">                <span class="keyword">int</span> h = heights[index.pop()];</span><br><span class="line">                <span class="keyword">int</span> prev = index.empty() ? -<span class="number">1</span> : index.peek();</span><br><span class="line">                maxArea = Math.max(maxArea, (i - prev - <span class="number">1</span>) * h);</span><br><span class="line">            &#125;</span><br><span class="line">            index.push(i);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> maxArea;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当然如果不理解为什么那样处理，可以依旧直接在开始添加<code>0</code>,对算法复杂度影响不大。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">largestRectangleArea</span><span class="params">(<span class="keyword">int</span>[] heights)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> maxArea = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">int</span>[] tmp = <span class="keyword">new</span> <span class="keyword">int</span>[heights.length + <span class="number">2</span>];</span><br><span class="line">        System.arraycopy(heights, <span class="number">0</span>, tmp, <span class="number">1</span>, heights.length);</span><br><span class="line">        heights = tmp;</span><br><span class="line">        Stack&lt;Integer&gt; index = <span class="keyword">new</span> Stack&lt;&gt;();</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; heights.length; i++) &#123;</span><br><span class="line">            <span class="keyword">while</span> (!index.empty() &amp;&amp; heights[i] &lt; heights[index.peek()]) &#123;</span><br><span class="line">                <span class="keyword">int</span> h = heights[index.pop()];</span><br><span class="line">                <span class="keyword">int</span> prev = index.peek();</span><br><span class="line">                maxArea = Math.max(maxArea, (i - prev - <span class="number">1</span>) * h);</span><br><span class="line">            &#125;</span><br><span class="line">            index.push(i);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> maxArea;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>Java数组固定，不能在原数组后直接追加元素，只能创建一个大小比当前数组大的数组，复制数据，然后修改最后一个元素的值。数组初始化后默认值为0,所以不用修改。复制数组使用系统提供的数组复制方法。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span>[] tmp = <span class="keyword">new</span> <span class="keyword">int</span>[heights.length + <span class="number">1</span>];</span><br><span class="line">System.arraycopy(heights, <span class="number">0</span>, tmp, <span class="number">0</span>, heights.length);</span><br><span class="line">heights = tmp;</span><br></pre></td></tr></table></figure>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p><a href="https://leetcode.com/problems/largest-rectangle-in-histogram/" target="_blank" rel="noopener">Largest Rectangle in Histogram</a><br><a href="https://leetcode.com/problems/largest-rectangle-in-histogram/discuss/217539/O%28n%29-stack-c%2B%2B-solution-12ms" target="_blank" rel="noopener">O(n) stack c++ solution 12ms 中文详细解释</a></p>
+]]></content>
+      <categories>
+        <category>算法</category>
+      </categories>
+      <tags>
+        <tag>栈</tag>
+        <tag>Java数组复制</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>关于C++迭代器的一些小技巧</title>
+    <url>/20191205005932/</url>
+    <content><![CDATA[<p>在看C++入门时，看到了关于迭代器的一些使用小技巧，觉得很有必要记下来。可能也是因为我太菜才觉得这部分很有趣吧。</p>
+<a id="more"></a>
+<p>这一切都来源于C++入门的练习10.30</p>
+<blockquote>
+<p><strong>练习10.30</strong><br>使用流迭代器，sort和copy从标准流读取一个整数序列，将其排序，并将结果写到标准输出。</p>
+</blockquote>
+<p>题目中并没有说按照什么顺序排序，为了复习一下lambda表达式和bind函数，不使用默认的sort排序规则。</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;functional&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iterator&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>::placeholders;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">is_smaller</span><span class="params">(<span class="keyword">const</span> <span class="keyword">int</span> &amp;a, <span class="keyword">const</span> <span class="keyword">int</span> &amp;b)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> a &lt; b;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    istream_iterator&lt;int&gt; is_it(cin), eof;</span><br><span class="line">    <span class="function">ostream_iterator&lt;<span class="keyword">int</span>&gt; <span class="title">os_it</span><span class="params">(<span class="built_in">cout</span>, <span class="string">" "</span>)</span></span>;</span><br><span class="line">    <span class="function"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; <span class="title">vec</span><span class="params">(is_it, eof)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">auto</span> is_greater = bind(is_smaller, _2, _1);</span><br><span class="line">    <span class="keyword">auto</span> greater_lambda = [](<span class="keyword">const</span> <span class="keyword">int</span> &amp;a, <span class="keyword">const</span> <span class="keyword">int</span> &amp;b) -&gt; <span class="keyword">bool</span> &#123; <span class="keyword">return</span> a &gt; b;&#125;;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 效果相同的三种sort</span></span><br><span class="line">    sort(vec.begin(), vec.end(), is_greater);</span><br><span class="line">    sort(vec.begin(), vec.end(), greater_lambda);</span><br><span class="line">    sort(vec.rbegin(), vec.rend());</span><br><span class="line"></span><br><span class="line">    copy(vec.begin(), vec.end(), os_it);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>C++</category>
+      </categories>
+      <tags>
+        <tag>C++</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>使用SSH访问内网中的服务器</title>
+    <url>/20190909233016/</url>
+    <content><![CDATA[<p>这篇文章讨论在有公网服务器作为中继的条件下，如何通过SSH访问没有公网IP的服务器。</p>
+<a id="more"></a>
+<p>这篇文章使用尽可能少的参数以及尽可能多的端口号，使读者更容易理解操作流程。</p>
+<p>阅读文章前，请确定能理解下面这句指令的含义，以及<code>[]</code>中的内容不存在时使用的默认值是什么。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ssh [username@]host [-p port]</span><br></pre></td></tr></table></figure>
+<h1 id="在外网服务器中的操作"><a href="#在外网服务器中的操作" class="headerlink" title="在外网服务器中的操作"></a>在外网服务器中的操作</h1><p>先从服务器开始。首先假设您已经通过上个命令登录到服务器。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ssh -L 0.0.0.0:10000:localhost:20000 outer@localhost -p 50000</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><strong>-L</strong> <code>[bind_address:]port:host:hostport</code>  </p>
+<p>Specifies that connections to the given TCP port or Unix socket on the local (client) host are to be forwarded to the given host and port, or Unix socket, on the remote side.</p>
+</blockquote>
+<p>简而言之，<code>0.0.0.0:10000</code> 收到的内容将被转发给<code>localhost:20000</code>。其他的参数与最开始的指令的含义相同。</p>
+<p>这是一个正向代理的过程。此时，就需要让 <code>20000</code> 端口收到的数据转发给内网中的服务器。</p>
+<h1 id="在内网服务器中的操作"><a href="#在内网服务器中的操作" class="headerlink" title="在内网服务器中的操作"></a>在内网服务器中的操作</h1><p>在进行后续操作前，请确定内网服务器的SSH服务的端口号是30000。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ssh -R 20000:localhost:30000 outer@12.34.56.78 -p 50000</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><strong>-R</strong> <code>[bind_address:]port:host:hostport</code>  </p>
+<p> <em>Specifies that connections to the given TCP port or Unix socket on the remote (server) host are to be forwarded to the local side.</em></p>
+</blockquote>
+<p>这样，外网服务器在 <code>20000</code> 端口接收到的数据将被转发到内网服务器的 <code>30000</code> 端口。使用第三台机器进行测试。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ssh inner@12.34.56.78 -p 10000</span><br></pre></td></tr></table></figure>
+<h1 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h1><p>直接使用上述方式运行的话，命令保持在前台，并且存在断线的风险。使用autossh和ssh参数配置实现断线重连</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">autossh -M 0 -o "ServerAliveInterval 60" -o "ServerAliveCountMax 3" -fCNL ...</span><br><span class="line">autossh -M 0 -o "ServerAliveInterval 60" -o "ServerAliveCountMax 3" -fCNR ...</span><br></pre></td></tr></table></figure>
+<h1 id="数据流向"><a href="#数据流向" class="headerlink" title="数据流向"></a>数据流向</h1><p>某SSH客户端，访问外网服务器的<code>10000</code>端口，<code>10000</code>端口将接收到的数据直接转发给外网服务器的<code>20000</code>端口，内网服务器在外网服务器上打开了<code>20000</code>端口，并将数据转发给了内网服务器的<code>30000</code>端口。</p>
+<p>通过访问<code>50000</code>端口的SSH服务器软件控制数据流向。</p>
+]]></content>
+      <categories>
+        <category>默认</category>
+      </categories>
+      <tags>
+        <tag>默认</tag>
       </tags>
   </entry>
   <entry>
@@ -442,69 +627,122 @@
       </tags>
   </entry>
   <entry>
-    <title>Largest Rectangle in Histogram</title>
-    <url>/20190320105022/</url>
-    <content><![CDATA[<p>一些紧密排列宽度为1高度已知(如2,1,5,6,2,3)的长方形，在这个拼出的图形中，寻找一个面积最大的长方形，返回这个长方形的面积。如本题中的5,6可拼出面积为10的长方形。</p>
+    <title>Best Time to Buy and Sell Stock II</title>
+    <url>/20190629005849/</url>
+    <content><![CDATA[<p>给定一个数组，它的第 i 个元素是一支给定股票第 i 天的价格。<br>设计一个算法来计算你所能获取的最大利润。你可以尽可能地完成更多的交易（多次买卖一支股票）。<br>注意：你不能同时参与多笔交易（你必须在再次购买前出售掉之前的股票）。</p>
 <a id="more"></a>
-<h1 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h1><p>Given n non-negative integers representing the histogram&#39;s bar height where the width of each bar is 1, find the area of largest rectangle in the histogram.</p>
-<p>Example:</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Input: [2,1,5,6,2,3]</span><br><span class="line">Output: 10</span><br></pre></td></tr></table></figure>
-<h1 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h1><p>整个思路来源于参考资料，把参考资料中的内容转化为自己容易理解的语言。对于每个长方形，必定存在左右边界，以及该边界对应的一个最大的高度。暴力搜索是一个思路，但是暴力搜索存在的一个缺陷是，有太多不必要的计算。比如输入数据为<code>[1,2,3]</code>，那么没有必要计算<code>[1]</code>和<code>[1,2]</code>这两种情况，这两种情况下，高度最高都是<code>1</code>,但是宽度却没有达到最大的<code>3</code>。存在这两个冗余的原因是没有确定一个合理的右界。若数组递增，则一定不会出现右界，所以右界出现在数组减小时。理论上，右界左边的都可以是左界，但是考虑<code>[1,2,3,2,1]</code>,在<code>3</code>时出现第一次下降，右界为<code>3</code>。虽然此时可以计算<code>[3]</code>、<code>[2,3]</code>、<code>[1,2,3]</code>,但是<code>3</code>的右面还存在<code>2</code>,当<code>2</code>成为边界时还会计算<code>[2,3,2]</code>,所以边界为<code>3</code>时，没有必要计算<code>[2,3]</code>和<code>[1,2,3]</code>。所以确定左边界的条件是，左边界的极限值要大于右边界右面的值。左边界从右边界向左逐渐逼近左边界的极限，在这个过程中，左边界的高度始终为可以使用的最大高度，该高度逐渐下降。宽度则为左边界到有边界的间隔。根据边界和高度可以计算面积。左右边界各访问一次数组，时间复杂度为<code>O(2n)=O(n)</code>。</p>
-<p>栈可以满足上面对左边界的描述。当右边界扩大时，将其入栈作为将来要使用的左边界。输入数据最后如果是个递增序列，递增的那部分就不会被考虑，右边界会扩展到最后而的不到左边界。在整个数组最后添加一个<code>0</code>使其最后一定不是一个递增序列。</p>
-<p>同理，也应该在数组最开始位置添加一个<code>0</code>。但是可以使用数组为空时返回位置为<code>-1</code>解决这个问题。</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">largestRectangleArea</span><span class="params">(<span class="keyword">int</span>[] heights)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> maxArea = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">int</span>[] tmp = <span class="keyword">new</span> <span class="keyword">int</span>[heights.length + <span class="number">1</span>];</span><br><span class="line">        System.arraycopy(heights, <span class="number">0</span>, tmp, <span class="number">0</span>, heights.length);</span><br><span class="line">        heights = tmp;</span><br><span class="line">        Stack&lt;Integer&gt; index = <span class="keyword">new</span> Stack&lt;&gt;();</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; heights.length; i++) &#123;</span><br><span class="line">            <span class="keyword">while</span> (!index.empty() &amp;&amp; heights[i] &lt; heights[index.peek()]) &#123;</span><br><span class="line">                <span class="keyword">int</span> h = heights[index.pop()];</span><br><span class="line">                <span class="keyword">int</span> prev = index.empty() ? -<span class="number">1</span> : index.peek();</span><br><span class="line">                maxArea = Math.max(maxArea, (i - prev - <span class="number">1</span>) * h);</span><br><span class="line">            &#125;</span><br><span class="line">            index.push(i);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> maxArea;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>当然如果不理解为什么那样处理，可以依旧直接在开始添加<code>0</code>,对算法复杂度影响不大。</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">largestRectangleArea</span><span class="params">(<span class="keyword">int</span>[] heights)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> maxArea = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">int</span>[] tmp = <span class="keyword">new</span> <span class="keyword">int</span>[heights.length + <span class="number">2</span>];</span><br><span class="line">        System.arraycopy(heights, <span class="number">0</span>, tmp, <span class="number">1</span>, heights.length);</span><br><span class="line">        heights = tmp;</span><br><span class="line">        Stack&lt;Integer&gt; index = <span class="keyword">new</span> Stack&lt;&gt;();</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; heights.length; i++) &#123;</span><br><span class="line">            <span class="keyword">while</span> (!index.empty() &amp;&amp; heights[i] &lt; heights[index.peek()]) &#123;</span><br><span class="line">                <span class="keyword">int</span> h = heights[index.pop()];</span><br><span class="line">                <span class="keyword">int</span> prev = index.peek();</span><br><span class="line">                maxArea = Math.max(maxArea, (i - prev - <span class="number">1</span>) * h);</span><br><span class="line">            &#125;</span><br><span class="line">            index.push(i);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> maxArea;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>Java数组固定，不能在原数组后直接追加元素，只能创建一个大小比当前数组大的数组，复制数据，然后修改最后一个元素的值。数组初始化后默认值为0,所以不用修改。复制数组使用系统提供的数组复制方法。</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span>[] tmp = <span class="keyword">new</span> <span class="keyword">int</span>[heights.length + <span class="number">1</span>];</span><br><span class="line">System.arraycopy(heights, <span class="number">0</span>, tmp, <span class="number">0</span>, heights.length);</span><br><span class="line">heights = tmp;</span><br></pre></td></tr></table></figure>
-<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p><a href="https://leetcode.com/problems/largest-rectangle-in-histogram/" target="_blank" rel="noopener">Largest Rectangle in Histogram</a><br><a href="https://leetcode.com/problems/largest-rectangle-in-histogram/discuss/217539/O%28n%29-stack-c%2B%2B-solution-12ms" target="_blank" rel="noopener">O(n) stack c++ solution 12ms 中文详细解释</a></p>
+<p>如果获得收益，一定是低价买入，高价卖出。<br>对于<code>[1,2,3]</code>，可以在第1天买入，在第3天卖出。但是也可以理解为，在第2天卖出，又在第2天买入。<br>那么题目可以化简为，如果第i天的价格比第i-1天的价格高，则在第i-1天买入，第i天卖出，每次只考虑临近的两天。算法如下。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">maxProfit</span><span class="params">(<span class="keyword">int</span>[] prices)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> earn=<span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>;i&lt;prices.length;i++)&#123;</span><br><span class="line">        earn+=prices[i]&gt;prices[i-<span class="number">1</span>]?prices[i]-prices[i-<span class="number">1</span>]:<span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> earn;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h1><p><a href="https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-cooldown/" target="_blank" rel="noopener">Best Time to Buy and Sell Stock with Cooldown</a></p>
+<p>在上述题目要求的基础上，又增加了一条要求</p>
+<blockquote>
+<p>在股票卖出后不能直接再次进行交易</p>
+</blockquote>
+<p>上面的算法不适用新情况，按照分治思想设计出的带有递归的算法复杂度超时，这里直接用<a href="https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-cooldown/discuss/441543/O(n)-Java-solution-2-Arrays" target="_blank" rel="noopener">前人给出的算法</a>，当作记录和学习了</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">maxProfit</span><span class="params">(<span class="keyword">int</span>[] prices)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (prices == <span class="keyword">null</span> || prices.length &lt; <span class="number">2</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 第i天持有股票获得的利润</span></span><br><span class="line">    <span class="keyword">int</span>[] hold = <span class="keyword">new</span> <span class="keyword">int</span>[prices.length];</span><br><span class="line">    <span class="comment">// 第i天不持有股票获得的利润</span></span><br><span class="line">    <span class="keyword">int</span>[] unhold = <span class="keyword">new</span> <span class="keyword">int</span>[prices.length];</span><br><span class="line">    <span class="comment">// 前两天如果持有股票，要买便宜的</span></span><br><span class="line">    hold[<span class="number">0</span>] = -prices[<span class="number">0</span>];</span><br><span class="line">    hold[<span class="number">1</span>] = Math.max(-prices[<span class="number">0</span>],-prices[<span class="number">1</span>]);</span><br><span class="line">    <span class="comment">// 前两天如果不持有股票，要么是根本没买，要么是第一天买第二天卖并且赚了</span></span><br><span class="line">    unhold[<span class="number">0</span>] = <span class="number">0</span>;</span><br><span class="line">    unhold[<span class="number">1</span>] = Math.max(<span class="number">0</span>,prices[<span class="number">1</span>]-prices[<span class="number">0</span>]);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">2</span>;i&lt;prices.length;++i)&#123;</span><br><span class="line">        <span class="comment">// 第i天持有股票只有两种情况</span></span><br><span class="line">        <span class="comment">// 保持第i-1天的持有情况不变</span></span><br><span class="line">        <span class="comment">// 或者在i-2天卖出，并在第i天买入</span></span><br><span class="line">        <span class="comment">// 注意:在i-2天保持未持有股票情况下的最大利润，并非一定在i-2天卖出了股票，下同</span></span><br><span class="line">        hold[i] = Math.max(hold[i-<span class="number">1</span>],unhold[i-<span class="number">2</span>]-prices[i]);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 第i天不持有股票的情况也有两种</span></span><br><span class="line">        <span class="comment">// 保持i-1天的不持有情况不变</span></span><br><span class="line">        <span class="comment">// 或者卖出在i-1天买入的股票</span></span><br><span class="line">        unhold[i] = Math.max(unhold[i-<span class="number">1</span>],hold[i-<span class="number">1</span>]+prices[i]);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 最后一天一定是不持有股票获得的利润最大</span></span><br><span class="line">    <span class="keyword">return</span> unhold[prices.length-<span class="number">1</span>];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>由于数组每次都是使用的最近几个元素，算法可以优化到O(1)空间复杂度。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">maxProfit</span><span class="params">(<span class="keyword">int</span>[] prices)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (prices == <span class="keyword">null</span> || prices.length &lt; <span class="number">2</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span>[] hold = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">1</span>];</span><br><span class="line">    <span class="keyword">int</span>[] unhold = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">3</span>];</span><br><span class="line">    </span><br><span class="line">    hold[<span class="number">0</span>] = Math.max(-prices[<span class="number">0</span>],-prices[<span class="number">1</span>]);</span><br><span class="line">    </span><br><span class="line">    unhold[<span class="number">0</span>] = <span class="number">0</span>;</span><br><span class="line">    unhold[<span class="number">1</span>] = Math.max(<span class="number">0</span>,prices[<span class="number">1</span>]-prices[<span class="number">0</span>]);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">2</span>;i&lt;prices.length;++i)&#123;</span><br><span class="line">        hold[<span class="number">0</span>] = Math.max(hold[<span class="number">0</span>],unhold[<span class="number">0</span>]-prices[i]);</span><br><span class="line">        unhold[<span class="number">2</span>] = Math.max(unhold[<span class="number">1</span>],hold[<span class="number">0</span>]+prices[i]);</span><br><span class="line">        </span><br><span class="line">        unhold[<span class="number">0</span>] = unhold[<span class="number">1</span>];</span><br><span class="line">        unhold[<span class="number">1</span>] = unhold[<span class="number">2</span>];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> unhold[<span class="number">1</span>];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 ]]></content>
       <categories>
         <category>算法</category>
       </categories>
       <tags>
-        <tag>栈</tag>
-        <tag>Java数组复制</tag>
+        <tag>数组</tag>
       </tags>
   </entry>
   <entry>
-    <title>Divisor Game</title>
-    <url>/20190623223142/</url>
-    <content><![CDATA[<p>这是一个在LeetCode被标记为Easy的题目，具体描述如下。</p>
-<p>爱丽丝和鲍勃一起玩游戏，他们轮流行动。爱丽丝先手开局。<br>最初，黑板上有一个数字 N 。在每个玩家的回合，玩家需要执行以下操作：</p>
-<ul>
-<li>选出任一 x，满足 0 &lt; x &lt; N 且 N % x == 0 。</li>
-<li>用 N - x 替换黑板上的数字 N 。</li>
-</ul>
-<p>如果玩家无法执行这些操作，就会输掉游戏。<br>只有在爱丽丝在游戏中取得胜利时才返回 True，否则返回 false。假设两个玩家都以最佳状态参与游戏。</p>
+    <title>Find All Duplicates in an Array</title>
+    <url>/20190625181705/</url>
+    <content><![CDATA[<p>给定一个整数数组 a，其中1 ≤ a[i] ≤ n （n为数组长度）, 其中有些元素出现两次而其他元素出现一次。</p>
+<p>找到所有出现两次的元素。</p>
+<p>你可以不用到任何额外空间并在O(n)时间复杂度内解决这个问题吗？</p>
 <a id="more"></a>
-<p>题目中的假设玩家都以最佳状态参与游戏，也就是说，某个玩家若能赢则必须赢，不存在放水的情况。</p>
-<p>比如，初始状态N=4,Alice必定选择将数字替换成3(4-1),并获得游戏的胜利，而不会选择替换成2(4-2)。</p>
-<p>先看一下这个题目的一般思路。</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">divisorGame</span><span class="params">(<span class="keyword">int</span> N)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(N==<span class="number">2</span>)&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span>(N==<span class="number">3</span>)&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>;i&lt;N;i++)&#123;</span><br><span class="line">        <span class="keyword">if</span>(N%i==<span class="number">0</span>)&#123;</span><br><span class="line">            <span class="comment">// 进行一次操作后存在让Bob一定失败的情况</span></span><br><span class="line">            <span class="keyword">if</span>(divisorGame(N-i)==<span class="keyword">false</span>)&#123;</span><br><span class="line">                <span class="comment">// Alice一定胜利</span></span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 若不能保证Alice一定胜利，那么Bob一定胜利。</span></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这是一个常规的递归思路，但是这个算法超时，即使用了备忘录也会超时。</p>
-<p>现在有两个思路：</p>
-<ol>
-<li>把这个递归过程反过来，用动态规划</li>
-<li>用数学方法推出一个公式。一开始就有这样一个想法，但是没有想出公式的样子</li>
-</ol>
-<p>瞄了一眼其他人的算法。当数字为偶数时为真(Alice胜利)，奇数时为假(Bob胜利)。下面用数学归纳法证明。</p>
-<p>初始状态：2为真，3为假。<br>4存在因子1,4-1的状态为假，故4的状态为真。(前面的算法描述)<br>5仅存在一个因子1，5-1=4状态为真，不存在为假的状态。故5的状态为假。  </p>
-<p>对于接下来的偶数，都可以将状态转换到比它小1的奇数，<em>奇数状态为假</em>，偶数状态必为真。</p>
-<p>接下来要证明奇数的状态一定为假。奇数进行一次转换后必定为偶数。因为：</p>
-<ol>
-<li>奇数减奇数一定为偶数。</li>
-<li>奇数的因子一定是奇数</li>
-</ol>
-<p>由因为偶数一定为真，故奇数一定为假。</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">divisorGame</span><span class="params">(<span class="keyword">int</span> N)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> N%<span class="number">2</span>==<span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><a href="https://leetcode.com/problems/divisor-game/" target="_blank" rel="noopener">Divisor Game</a></p>
+<p>题目中要求时间复杂度为O(n)，遍历整个数组的时间复杂度是O(n)，此外的所有操作时间复杂度都应该是O(1),使用哈系表可以满足时间复杂度。但是题目中还要求不使用额外的空间。也就意味着，不能使用哈系表，仅能在原数组上进行操作。</p>
+<p>要求不使用额外空间，算法应该直接在原数组上进行操作，或者使用固定大小的内存(固定的几个变量，与输入数据规模无关)。将某个值放到其对应的指针的位置是常见的在原数组上进行的操作。扫描一遍数组，每个元素都修改一次某个变量，是常见的使用固定内存的方法。</p>
+<p>时间复杂度O(n)，意味着只能对数组进行(固定次数的)扫描，毕竟<code>O(n)=O(2n)=O(k*n)</code>，其中k是与输入数据规模无关的常数。前几次扫描可以用来获取一些必要信息。比如判断单链表是否回文，可以通过第一次扫描确定单链表的长度。再通过第二次扫描反转一半的单链表。第三次扫描再判断是否回文。</p>
+<p>这个题目扫描两次数组，第一次将值放到其对应的键上，并交换。第二次扫描，查找那些键值不匹配的位置的值，这些值就是要找的结果。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> List&lt;Integer&gt; <span class="title">findDuplicates</span><span class="params">(<span class="keyword">int</span>[] nums)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>;i&lt;=nums.length;i++)&#123;</span><br><span class="line">        <span class="keyword">while</span>(nums[i-<span class="number">1</span>]!=nums[nums[i-<span class="number">1</span>]-<span class="number">1</span>])&#123;</span><br><span class="line">            <span class="keyword">int</span> tmp = nums[nums[i-<span class="number">1</span>]-<span class="number">1</span>];</span><br><span class="line">            nums[nums[i-<span class="number">1</span>]-<span class="number">1</span>] = nums[i-<span class="number">1</span>];</span><br><span class="line">            nums[i-<span class="number">1</span>]=tmp;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    List&lt;Integer&gt; ans = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>;i&lt;=nums.length;i++)&#123;</span><br><span class="line">        <span class="keyword">if</span>(nums[i-<span class="number">1</span>]!=i)&#123;</span><br><span class="line">            ans.add(nums[i-<span class="number">1</span>]);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> ans;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面这个题要求找出所有<strong>重复出现</strong>的数字。有一个<a href="https://leetcode.com/problems/find-all-numbers-disappeared-in-an-array/" target="_blank" rel="noopener">类似的题目</a>，要求找出<strong>消失的数字</strong>。<br>整体算法一致，唯一不同的是整理结果时获取的值不同。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 将</span></span><br><span class="line">ans.add(nums[i-<span class="number">1</span>]);</span><br><span class="line"><span class="comment">// 修改为</span></span><br><span class="line">ans.add(i);</span><br></pre></td></tr></table></figure>
 ]]></content>
       <categories>
         <category>算法</category>
       </categories>
       <tags>
-        <tag>数学</tag>
+        <tag>数组</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>开始使用WireGuard</title>
+    <url>/20200202210032/</url>
+    <content><![CDATA[<p>WireGuard是让人眼前一亮的VPN软件。最近尝试通过它来完成两个没有公网IP的机器的通信，作为<a href="20190909233016">使用SSH访问内网中的服务器</a>的代替方案。</p>
+<a id="more"></a>
+<p>WireGuard的介绍和使用方法可以参考<a href="https://wiki.archlinux.org/index.php/WireGuard" target="_blank" rel="noopener">WireGuard-ArchWiki</a>。</p>
+<p>对于WireGuard，所有设备的关系基本对等。所以下面约定。有公网IP的机器被称作S，另外两台普通机器为A，B</p>
+<p>S中设置两个Peer A和B。A和B的Peer仅需要设置S。</p>
+<p>这样A和B机器就可以相互访问了。能做什么事情就可以发挥自己的想象力了。</p>
+]]></content>
+      <categories>
+        <category>默认</category>
+      </categories>
+      <tags>
+        <tag>默认</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>己亥年年终总结</title>
+    <url>/20200131211617/</url>
+    <content><![CDATA[<p>这篇文章本应该写在2019年末或者2020年初，因为一些原因拖到了现在，在这个时间点写可能更有意义一些吧，毕竟新年的发展有些出人意料。曾经的计划也可能因为现在情况的发展而落空。</p>
+<a id="more"></a>
+<h1 id="序"><a href="#序" class="headerlink" title="序"></a>序</h1><p>2020年的我24岁，已经过了<strong>可以尽情试错</strong>的年龄。过去这一年经历足够丰富。认识新朋友，重新审视老朋友，也学到一些（长者没有告诉我的）人生的经验。</p>
+<h1 id="关于工作"><a href="#关于工作" class="headerlink" title="关于工作"></a>关于工作</h1><p>2019年是正式工作的第一年。离开学校前一份实习。离开学校后第一份工作坚持了将近4个月，再一次生病后毅然选择辞职。在一个多月后换到了现在这份工作。其间面试过一些公司。学到的一点小小的经验是，<strong>工作就是拿钱办事</strong>。公司的角度是要花更少的钱办更多的事，在公司拿不出你想要的薪资的时候，一般会画饼，</p>
+<blockquote>
+<p>这个项目上线了就给你们涨工资</p>
+</blockquote>
+<p>又或者打感情牌，</p>
+<blockquote>
+<p>公司花钱培养你们几个月，刚学会就要走不好</p>
+</blockquote>
+<p>对于画饼不多说，能不能吃下这个饼看自己的判断。这里主要说一下第二种。如果公司觉得在试用期学会就走人是公司的损失，完全可以降低试用期工资（如果还能招到人的话），或者及时调整薪资到与能力相匹配的水平。有些人倾向于向公司提出涨薪。但是也存在另一些人，他知道自己换家公司可以显著提高自己的工资，同时可以短时间忍耐工资略低于工作能力（忍耐的过程不考虑工作效率）。我更倾向于后者，毕竟要给那些想白嫖劳动力的人一些教训。教训就是上面提到的那句话，</p>
+<blockquote>
+<p>公司花钱培养你们几个月，刚学会就要走不好</p>
+</blockquote>
+<p>在考虑与工作相关的事情时，撇开所有情感因素。因为<strong>工作只是一场交易</strong>。交易追求公平，如果自认为有失公允，完全可以离开这场交易，毕竟在自己年老体弱（35岁）时，公司会是主动中断交易的一方，在自己还有选择的时候，不要放弃自己的权利。</p>
+<h1 id="关于学习"><a href="#关于学习" class="headerlink" title="关于学习"></a>关于学习</h1><p>持续学习可能是无产阶级唯一能平稳度过中年危机的方法。能否持续学习应该被当作考量一份工作好坏的重要因素。到目前位置我发现持续学习有两个（特别功利的）好处。</p>
+<ol>
+<li>足够的知识可以当作面试谈判的砝码</li>
+<li>离开公司后，更多的知识可以帮助自己更好的生存</li>
+</ol>
+<p>思想境界的提升先不考虑，毕竟我不想过</p>
+<blockquote>
+<p>种豆南山下，草盛豆苗稀。晨兴理荒秽，带月荷锄归。</p>
+</blockquote>
+<p>的生活。</p>
+<p>顺便说一下我现在的学习方法：LeetCode 和 经典图书。能与人实时互动的方式都不推荐，比如QQ群。</p>
+<p>回看这一年，学习新东西最多的时候是实习和离职后。还需要平衡好学习和工作的时间，不能学习的工作，或者学习的内容不是自己喜欢的工作，要果断换掉。还好我只是耽误了3个月。</p>
+<h1 id="关于生活"><a href="#关于生活" class="headerlink" title="关于生活"></a>关于生活</h1><p>到2020-01-31 22:41新型冠状病毒确诊病例9811,疑似病例15238。我已经在家里呆了不知道多少天，希望这一切快点结束，回归到正常生活。</p>
+<!--
+1. 医生发现病毒，不解决问题，先解决医生，真有天朝特色
+2. 对抗疫情就对抗疫情，别弄成感动中国
+3. 有禁止吃野味的法律，却还是发生了这种事。这种签了字的纸也是厕所里的屎
+-->
+<p>这篇文章拖到现在写就是因为，现在我空闲时间比较多。而在应该写这篇文章的时间，刚好是我离职的那段时间，那段时间在刷题看书，没有抽出时间来写。平时还是要常常抽出时间思考。常常独立思考实在是太重要了呀。</p>
+<p>实习和工作结交了很多新朋友，让我也看到了更多不同的人生。沉淀下来的老朋友，绝对是一笔物质和精神上的双重财富。</p>
+<!--LH-->
+<p>实习那段时间，小A去我实习城市玩，一起玩了两天。小A离开的时候我竟然控制不住自己的情绪。</p>
+<!--LQQ-->
+<p>跟小B认识快有10年了吧，安安稳稳到现在还是朋友，我可真棒。</p>
+<!--LJN-->
+<p>当初在学校，就知道跟小C可以谈心。但是我们第一次没有目的聊天竟然发生在毕业后。</p>
+<!--SYF-->
+<p>小D必须有姓名，虽然这半年的接触不是很多（导致运动量下降太多），不过接下来又可以经常约出来玩了。</p>
+<p>恢复平静吧，我想去吃火锅了，热干面也可以。</p>
+]]></content>
+      <categories>
+        <category>默认</category>
+      </categories>
+      <tags>
+        <tag>默认</tag>
       </tags>
   </entry>
   <entry>
@@ -655,51 +893,6 @@
       </tags>
   </entry>
   <entry>
-    <title>MySQL语句执行顺序简介</title>
-    <url>/20190322155258/</url>
-    <content><![CDATA[<p>本篇文章侧重于一条SQL语句提交后，对于这条语句中不同部分的执行先后顺序，对于普通MySQL更实用。<a href="/20190301160919/">MySQL语句执行过程简介</a>侧重于讲解底层的的原理。</p>
-<a id="more"></a>
-<p>首先给出如下语句，并对该语句的执行过程进行解释。</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> ...</span><br><span class="line"><span class="keyword">FROM</span> ...</span><br><span class="line"><span class="keyword">WHERE</span> ...</span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span> ...</span><br><span class="line"><span class="keyword">HAVING</span> ...</span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> ...</span><br></pre></td></tr></table></figure>
-<p>与SQL语句的书写顺序并不是一样的，而是按照下面的顺序来执行</p>
-<ol>
-<li>FROM: 需要从哪个数据表检索数据</li>
-<li>WHERE: 过滤表中数据的条件</li>
-<li>GROUP BY: 如何将上面过滤出的数据分组 </li>
-<li>HAVING: 对上面已经分组的数据进行过滤的条件  </li>
-<li>SELECT: 查看结果集中的哪个列，或列的计算结果 </li>
-<li>ORDER BY: 按照什么样的顺序来查看返回的数据</li>
-</ol>
-<h1 id="FROM"><a href="#FROM" class="headerlink" title="FROM"></a>FROM</h1><p>FROM后跟需要查询的表，可能是一个，也可能是多个。对于多个表的查询，不得不提到JOIN(连接)，能否合理使用JOIN也影响了执行效率的高低。</p>
-<p>首先对给出连接操作的种类：<strong>交叉连接</strong>、<strong>内连接</strong>、<strong>外连接</strong>、<strong>自然连接</strong>和<strong>直接连接</strong>。</p>
-<h2 id="交叉连接"><a href="#交叉连接" class="headerlink" title="交叉连接"></a>交叉连接</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">FROM table1,table2</span><br><span class="line"><span class="comment">-- 等价于</span></span><br><span class="line">FROM table1 CROSS JOIN table2</span><br></pre></td></tr></table></figure>
-<p>交叉连接产生的是两个表的笛卡尔积，交叉链接可能产生巨大的表，慎用。</p>
-<blockquote>
-<p>笛卡尔积：两个集合X和Y的笛卡尓积（Cartesian product），又称直积，表示为X × Y，第一个对象是X的成员而第二个对象是Y的所有可能有序对的其中一个成员</p>
-</blockquote>
-<h2 id="内连接"><a href="#内连接" class="headerlink" title="内连接"></a>内连接</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">-- 一定要有 ON</span></span><br><span class="line">FROM table1 JOIN table2 ON table1.col1=table2.col2</span><br></pre></td></tr></table></figure>
-<p>如果不跟<code>ON</code>，则返回笛卡尔积。(与外链接没有区别吗？)<br><code>ON</code>可以被<code>WHERE</code>代替，但是<code>ON</code>效率更高。使用<code>WHERE</code>相当于先返回表格的笛卡尔积，再约束查询结果(猜测，带验证)。</p>
-<h2 id="外连接"><a href="#外连接" class="headerlink" title="外连接"></a>外连接</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">-- 一定显示table1中的所有行，若table2中没有与table1匹配的，则显示null</span></span><br><span class="line">FROM table1 LEFT JOIN table2 on ...</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 一定显示table2中的所有行，若table1中没有与table2匹配的，则显示null</span></span><br><span class="line">FROM table1 RIGHT JOIN table2 on ...</span><br></pre></td></tr></table></figure>
-<h2 id="自然连接"><a href="#自然连接" class="headerlink" title="自然连接"></a>自然连接</h2><p>不允许指定<code>ON</code>，自动查找相同的列名进行连接。</p>
-<h2 id="直接连接"><a href="#直接连接" class="headerlink" title="直接连接"></a>直接连接</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">-- 强制以table1为基本表</span></span><br><span class="line">FROM table1 STRAIGHT_JOIN table2</span><br></pre></td></tr></table></figure>
-<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><p>参考手册中给出的关于JOIN有关的操作</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">table_references:</span><br><span class="line">    escaped_table_reference [, escaped_table_reference] ...</span><br><span class="line"></span><br><span class="line">escaped_table_reference:</span><br><span class="line">    table_reference</span><br><span class="line">  | &#123; OJ table_reference &#125;</span><br><span class="line"></span><br><span class="line">table_reference:</span><br><span class="line">    table_factor</span><br><span class="line">  | joined_table</span><br><span class="line"></span><br><span class="line">table_factor:</span><br><span class="line">    tbl_name [PARTITION (partition_names)]</span><br><span class="line">        [[AS] alias] [index_hint_list]</span><br><span class="line">  | table_subquery [AS] alias [(col_list)]</span><br><span class="line">  | ( table_references )</span><br><span class="line"></span><br><span class="line">joined_table:</span><br><span class="line">    table_reference &#123;[INNER | CROSS] JOIN | STRAIGHT_JOIN&#125; table_factor [join_specification]</span><br><span class="line">  | table_reference &#123;LEFT|RIGHT&#125; [OUTER] JOIN table_reference join_specification</span><br><span class="line">  | table_reference NATURAL [INNER | &#123;LEFT|RIGHT&#125; [OUTER]] JOIN table_factor</span><br><span class="line"></span><br><span class="line">join_specification:</span><br><span class="line">    ON search_condition</span><br><span class="line">  | USING (join_column_list)</span><br><span class="line"></span><br><span class="line">join_column_list:</span><br><span class="line">    column_name [, column_name] ...</span><br><span class="line"></span><br><span class="line">index_hint_list:</span><br><span class="line">    index_hint [, index_hint] ...</span><br><span class="line"></span><br><span class="line">index_hint:</span><br><span class="line">    USE &#123;INDEX|KEY&#125;</span><br><span class="line">      [FOR &#123;JOIN|ORDER BY|GROUP BY&#125;] ([index_list])</span><br><span class="line">  | &#123;IGNORE|FORCE&#125; &#123;INDEX|KEY&#125;</span><br><span class="line">      [FOR &#123;JOIN|ORDER BY|GROUP BY&#125;] (index_list)</span><br><span class="line"></span><br><span class="line">index_list:</span><br><span class="line">    index_name [, index_name] ...</span><br></pre></td></tr></table></figure>
-<h1 id="WHERE"><a href="#WHERE" class="headerlink" title="WHERE"></a>WHERE</h1><p>根据指定条件是否要将结果返回查询的表中。在<a href="/20190226104504/">MySQL索引</a>中讲了一些WHERE的优化。<br>此外对语句中的AND、OR、=也可以进行化简，这类化简属于数理逻辑内容，仅列出一个作为参考。</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">(b&gt;=5 AND b=5) OR (b=6 AND 5=5) OR (b=7 AND 5=6)</span><br><span class="line"><span class="comment">-- 化简为</span></span><br><span class="line">b=5 OR b=6</span><br></pre></td></tr></table></figure>
-<h1 id="GROUP-BY"><a href="#GROUP-BY" class="headerlink" title="GROUP BY"></a>GROUP BY</h1><p>对结果分组</p>
-<h1 id="HAVING"><a href="#HAVING" class="headerlink" title="HAVING"></a>HAVING</h1><p>对上面已经分组的数据进行过滤的条件，此时是在被WHERE过滤后的表格进行操作，为了效率，尽可能的使用WHERE。若查询过程中出现聚合语句(SUM,MIN,MAX,AVG,COUNT)，则需要使用HAVING。</p>
-<h1 id="SELECT"><a href="#SELECT" class="headerlink" title="SELECT"></a>SELECT</h1><p>查看结果集中的哪个列，或列的计算结果。如果要显示的结果和查询过程中只使用了索引字段，则结果仅索引就可以返回，而不需要去查表。</p>
-<h1 id="ORDER-BY"><a href="#ORDER-BY" class="headerlink" title="ORDER BY"></a>ORDER BY</h1><p>按照什么样的顺序来查看返回的数据，排序操作必定消耗大量资源。</p>
-<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p><a href="https://www.cnblogs.com/huminxxl/p/3149097.html" target="_blank" rel="noopener">SQL语句执行顺序</a><br><a href="https://blog.csdn.net/u011277123/article/details/54863371" target="_blank" rel="noopener">MySQL数据高级查询之连接查询、联合查询、子查询</a><br><a href="https://huoding.com/2013/06/04/261" target="_blank" rel="noopener">MySQL优化的奇技淫巧之STRAIGHT_JOIN</a><br><a href="https://dev.mysql.com/doc/refman/8.0/en/join.html" target="_blank" rel="noopener">JOIN Syntax</a><br><a href="http://www.orczhou.com/index.php/2013/04/how-mysql-choose-index-in-a-join/" target="_blank" rel="noopener">MySQL优化器如何选择索引和JOIN顺序</a><br><a href="https://blog.csdn.net/qmhball/article/details/7941638" target="_blank" rel="noopener">sql语句中WHERE与HAVING的区别</a></p>
-]]></content>
-      <categories>
-        <category>数据库</category>
-      </categories>
-      <tags>
-        <tag>MySQL</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Maximum Subarray</title>
     <url>/20190627224513/</url>
     <content><![CDATA[<p>给定一个整数数组 nums ，找到一个具有最大和的连续子数组（子数组最少包含一个元素），返回其最大和。</p>
@@ -714,190 +907,37 @@
       </tags>
   </entry>
   <entry>
-    <title>Find All Duplicates in an Array</title>
-    <url>/20190625181705/</url>
-    <content><![CDATA[<p>给定一个整数数组 a，其中1 ≤ a[i] ≤ n （n为数组长度）, 其中有些元素出现两次而其他元素出现一次。</p>
-<p>找到所有出现两次的元素。</p>
-<p>你可以不用到任何额外空间并在O(n)时间复杂度内解决这个问题吗？</p>
+    <title>《鲁迅全集》摘抄</title>
+    <url>/20201225125556/</url>
+    <content><![CDATA[<p>谁曾想一个工科学生在将来的某一天重读鲁迅，并愿意把它记录下来。</p>
 <a id="more"></a>
-<p>题目中要求时间复杂度为O(n)，遍历整个数组的时间复杂度是O(n)，此外的所有操作时间复杂度都应该是O(1),使用哈系表可以满足时间复杂度。但是题目中还要求不使用额外的空间。也就意味着，不能使用哈系表，仅能在原数组上进行操作。</p>
-<p>要求不使用额外空间，算法应该直接在原数组上进行操作，或者使用固定大小的内存(固定的几个变量，与输入数据规模无关)。将某个值放到其对应的指针的位置是常见的在原数组上进行的操作。扫描一遍数组，每个元素都修改一次某个变量，是常见的使用固定内存的方法。</p>
-<p>时间复杂度O(n)，意味着只能对数组进行(固定次数的)扫描，毕竟<code>O(n)=O(2n)=O(k*n)</code>，其中k是与输入数据规模无关的常数。前几次扫描可以用来获取一些必要信息。比如判断单链表是否回文，可以通过第一次扫描确定单链表的长度。再通过第二次扫描反转一半的单链表。第三次扫描再判断是否回文。</p>
-<p>这个题目扫描两次数组，第一次将值放到其对应的键上，并交换。第二次扫描，查找那些键值不匹配的位置的值，这些值就是要找的结果。</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> List&lt;Integer&gt; <span class="title">findDuplicates</span><span class="params">(<span class="keyword">int</span>[] nums)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>;i&lt;=nums.length;i++)&#123;</span><br><span class="line">        <span class="keyword">while</span>(nums[i-<span class="number">1</span>]!=nums[nums[i-<span class="number">1</span>]-<span class="number">1</span>])&#123;</span><br><span class="line">            <span class="keyword">int</span> tmp = nums[nums[i-<span class="number">1</span>]-<span class="number">1</span>];</span><br><span class="line">            nums[nums[i-<span class="number">1</span>]-<span class="number">1</span>] = nums[i-<span class="number">1</span>];</span><br><span class="line">            nums[i-<span class="number">1</span>]=tmp;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    List&lt;Integer&gt; ans = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>;i&lt;=nums.length;i++)&#123;</span><br><span class="line">        <span class="keyword">if</span>(nums[i-<span class="number">1</span>]!=i)&#123;</span><br><span class="line">            ans.add(nums[i-<span class="number">1</span>]);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> ans;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>上面这个题要求找出所有<strong>重复出现</strong>的数字。有一个<a href="https://leetcode.com/problems/find-all-numbers-disappeared-in-an-array/" target="_blank" rel="noopener">类似的题目</a>，要求找出<strong>消失的数字</strong>。<br>整体算法一致，唯一不同的是整理结果时获取的值不同。</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 将</span></span><br><span class="line">ans.add(nums[i-<span class="number">1</span>]);</span><br><span class="line"><span class="comment">// 修改为</span></span><br><span class="line">ans.add(i);</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>算法</category>
-      </categories>
-      <tags>
-        <tag>数组</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Best Time to Buy and Sell Stock II</title>
-    <url>/20190629005849/</url>
-    <content><![CDATA[<p>给定一个数组，它的第 i 个元素是一支给定股票第 i 天的价格。<br>设计一个算法来计算你所能获取的最大利润。你可以尽可能地完成更多的交易（多次买卖一支股票）。<br>注意：你不能同时参与多笔交易（你必须在再次购买前出售掉之前的股票）。</p>
-<a id="more"></a>
-<p>如果获得收益，一定是低价买入，高价卖出。<br>对于<code>[1,2,3]</code>，可以在第1天买入，在第3天卖出。但是也可以理解为，在第2天卖出，又在第2天买入。<br>那么题目可以化简为，如果第i天的价格比第i-1天的价格高，则在第i-1天买入，第i天卖出，每次只考虑临近的两天。算法如下。</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">maxProfit</span><span class="params">(<span class="keyword">int</span>[] prices)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> earn=<span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>;i&lt;prices.length;i++)&#123;</span><br><span class="line">        earn+=prices[i]&gt;prices[i-<span class="number">1</span>]?prices[i]-prices[i-<span class="number">1</span>]:<span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> earn;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h1 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h1><p><a href="https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-cooldown/" target="_blank" rel="noopener">Best Time to Buy and Sell Stock with Cooldown</a></p>
-<p>在上述题目要求的基础上，又增加了一条要求</p>
+<p>《端午节》</p>
 <blockquote>
-<p>在股票卖出后不能直接再次进行交易</p>
+<p>人们是每苦于没有“自知之明”的。</p>
 </blockquote>
-<p>上面的算法不适用新情况，按照分治思想设计出的带有递归的算法复杂度超时，这里直接用<a href="https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-cooldown/discuss/441543/O(n)-Java-solution-2-Arrays" target="_blank" rel="noopener">前人给出的算法</a>，当作记录和学习了</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">maxProfit</span><span class="params">(<span class="keyword">int</span>[] prices)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (prices == <span class="keyword">null</span> || prices.length &lt; <span class="number">2</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 第i天持有股票获得的利润</span></span><br><span class="line">    <span class="keyword">int</span>[] hold = <span class="keyword">new</span> <span class="keyword">int</span>[prices.length];</span><br><span class="line">    <span class="comment">// 第i天不持有股票获得的利润</span></span><br><span class="line">    <span class="keyword">int</span>[] unhold = <span class="keyword">new</span> <span class="keyword">int</span>[prices.length];</span><br><span class="line">    <span class="comment">// 前两天如果持有股票，要买便宜的</span></span><br><span class="line">    hold[<span class="number">0</span>] = -prices[<span class="number">0</span>];</span><br><span class="line">    hold[<span class="number">1</span>] = Math.max(-prices[<span class="number">0</span>],-prices[<span class="number">1</span>]);</span><br><span class="line">    <span class="comment">// 前两天如果不持有股票，要么是根本没买，要么是第一天买第二天卖并且赚了</span></span><br><span class="line">    unhold[<span class="number">0</span>] = <span class="number">0</span>;</span><br><span class="line">    unhold[<span class="number">1</span>] = Math.max(<span class="number">0</span>,prices[<span class="number">1</span>]-prices[<span class="number">0</span>]);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">2</span>;i&lt;prices.length;++i)&#123;</span><br><span class="line">        <span class="comment">// 第i天持有股票只有两种情况</span></span><br><span class="line">        <span class="comment">// 保持第i-1天的持有情况不变</span></span><br><span class="line">        <span class="comment">// 或者在i-2天卖出，并在第i天买入</span></span><br><span class="line">        <span class="comment">// 注意:在i-2天保持未持有股票情况下的最大利润，并非一定在i-2天卖出了股票，下同</span></span><br><span class="line">        hold[i] = Math.max(hold[i-<span class="number">1</span>],unhold[i-<span class="number">2</span>]-prices[i]);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 第i天不持有股票的情况也有两种</span></span><br><span class="line">        <span class="comment">// 保持i-1天的不持有情况不变</span></span><br><span class="line">        <span class="comment">// 或者卖出在i-1天买入的股票</span></span><br><span class="line">        unhold[i] = Math.max(unhold[i-<span class="number">1</span>],hold[i-<span class="number">1</span>]+prices[i]);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 最后一天一定是不持有股票获得的利润最大</span></span><br><span class="line">    <span class="keyword">return</span> unhold[prices.length-<span class="number">1</span>];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>由于数组每次都是使用的最近几个元素，算法可以优化到O(1)空间复杂度。</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">maxProfit</span><span class="params">(<span class="keyword">int</span>[] prices)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (prices == <span class="keyword">null</span> || prices.length &lt; <span class="number">2</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span>[] hold = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">1</span>];</span><br><span class="line">    <span class="keyword">int</span>[] unhold = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">3</span>];</span><br><span class="line">    </span><br><span class="line">    hold[<span class="number">0</span>] = Math.max(-prices[<span class="number">0</span>],-prices[<span class="number">1</span>]);</span><br><span class="line">    </span><br><span class="line">    unhold[<span class="number">0</span>] = <span class="number">0</span>;</span><br><span class="line">    unhold[<span class="number">1</span>] = Math.max(<span class="number">0</span>,prices[<span class="number">1</span>]-prices[<span class="number">0</span>]);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">2</span>;i&lt;prices.length;++i)&#123;</span><br><span class="line">        hold[<span class="number">0</span>] = Math.max(hold[<span class="number">0</span>],unhold[<span class="number">0</span>]-prices[i]);</span><br><span class="line">        unhold[<span class="number">2</span>] = Math.max(unhold[<span class="number">1</span>],hold[<span class="number">0</span>]+prices[i]);</span><br><span class="line">        </span><br><span class="line">        unhold[<span class="number">0</span>] = unhold[<span class="number">1</span>];</span><br><span class="line">        unhold[<span class="number">1</span>] = unhold[<span class="number">2</span>];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> unhold[<span class="number">1</span>];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>算法</category>
-      </categories>
-      <tags>
-        <tag>数组</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>关于C++迭代器的一些小技巧</title>
-    <url>/20191205005932/</url>
-    <content><![CDATA[<p>在看C++入门时，看到了关于迭代器的一些使用小技巧，觉得很有必要记下来。可能也是因为我太菜才觉得这部分很有趣吧。</p>
-<a id="more"></a>
-<p>这一切都来源于C++入门的练习10.30</p>
+<p>《影的告别》</p>
 <blockquote>
-<p><strong>练习10.30</strong><br>使用流迭代器，sort和copy从标准流读取一个整数序列，将其排序，并将结果写到标准输出。</p>
+<p>我不过一个影，要别你而沉默在黑暗里了。而然黑暗又会吞并我，然而光明又会使我消失。</p>
 </blockquote>
-<p>题目中并没有说按照什么顺序排序，为了复习一下lambda表达式和bind函数，不使用默认的sort排序规则。</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;functional&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iterator&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>::placeholders;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">is_smaller</span><span class="params">(<span class="keyword">const</span> <span class="keyword">int</span> &amp;a, <span class="keyword">const</span> <span class="keyword">int</span> &amp;b)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> a &lt; b;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    istream_iterator&lt;int&gt; is_it(cin), eof;</span><br><span class="line">    <span class="function">ostream_iterator&lt;<span class="keyword">int</span>&gt; <span class="title">os_it</span><span class="params">(<span class="built_in">cout</span>, <span class="string">" "</span>)</span></span>;</span><br><span class="line">    <span class="function"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; <span class="title">vec</span><span class="params">(is_it, eof)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">auto</span> is_greater = bind(is_smaller, _2, _1);</span><br><span class="line">    <span class="keyword">auto</span> greater_lambda = [](<span class="keyword">const</span> <span class="keyword">int</span> &amp;a, <span class="keyword">const</span> <span class="keyword">int</span> &amp;b) -&gt; <span class="keyword">bool</span> &#123; <span class="keyword">return</span> a &gt; b;&#125;;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 效果相同的三种sort</span></span><br><span class="line">    sort(vec.begin(), vec.end(), is_greater);</span><br><span class="line">    sort(vec.begin(), vec.end(), greater_lambda);</span><br><span class="line">    sort(vec.rbegin(), vec.rend());</span><br><span class="line"></span><br><span class="line">    copy(vec.begin(), vec.end(), os_it);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>C++</category>
-      </categories>
-      <tags>
-        <tag>C++</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>C++函数指针到UE4委托代理</title>
-    <url>/20190821135227/</url>
-    <content><![CDATA[<p>Delegate: A type of variable storing a reference to a method with a particular signature, analogous to a function pointer</p>
-<a id="more"></a>
-<h1 id="函数指针"><a href="#函数指针" class="headerlink" title="函数指针"></a>函数指针</h1><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// demo</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// f是一个函数，函数的参数是 int，返回值是指向函数的指针</span></span><br><span class="line"><span class="comment">// 被指向的函数的参数和返回值分别是(int*,int) 和 int</span></span><br><span class="line"><span class="keyword">int</span>(*f(<span class="keyword">int</span>)) (<span class="keyword">int</span>*, <span class="keyword">int</span>);</span><br><span class="line"><span class="comment">// 这个函数刚好符合上面的函数返回值的要求</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fun</span><span class="params">(<span class="keyword">int</span>*, <span class="keyword">int</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> a = <span class="number">1</span>, b = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// pf是一个指向函数的指针</span></span><br><span class="line">    <span class="comment">// 被指向的函数的参数列表和返回值分别是，(int*,int) 和 int</span></span><br><span class="line">    <span class="keyword">int</span>(*pf) (<span class="keyword">int</span>*, <span class="keyword">int</span>) = &amp;fun;</span><br><span class="line">    <span class="comment">// int(*pf) (int*, int) = fun; 效果同上</span></span><br><span class="line"></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt; pf(&amp;a, b)&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>; <span class="comment">// 2</span></span><br><span class="line"></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; ((*f(<span class="number">1</span>))(&amp;a, b)) &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>; <span class="comment">// 1 2</span></span><br><span class="line">    <span class="comment">// std::cout &lt;&lt; (f(1)(&amp;a, b)) &lt;&lt; std::endl; 效果同上</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fun</span><span class="params">(<span class="keyword">int</span>* a, <span class="keyword">int</span> b)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> *a + b;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span>(*f(<span class="keyword">int</span> a)) (<span class="keyword">int</span>* b, <span class="keyword">int</span> c)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; a &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    <span class="keyword">return</span> fun;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h1 id="UE4-委托代理"><a href="#UE4-委托代理" class="headerlink" title="UE4 委托代理"></a>UE4 委托代理</h1><p>Wiki里对委托(Delegate)的解释</p>
+<p>《希望》</p>
 <blockquote>
-<p>a type of variable storing a reference to a method with a particular signature, analogous to a function pointer</p>
+<p>希望是甚么？是娼妓：她对谁都蛊惑，将一切都献给；待你牺牲了极多的宝贝——你的青春——她就弃掉你。</p>
 </blockquote>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">//OnlyDelegateTest.h</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">pragma</span> once</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"CoreMinimal.h"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"UObject/NoExportTypes.h"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"OnlyDelegateTest.generated.h"</span></span></span><br><span class="line"></span><br><span class="line">DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnlyDelegateTestSignature);</span><br><span class="line"></span><br><span class="line">UCLASS(Blueprintable)</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">FAITHGAME_API</span> <span class="title">UOnlyDelegateTest</span> :</span> <span class="keyword">public</span> UObject</span><br><span class="line">&#123;</span><br><span class="line">    GENERATED_BODY()</span><br><span class="line">    </span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    UFUNCTION(BlueprintCallable, Category = <span class="string">"DelegateTest"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">static</span> UOnlyDelegateTest* <span class="title">get_instance_ptr</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">static</span> UOnlyDelegateTest&amp; <span class="title">get_instance</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="keyword">static</span> UOnlyDelegateTest* instance_;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    UFUNCTION(BlueprintCallable, Category = <span class="string">"DelegateTest"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">execute_broadcast_in_cpp</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> class UWorld* <span class="title">GetWorld</span><span class="params">()</span> <span class="keyword">const</span> <span class="keyword">override</span></span>;</span><br><span class="line">    UPROPERTY(Transient)</span><br><span class="line">    UWorld * World;</span><br><span class="line">    </span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    UPROPERTY(BlueprintAssignable, Category = <span class="string">"DelegateTest"</span>)</span><br><span class="line">    FOnlyDelegateTestSignature OnlyTestDelegate;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// OnlyDelegateTest.cpp</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"etc..."</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"OnlyDelegateTest.h"</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 类外定义静态变量</span></span><br><span class="line">UOnlyDelegateTest* UOnlyDelegateTest::instance_ = <span class="literal">nullptr</span>;</span><br><span class="line"></span><br><span class="line"><span class="function">UOnlyDelegateTest* <span class="title">UOnlyDelegateTest::get_instance_ptr</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="literal">nullptr</span> != instance_) <span class="keyword">return</span> instance_;</span><br><span class="line"></span><br><span class="line">    instance_ = NewObject&lt;UOnlyDelegateTest&gt;();</span><br><span class="line">    instance_-&gt;AddToRoot();</span><br><span class="line">    <span class="keyword">return</span> instance_;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">UOnlyDelegateTest&amp; <span class="title">UOnlyDelegateTest::get_instance</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> *get_instance_ptr();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">UOnlyDelegateTest::execute_broadcast_in_cpp</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    OnlyTestDelegate.Broadcast();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">UWorld* <span class="title">UOnlyDelegateTest::GetWorld</span><span class="params">()</span> <span class="keyword">const</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> World;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>默认</category>
-      </categories>
-      <tags>
-        <tag>默认</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>开始使用WireGuard</title>
-    <url>/20200202210032/</url>
-    <content><![CDATA[<p>WireGuard是让人眼前一亮的VPN软件。最近尝试通过它来完成两个没有公网IP的机器的通信，作为<a href="20190909233016">使用SSH访问内网中的服务器</a>的代替方案。</p>
-<a id="more"></a>
-<p>WireGuard的介绍和使用方法可以参考<a href="https://wiki.archlinux.org/index.php/WireGuard" target="_blank" rel="noopener">WireGuard-ArchWiki</a>。</p>
-<p>对于WireGuard，所有设备的关系基本对等。所以下面约定。有公网IP的机器被称作S，另外两台普通机器为A，B</p>
-<p>S中设置两个Peer A和B。A和B的Peer仅需要设置S。</p>
-<p>这样A和B机器就可以相互访问了。能做什么事情就可以发挥自己的想象力了。</p>
-]]></content>
-      <categories>
-        <category>默认</category>
-      </categories>
-      <tags>
-        <tag>默认</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>使用SSH访问内网中的服务器</title>
-    <url>/20190909233016/</url>
-    <content><![CDATA[<p>这篇文章讨论在有公网服务器作为中继的条件下，如何通过SSH访问没有公网IP的服务器。</p>
-<a id="more"></a>
-<p>这篇文章使用尽可能少的参数以及尽可能多的端口号，使读者更容易理解操作流程。</p>
-<p>阅读文章前，请确定能理解下面这句指令的含义，以及<code>[]</code>中的内容不存在时使用的默认值是什么。</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ssh [username@]host [-p port]</span><br></pre></td></tr></table></figure>
-<h1 id="在外网服务器中的操作"><a href="#在外网服务器中的操作" class="headerlink" title="在外网服务器中的操作"></a>在外网服务器中的操作</h1><p>先从服务器开始。首先假设您已经通过上个命令登录到服务器。</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ssh -L 0.0.0.0:10000:localhost:20000 outer@localhost -p 50000</span><br></pre></td></tr></table></figure>
+<p>《过客》</p>
 <blockquote>
-<p><strong>-L</strong> <code>[bind_address:]port:host:hostport</code>  </p>
-<p>Specifies that connections to the given TCP port or Unix socket on the local (client) host are to be forwarded to the given host and port, or Unix socket, on the remote side.</p>
+<p>倘使我得到了谁的布施，我就要想秃鹰看见死尸一样，在四近徘徊，祝愿她的灭亡，给我亲眼看见；或者诅咒她以外的一切全部灭亡，连我自己，因为我就应该得到诅咒。但我还没有这样的力量；即使有这力量，我也不愿意她有这样的境遇，因为他们大概总不愿意有这样的境遇。</p>
 </blockquote>
-<p>简而言之，<code>0.0.0.0:10000</code> 收到的内容将被转发给<code>localhost:20000</code>。其他的参数与最开始的指令的含义相同。</p>
-<p>这是一个正向代理的过程。此时，就需要让 <code>20000</code> 端口收到的数据转发给内网中的服务器。</p>
-<h1 id="在内网服务器中的操作"><a href="#在内网服务器中的操作" class="headerlink" title="在内网服务器中的操作"></a>在内网服务器中的操作</h1><p>在进行后续操作前，请确定内网服务器的SSH服务的端口号是30000。</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ssh -R 20000:localhost:30000 outer@12.34.56.78 -p 50000</span><br></pre></td></tr></table></figure>
+<p>《随感录四十一》</p>
 <blockquote>
-<p><strong>-R</strong> <code>[bind_address:]port:host:hostport</code>  </p>
-<p> <em>Specifies that connections to the given TCP port or Unix socket on the remote (server) host are to be forwarded to the local side.</em></p>
+<p>愿中国青年都摆脱冷气，只是向上走，不必听自暴自弃者流的话。能做事的做事，能发声的发声。有一分热，发一分光，就令萤火一般，也可以在黑暗里发一点光，不必等候炬火。  </p>
+<p>此后如竟没有炬火：我便是唯一的光。</p>
 </blockquote>
-<p>这样，外网服务器在 <code>20000</code> 端口接收到的数据将被转发到内网服务器的 <code>30000</code> 端口。使用第三台机器进行测试。</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ssh inner@12.34.56.78 -p 10000</span><br></pre></td></tr></table></figure>
-<h1 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h1><p>直接使用上述方式运行的话，命令保持在前台，并且存在断线的风险。使用autossh和ssh参数配置实现断线重连</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">autossh -M 0 -o "ServerAliveInterval 60" -o "ServerAliveCountMax 3" -fCNL ...</span><br><span class="line">autossh -M 0 -o "ServerAliveInterval 60" -o "ServerAliveCountMax 3" -fCNR ...</span><br></pre></td></tr></table></figure>
-<h1 id="数据流向"><a href="#数据流向" class="headerlink" title="数据流向"></a>数据流向</h1><p>某SSH客户端，访问外网服务器的<code>10000</code>端口，<code>10000</code>端口将接收到的数据直接转发给外网服务器的<code>20000</code>端口，内网服务器在外网服务器上打开了<code>20000</code>端口，并将数据转发给了内网服务器的<code>30000</code>端口。</p>
-<p>通过访问<code>50000</code>端口的SSH服务器软件控制数据流向。</p>
-]]></content>
-      <categories>
-        <category>默认</category>
-      </categories>
-      <tags>
-        <tag>默认</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>己亥年年终总结</title>
-    <url>/20200131211617/</url>
-    <content><![CDATA[<p>这篇文章本应该写在2019年末或者2020年初，因为一些原因拖到了现在，在这个时间点写可能更有意义一些吧，毕竟新年的发展有些出人意料。曾经的计划也可能因为现在情况的发展而落空。</p>
-<a id="more"></a>
-<h1 id="序"><a href="#序" class="headerlink" title="序"></a>序</h1><p>2020年的我24岁，已经过了<strong>可以尽情试错</strong>的年龄。过去这一年经历足够丰富。认识新朋友，重新审视老朋友，也学到一些（长者没有告诉我的）人生的经验。</p>
-<h1 id="关于工作"><a href="#关于工作" class="headerlink" title="关于工作"></a>关于工作</h1><p>2019年是正式工作的第一年。离开学校前一份实习。离开学校后第一份工作坚持了将近4个月，再一次生病后毅然选择辞职。在一个多月后换到了现在这份工作。其间面试过一些公司。学到的一点小小的经验是，<strong>工作就是拿钱办事</strong>。公司的角度是要花更少的钱办更多的事，在公司拿不出你想要的薪资的时候，一般会画饼，</p>
+<p>《六十二 恨恨而死》</p>
 <blockquote>
-<p>这个项目上线了就给你们涨工资</p>
+<p>古来很有几位恨恨而死的人物。他们一面说些“怀才不遇”，“天道宁论”的话，一面有钱的便狂嫖滥赌，没钱的便喝几十碗酒，——因为不平的缘故，于是后来就恨恨而死了。</p>
+<p>我们应该趁他们活着的时候问他：诸公！您知道北京离昆仑山几里，弱水去黄河几丈么？火药除了做鞭炮，罗盘除了看风水，还有什么用处么？棉花是红的还是白的？谷子是长在树上，还是长在草上？桑见濮上如何情形，自由恋爱怎样态度？您在半夜里可忽然觉得有些羞，清早上可居然有点悔么？四斤的担，您能挑么？三里的道，您能跑么？</p>
+<p>他们如果细细的想，慢慢的悔了，这便很有些希望。万一越发不平，越发愤怒，那便“爱莫能助”。——于是他们终于恨恨而死了。</p>
 </blockquote>
-<p>又或者打感情牌，</p>
-<blockquote>
-<p>公司花钱培养你们几个月，刚学会就要走不好</p>
-</blockquote>
-<p>对于画饼不多说，能不能吃下这个饼看自己的判断。这里主要说一下第二种。如果公司觉得在试用期学会就走人是公司的损失，完全可以降低试用期工资（如果还能招到人的话），或者及时调整薪资到与能力相匹配的水平。有些人倾向于向公司提出涨薪。但是也存在另一些人，他知道自己换家公司可以显著提高自己的工资，同时可以短时间忍耐工资略低于工作能力（忍耐的过程不考虑工作效率）。我更倾向于后者，毕竟要给那些想白嫖劳动力的人一些教训。教训就是上面提到的那句话，</p>
-<blockquote>
-<p>公司花钱培养你们几个月，刚学会就要走不好</p>
-</blockquote>
-<p>在考虑与工作相关的事情时，撇开所有情感因素。因为<strong>工作只是一场交易</strong>。交易追求公平，如果自认为有失公允，完全可以离开这场交易，毕竟在自己年老体弱（35岁）时，公司会是主动中断交易的一方，在自己还有选择的时候，不要放弃自己的权利。</p>
-<h1 id="关于学习"><a href="#关于学习" class="headerlink" title="关于学习"></a>关于学习</h1><p>持续学习可能是无产阶级唯一能平稳度过中年危机的方法。能否持续学习应该被当作考量一份工作好坏的重要因素。到目前位置我发现持续学习有两个（特别功利的）好处。</p>
-<ol>
-<li>足够的知识可以当作面试谈判的砝码</li>
-<li>离开公司后，更多的知识可以帮助自己更好的生存</li>
-</ol>
-<p>思想境界的提升先不考虑，毕竟我不想过</p>
-<blockquote>
-<p>种豆南山下，草盛豆苗稀。晨兴理荒秽，带月荷锄归。</p>
-</blockquote>
-<p>的生活。</p>
-<p>顺便说一下我现在的学习方法：LeetCode 和 经典图书。能与人实时互动的方式都不推荐，比如QQ群。</p>
-<p>回看这一年，学习新东西最多的时候是实习和离职后。还需要平衡好学习和工作的时间，不能学习的工作，或者学习的内容不是自己喜欢的工作，要果断换掉。还好我只是耽误了3个月。</p>
-<h1 id="关于生活"><a href="#关于生活" class="headerlink" title="关于生活"></a>关于生活</h1><p>到2020-01-31 22:41新型冠状病毒确诊病例9811,疑似病例15238。我已经在家里呆了不知道多少天，希望这一切快点结束，回归到正常生活。</p>
-<!--
-1. 医生发现病毒，不解决问题，先解决医生，真有天朝特色
-2. 对抗疫情就对抗疫情，别弄成感动中国
-3. 有禁止吃野味的法律，却还是发生了这种事。这种签了字的纸也是厕所里的屎
--->
-<p>这篇文章拖到现在写就是因为，现在我空闲时间比较多。而在应该写这篇文章的时间，刚好是我离职的那段时间，那段时间在刷题看书，没有抽出时间来写。平时还是要常常抽出时间思考。常常独立思考实在是太重要了呀。</p>
-<p>实习和工作结交了很多新朋友，让我也看到了更多不同的人生。沉淀下来的老朋友，绝对是一笔物质和精神上的双重财富。</p>
-<!--LH-->
-<p>实习那段时间，小A去我实习城市玩，一起玩了两天。小A离开的时候我竟然控制不住自己的情绪。</p>
-<!--LQQ-->
-<p>跟小B认识快有10年了吧，安安稳稳到现在还是朋友，我可真棒。</p>
-<!--LJN-->
-<p>当初在学校，就知道跟小C可以谈心。但是我们第一次没有目的聊天竟然发生在毕业后。</p>
-<!--SYF-->
-<p>小D必须有姓名，虽然这半年的接触不是很多（导致运动量下降太多），不过接下来又可以经常约出来玩了。</p>
-<p>恢复平静吧，我想去吃火锅了，热干面也可以。</p>
 ]]></content>
       <categories>
         <category>默认</category>
@@ -1013,46 +1053,6 @@
       </categories>
       <tags>
         <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>《鲁迅全集》摘抄</title>
-    <url>/20201225125556/</url>
-    <content><![CDATA[<p>谁曾想一个工科学生在将来的某一天重读鲁迅，并愿意把它记录下来。</p>
-<a id="more"></a>
-<p>《端午节》</p>
-<blockquote>
-<p>人们是每苦于没有“自知之明”的。</p>
-</blockquote>
-<p>《影的告别》</p>
-<blockquote>
-<p>我不过一个影，要别你而沉默在黑暗里了。而然黑暗又会吞并我，然而光明又会使我消失。</p>
-</blockquote>
-<p>《希望》</p>
-<blockquote>
-<p>希望是甚么？是娼妓：她对谁都蛊惑，将一切都献给；待你牺牲了极多的宝贝——你的青春——她就弃掉你。</p>
-</blockquote>
-<p>《过客》</p>
-<blockquote>
-<p>倘使我得到了谁的布施，我就要想秃鹰看见死尸一样，在四近徘徊，祝愿她的灭亡，给我亲眼看见；或者诅咒她以外的一切全部灭亡，连我自己，因为我就应该得到诅咒。但我还没有这样的力量；即使有这力量，我也不愿意她有这样的境遇，因为他们大概总不愿意有这样的境遇。</p>
-</blockquote>
-<p>《随感录四十一》</p>
-<blockquote>
-<p>愿中国青年都摆脱冷气，只是向上走，不必听自暴自弃者流的话。能做事的做事，能发声的发声。有一分热，发一分光，就令萤火一般，也可以在黑暗里发一点光，不必等候炬火。  </p>
-<p>此后如竟没有炬火：我便是唯一的光。</p>
-</blockquote>
-<p>《六十二 恨恨而死》</p>
-<blockquote>
-<p>古来很有几位恨恨而死的人物。他们一面说些“怀才不遇”，“天道宁论”的话，一面有钱的便狂嫖滥赌，没钱的便喝几十碗酒，——因为不平的缘故，于是后来就恨恨而死了。</p>
-<p>我们应该趁他们活着的时候问他：诸公！您知道北京离昆仑山几里，弱水去黄河几丈么？火药除了做鞭炮，罗盘除了看风水，还有什么用处么？棉花是红的还是白的？谷子是长在树上，还是长在草上？桑见濮上如何情形，自由恋爱怎样态度？您在半夜里可忽然觉得有些羞，清早上可居然有点悔么？四斤的担，您能挑么？三里的道，您能跑么？</p>
-<p>他们如果细细的想，慢慢的悔了，这便很有些希望。万一越发不平，越发愤怒，那便“爱莫能助”。——于是他们终于恨恨而死了。</p>
-</blockquote>
-]]></content>
-      <categories>
-        <category>默认</category>
-      </categories>
-      <tags>
-        <tag>默认</tag>
       </tags>
   </entry>
 </search>
