@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://blog.sugarmix.me/20210220143927/</loc>
+    
+    <lastmod>2021-02-20T08:55:35.834Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://blog.sugarmix.me/20201225125556/</loc>
     
     <lastmod>2020-12-25T05:31:15.993Z</lastmod>
@@ -30,13 +37,6 @@
   </url>
   
   <url>
-    <loc>https://blog.sugarmix.me/tags/index.html</loc>
-    
-    <lastmod>2020-04-07T08:02:20.261Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>https://blog.sugarmix.me/about/index.html</loc>
     
     <lastmod>2020-04-07T08:02:20.261Z</lastmod>
@@ -44,7 +44,14 @@
   </url>
   
   <url>
-    <loc>https://blog.sugarmix.me/20181229230044/</loc>
+    <loc>https://blog.sugarmix.me/tags/index.html</loc>
+    
+    <lastmod>2020-04-07T08:02:20.261Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://blog.sugarmix.me/20180415221531/</loc>
     
     <lastmod>2020-04-07T08:02:20.251Z</lastmod>
     
@@ -58,21 +65,7 @@
   </url>
   
   <url>
-    <loc>https://blog.sugarmix.me/20180415221531/</loc>
-    
-    <lastmod>2020-04-07T08:02:20.251Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://blog.sugarmix.me/20190225173604/</loc>
-    
-    <lastmod>2020-04-07T08:02:20.251Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://blog.sugarmix.me/20190301160919/</loc>
+    <loc>https://blog.sugarmix.me/20181229230044/</loc>
     
     <lastmod>2020-04-07T08:02:20.251Z</lastmod>
     
@@ -86,6 +79,13 @@
   </url>
   
   <url>
+    <loc>https://blog.sugarmix.me/20190225173604/</loc>
+    
+    <lastmod>2020-04-07T08:02:20.251Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://blog.sugarmix.me/20190226104504/</loc>
     
     <lastmod>2020-04-07T08:02:20.251Z</lastmod>
@@ -93,28 +93,7 @@
   </url>
   
   <url>
-    <loc>https://blog.sugarmix.me/20190320093728/</loc>
-    
-    <lastmod>2020-04-07T08:02:20.251Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://blog.sugarmix.me/20190322155258/</loc>
-    
-    <lastmod>2020-04-07T08:02:20.251Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://blog.sugarmix.me/20190623223142/</loc>
-    
-    <lastmod>2020-04-07T08:02:20.251Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://blog.sugarmix.me/20190821135227/</loc>
+    <loc>https://blog.sugarmix.me/20190301160919/</loc>
     
     <lastmod>2020-04-07T08:02:20.251Z</lastmod>
     
@@ -128,14 +107,7 @@
   </url>
   
   <url>
-    <loc>https://blog.sugarmix.me/20191205005932/</loc>
-    
-    <lastmod>2020-04-07T08:02:20.251Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://blog.sugarmix.me/20190909233016/</loc>
+    <loc>https://blog.sugarmix.me/20190320093728/</loc>
     
     <lastmod>2020-04-07T08:02:20.251Z</lastmod>
     
@@ -149,28 +121,7 @@
   </url>
   
   <url>
-    <loc>https://blog.sugarmix.me/20190629005849/</loc>
-    
-    <lastmod>2020-04-07T08:02:20.251Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://blog.sugarmix.me/20190625181705/</loc>
-    
-    <lastmod>2020-04-07T08:02:20.251Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://blog.sugarmix.me/20200202210032/</loc>
-    
-    <lastmod>2020-04-07T08:02:20.251Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://blog.sugarmix.me/20200131211617/</loc>
+    <loc>https://blog.sugarmix.me/20190322155258/</loc>
     
     <lastmod>2020-04-07T08:02:20.251Z</lastmod>
     
@@ -184,7 +135,63 @@
   </url>
   
   <url>
+    <loc>https://blog.sugarmix.me/20190625181705/</loc>
+    
+    <lastmod>2020-04-07T08:02:20.251Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://blog.sugarmix.me/20190627224513/</loc>
+    
+    <lastmod>2020-04-07T08:02:20.251Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://blog.sugarmix.me/20190623223142/</loc>
+    
+    <lastmod>2020-04-07T08:02:20.251Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://blog.sugarmix.me/20190629005849/</loc>
+    
+    <lastmod>2020-04-07T08:02:20.251Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://blog.sugarmix.me/20190821135227/</loc>
+    
+    <lastmod>2020-04-07T08:02:20.251Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://blog.sugarmix.me/20190909233016/</loc>
+    
+    <lastmod>2020-04-07T08:02:20.251Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://blog.sugarmix.me/20191205005932/</loc>
+    
+    <lastmod>2020-04-07T08:02:20.251Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://blog.sugarmix.me/20200131211617/</loc>
+    
+    <lastmod>2020-04-07T08:02:20.251Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://blog.sugarmix.me/20200202210032/</loc>
     
     <lastmod>2020-04-07T08:02:20.251Z</lastmod>
     
